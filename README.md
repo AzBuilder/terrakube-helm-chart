@@ -22,6 +22,7 @@ name: "terrakube-sample"
 databaseType: "SQL_AZURE" 
 securityType: "AZURE"
 
+azureAppIdURI: "api://XXX"
 azureAppClientId: "XXX"
 azureAppTenantId: "XXX"
 azureAppSecret: "XXX"
@@ -32,7 +33,6 @@ datasourceUser: "XXX"
 datasourcePassword: "XXX"
 
 apiDomain: "XXX"
-apiPath: "XXX"
 
 apiVersion: "2.0.0"
 registryVersion: "2.0.0"
@@ -46,6 +46,10 @@ terraformOutputType: "AzureTerraformOutputImpl"
 azureStorageAccountResourceGroup: "XXX"
 azureStorageAccountName: "XXX"
 azureStorageAccountAccessKey: "XXX"
+
+enableTLS: true
+enableIngressNginx: true
+enableIngressNginxTLS: false
 
 ```
 

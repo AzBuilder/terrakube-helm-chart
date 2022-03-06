@@ -14,6 +14,10 @@
         "description": "Supported databse types",
         "enum": ["H2", "SQL_AZURE", "POSTGRESQL", "MYSQL"]
       },
+      "azureAppIdURI": {
+        "description": "Azure Active Directory Application Id URI from Base App",
+        "type": "string"
+      },
       "azureAppClientId": {
         "description": "Azure Active Directory Application Id",
         "type": "string"
@@ -46,8 +50,8 @@
         "description": "Domain where the API will be deployed. Example: sampledomain.me",
         "type": "string"
       },
-      "apiPath": {
-        "description": "Domain path where the API will be deployed. Example: service ",
+      "uiDomain": {
+        "description": "Domain where the UI will be deployed. Example: ui.sampledomain.me",
         "type": "string"
       },
       "registryDomain": {
@@ -80,6 +84,10 @@
         "description": "Docker image version for API",
         "type": "string"
       },
+      "uiVersion": {
+        "description": "Docker image version for UI",
+        "type": "string"
+      },
       "registryVersion": {
         "description": "Docker image version for Registry",
         "type": "string"
@@ -87,11 +95,24 @@
       "executorVersion": {
         "description": "Docker image version for Executor",
         "type": "string"
+      },
+      "enableTLS": {
+        "description": "Enable https for UI endpoint",
+        "type": "boolean"
+      },
+      "enableIngressNginx": {
+        "description": "Enable Ingress using Nginx",
+        "type": "boolean"
+      },
+      "enableIngressNginxTLS": {
+        "description": "Docker image version for Executor",
+        "type": "boolean"
       }
     },
     "required": [
       "name",
-      "databaseType"
+      "databaseType",
+      "enableIngressNginx"
     ],
     "title": "Values",
     "type": "object"
