@@ -47,6 +47,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: aks-azbuilder-open-registry-service
+            name: terrakube-registry-service
             port:
               number: 8075
