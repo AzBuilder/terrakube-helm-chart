@@ -2,6 +2,7 @@ name: ""
 databaseType: "" 
 securityType: ""
 
+azureAppIdURI: ""
 azureAppClientId: ""
 azureAppTenantId: ""
 azureAppSecret: ""
@@ -12,11 +13,12 @@ datasourceUser: ""
 datasourcePassword: ""
 
 apiDomain: ""
-apiPath: ""
+uiDomain: ""
 
 apiVersion: ""
 registryVersion: ""
 executorVersion: ""
+uiVersion: ""
 
 registryDomain: ""
 
@@ -26,3 +28,8 @@ terraformOutputType: ""
 azureStorageAccountResourceGroup: ""
 azureStorageAccountName: ""
 azureStorageAccountAccessKey: ""
+
+enableTLS: false
+enableIngressNginx: false
+enableIngressNginxTLS: false
+
