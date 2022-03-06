@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: terrakube-api-ingress
+  namespace: {{ .Values.name }}-ns
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2 
+    nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
+spec:
+  rules:
+  - host: {{ .Values.apiDomain }}
+    http:
+      paths:
+      - path: /{{ .Values.apiPath}}(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: terrakube-api-service
+            port:
+              number: 8080
+      - path: /open-registry(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: terrakube-registry-service
+            port:
+              number: 8075
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: terrakube-registry-ingress
+  namespace: {{ .Values.name }}-ns
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+spec:
+  rules:
+  - host:  {{ .Values.registryDomain }}
+    http:
+      paths:
+      - path: /(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: terrakube-registry-service
+            port:
+              number: 8075

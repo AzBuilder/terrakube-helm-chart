@@ -1,0 +1,98 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema#",
+    "properties": {
+      "name": {
+        "description": "Service name",
+        "type": "string"
+      },
+      "securityType": {
+        "type": "string",
+        "enum": ["AZURE"]
+      },
+      "databaseType": {
+        "type": "string",
+        "description": "Supported databse types",
+        "enum": ["H2", "SQL_AZURE", "POSTGRESQL", "MYSQL"]
+      },
+      "azureAppClientId": {
+        "description": "Azure Active Directory Application Id",
+        "type": "string"
+      },
+      "azureAppTenantId": {
+        "description": "Azure Active Directory Tenant Id",
+        "type": "string"
+      },
+      "azureAppSecret": {
+        "description": "Azure Active Directory Application Secret",
+        "type": "string"
+      },
+      "datasourceHostname": {
+        "description": "Database hostname. Example: terrakube-sample-db.database.windows.net",
+        "type": "string"
+      },
+      "datasourceDatabase": {
+        "description": "Database name. Example: terrakube-db",
+        "type": "string"
+      },
+      "datasourceUser": {
+        "description": "Database user. Example: SuperAdmin",
+        "type": "string"
+      },
+      "datasourcePassword": {
+        "description": "Database password. Example: SuperPassword",
+        "type": "string"
+      },
+      "apiDomain": {
+        "description": "Domain where the API will be deployed. Example: sampledomain.me",
+        "type": "string"
+      },
+      "apiPath": {
+        "description": "Domain path where the API will be deployed. Example: service ",
+        "type": "string"
+      },
+      "registryDomain": {
+        "description": "Domain where the private Registry will be deployed. Example: .registry.sampledomain.me",
+        "type": "string"
+      },
+      "terraformStateType": {
+        "type": "string",
+        "description": "Supported databse types",
+        "enum": ["AzureTerraformStateImpl"]
+      },
+      "terraformOutputType": {
+        "type": "string",
+        "description": "Supported databse types",
+        "enum": ["AzureTerraformOutputImpl"]
+      },
+      "azureStorageAccountResourceGroup": {
+        "description": "Azure storage account resource group where the terraform state, output and registry modules will be saved",
+        "type": "string"
+      },
+      "azureStorageAccountName": {
+        "description": "Azure storage account name where the terraform state, output and registry modules will be saved",
+        "type": "string"
+      },
+      "azureStorageAccountAccessKey": {
+        "description": "Azure storage account access key where the terraform state, output and registry modules will be saved",
+        "type": "string"
+      },
+      "apiVersion": {
+        "description": "Docker image version for API",
+        "type": "string"
+      },
+      "registryVersion": {
+        "description": "Docker image version for Registry",
+        "type": "string"
+      },
+      "executorVersion": {
+        "description": "Docker image version for Executor",
+        "type": "string"
+      }
+    },
+    "required": [
+      "name",
+      "databaseType"
+    ],
+    "title": "Values",
+    "type": "object"
+  }

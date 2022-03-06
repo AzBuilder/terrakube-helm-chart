@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terrakube-api
+  namespace: {{ .Values.name }}-ns
+  labels:
+    app: terrakube-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: terrakube-api
+  template:
+    metadata:
+      labels:
+        app: terrakube-api
+    spec:
+      containers:
+      - name: terrakube-api
+        image: azbuilder/api-server:{{ .Values.apiVersion }}
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - secretRef:
+            name: terrakube-api-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: terrakube-api-service
+  namespace: {{ .Values.name }}-ns  
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: terrakube-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terrakube-executor
+  namespace: {{ .Values.name }}-ns
+  labels:
+    app: terrakube-executor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: terrakube-executor
+  template:
+    metadata:
+      labels:
+        app: terrakube-executor
+    spec:
+      containers:
+      - name: terrakube-executor
+        image: azbuilder/executor:{{ .Values.executorVersion }}
+        ports:
+        - containerPort: 8090
+        envFrom:
+        - secretRef:
+            name: terrakube-executor-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: terrakube-executor-service 
+  namespace: {{ .Values.name }}-ns 
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8090
+    targetPort: 8090
+  selector:
+    app: terrakube-executor
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terrakube-registry
+  namespace: {{ .Values.name }}-ns
+  labels:
+    app: terrakube-registry
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: terrakube-registry
+  template:
+    metadata:
+      labels:
+        app: terrakube-registry
+    spec:
+      containers:
+      - name: terrakube-registry
+        image: azbuilder/open-registry:{{ .Values.registryVersion }}
+        ports:
+        - containerPort: 8075
+        envFrom:
+        - secretRef:
+            name: terrakube-registry-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: terrakube-registry-service
+  namespace: {{ .Values.name }}-ns  
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8075
+    targetPort: 8075
+  selector:
+    app: terrakube-registry
