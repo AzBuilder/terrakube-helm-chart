@@ -1,0 +1,28 @@
+name: ""
+databaseType: "" 
+securityType: ""
+
+azureAppClientId: ""
+azureAppTenantId: ""
+azureAppSecret: ""
+
+datasourceHostname: ""
+datasourceDatabase: ""
+datasourceUser: ""
+datasourcePassword: ""
+
+apiDomain: ""
+apiPath: ""
+
+apiVersion: ""
+registryVersion: ""
+executorVersion: ""
+
+registryDomain: ""
+
+terraformStateType: ""
+terraformOutputType: ""
+
+azureStorageAccountResourceGroup: ""
+azureStorageAccountName: ""
+azureStorageAccountAccessKey: ""
