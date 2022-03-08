@@ -134,7 +134,7 @@ spec:
     spec:
       containers:
       - name: terrakube-ui
-        image: azbuilder/terakube-ui:{{ .Values.uiVersion }}
+        image: azbuilder/terrakube-ui:{{ .Values.uiVersion }}
         ports:
         - containerPort: 8080
         envFrom:

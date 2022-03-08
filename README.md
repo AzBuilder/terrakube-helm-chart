@@ -55,6 +55,18 @@ enableIngressNginxTLS: false
 
 ## Instalation
 
+## 1. Azure Active Directory 
+
+In order to use Terrakube we need to register the application inside Azure Active Directory, to do this use the following Terraform module:
+
+```bash
+git clone https://github.com/AzBuilder/terraform-azurerm-terrakube-app-registration.git
+terraform apply --var "app_name=Terrakube"
+
+```
+
+## 2. Deploy Terrakube
+
 ```bash
 git clone https://github.com/AzBuilder/terrakube-heml-chart.git
 helm install --debug --values .\sample-values.yaml terrakube .\terrakube-heml-chart\
