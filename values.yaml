@@ -1,35 +1,69 @@
+## Global Name
 name: ""
-databaseType: "" 
-securityType: ""
 
-azureAppIdURI: ""
-azureAppClientId: ""
-azureAppTenantId: ""
-azureAppSecret: ""
+## Azure Active Directory Security
+security:
+  type: ""
+  azure:
+    appIdURI: ""
+    appClientId: ""
+    appTenantId: ""
+    appSecret: ""
 
-datasourceHostname: ""
-datasourceDatabase: ""
-datasourceUser: ""
-datasourcePassword: ""
+## Terraform Storage
+storage:
+  azure:
+    storageAccountName: ""
+    storageAccountResourceGroup: ""
+    storageAccountAccessKey: ""
 
-apiDomain: ""
-uiDomain: ""
+## API properties
+api:
+  enabled: true
+  version: ""
+  replicaCount: ""
+  properties:
+    databaseType: ""
+    databaseHostname: ""
+    databaseName: ""
+    databaseUser: ""
+    databasePassword: ""
 
-apiVersion: ""
-registryVersion: ""
-executorVersion: ""
-uiVersion: ""
+## Executor properties
+executor:
+  enabled: true
+  version: ""
+  replicaCount: ""
+  properties:
+    toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
+    toolsBranch: "main"
+    terraformStateType: "AzureTerraformStateImpl"
+    terraformOutputType: "AzureTerraformOutputImpl"
 
-registryDomain: ""
+## Registry properties
+registry:
+  enabled: true
+  version: ""
+  replicaCount: ""
 
-terraformStateType: ""
-terraformOutputType: ""
+## UI Properties
+ui:
+  enabled: true
+  version: ""
+  replicaCount: ""
 
-azureStorageAccountResourceGroup: ""
-azureStorageAccountName: ""
-azureStorageAccountAccessKey: ""
-
-enableTLS: false
-enableIngressNginx: false
-enableIngressNginxTLS: false
-
+## Ingress properties
+ingress:
+  useTls: true
+  ui:
+    enabled: true
+    domain: ""
+    annotations: {}
+  api:
+    enabled: true
+    domain: ""
+    annotations: {}
+  registry:
+    enabled: true
+    domain: ""
+    annotations: {}

@@ -5,69 +5,163 @@
 To install Terrakube in a Kubernetes cluster you will need the following:
 
 - Azure Active Directory
-- Azure Storage Account with the followings containers:
-  - registry (blob)
-  - tfstate (private)
-  - tfoutput (private)
-- Supported databases:
+- Azure Storage Account
+- Supported database:
   - SQL Azure
   - PostgreSQL
   - Mysql
-- Create a YAML file with all the parameters.
-
-Example: 
-
-```yaml
-name: "terrakube-sample"
-databaseType: "SQL_AZURE" 
-securityType: "AZURE"
-
-azureAppIdURI: "api://XXX"
-azureAppClientId: "XXX"
-azureAppTenantId: "XXX"
-azureAppSecret: "XXX"
-
-datasourceHostname: "XXX.database.windows.net"
-datasourceDatabase: "XXX"
-datasourceUser: "XXX"
-datasourcePassword: "XXX"
-
-apiDomain: "XXX"
-
-apiVersion: "2.0.0"
-registryVersion: "2.0.0"
-executorVersion: "1.5.3 "
-
-registryDomain: "XXX"
-
-terraformStateType: "AzureTerraformStateImpl"
-terraformOutputType: "AzureTerraformOutputImpl"
-
-azureStorageAccountResourceGroup: "XXX"
-azureStorageAccountName: "XXX"
-azureStorageAccountAccessKey: "XXX"
-
-enableTLS: true
-enableIngressNginx: true
-enableIngressNginxTLS: false
-
-```
+- Create a YAML file with all the require parameters.
 
 ## Instalation
 
-## 1. Azure Active Directory 
+### 1. Azure Active Directory Registration
 
-In order to use Terrakube we need to register the application inside Azure Active Directory, to do this use the following Terraform module:
+In order to use Terrakube we need to register the application inside Azure Active Directory, to do this use the following Terraform module using the example name "Terrakube":
 
 ```bash
 git clone https://github.com/AzBuilder/terraform-azurerm-terrakube-app-registration.git
 terraform apply --var "app_name=Terrakube"
-
 ```
 
-## 2. Deploy Terrakube
+The terraform module will create three applications inside Azure Active Directory:
+- Terrakube Base
+- Terrakube APP
+- Terrakube CLI
 
+Inside ***Terrakube App*** you can get the following information:
+- Azure app Client Id
+- Azure app Tenant Id 
+- Azure app Secret
+
+Inside ***Terrakube Base*** you can get the following information:
+- Azure app API Scope
+
+> If you use ***app_name=Terrakube*** the API Scope will be ***api://Terrakube***
+
+### 2. Terrakube Admin Group
+
+In order to use Terrakube the following Azure Active Directory Group should be created:
+- TERRAKUBE_ADMIN
+
+Once the group it is created we will need to include ***Terrakube APP*** as a member.
+
+> ***TERRAKUBE_ADMIN*** group members are the only users inside the app that can create ***organization*** and ***teams***
+
+### 3. Terrakube Storage
+
+Terrakube require an Azure Storage account to save the state/output for the jobs and to save the terraform modules when using terraform CLI and it require the following containers:
+- registry (blob)
+- tfstate (private)
+- tfoutput (private)
+
+### 4. Build Yaml file
+
+Once you have completed the above steps you can complete the file values.yaml to deploy the helm chart
+
+Example: 
+
+```yaml
+## Global Name
+name: "terrakube"
+
+## Azure Active Directory Security
+security:
+  type: "AZURE" # This is the only value supported righ now
+  azure:
+    appIdURI: "XXX" #Replace with values from Step 1
+    appClientId: "XXX"
+    appTenantId: "XXX"
+    appSecret: "XXX"
+
+## Terraform Storage
+storage:
+  azure:
+    storageAccountName: "XXX" #Replace with values from Step 1
+    storageAccountResourceGroup: "XXX"
+    storageAccountAccessKey: "XXX"
+
+## API properties
+api:
+  enabled: true
+  version: "2.1.1"
+  replicaCount: "1"
+  properties:
+    databaseType: "SQL_AZURE" # Replace with "H2" (ONLY FOR TESTING), "SQL_AZURE", "POSTGRESQL" or "MYSQL"
+    databaseHostname: "mysuperdatabse.database.windows.net" # Replace with the real value
+    databaseName: "databasename" # Replace with the real value
+    databaseUser: "databaseuser" # Replace with the real value
+    databasePassword: "XXX" # Replace with the real value
+
+## Executor properties
+executor:
+  enabled: true
+  version: "1.5.3"
+  replicaCount: "1"
+  properties:
+    toolsRepository: "https://github.com/AzBuilder/terrakube-extensions" # Default extension repository
+    toolsBranch: "main" #Default branch for extensions
+    terraformStateType: "AzureTerraformStateImpl" # This is the only supported type currently
+    terraformOutputType: "AzureTerraformOutputImpl" # This is the only supported type currently
+
+## Registry properties
+registry:
+  enabled: true
+  version: "2.1.1"
+  replicaCount: "1"
+
+## UI Properties
+ui:
+  enabled: true
+  version: "0.5.0-beta.2"
+  replicaCount: "1"
+
+## Ingress properties
+ingress:
+  useTls: true
+  ui:
+    enabled: true
+    domain: "ui.terrakube.docker.internal" # Replace with the real value
+    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      cert-manager.io/cluster-issuer: letsencrypt
+  api:
+    enabled: true
+    domain: "api.terrakube.docker.internal" # Replace with the real value
+    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /$2 
+      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
+      cert-manager.io/cluster-issuer: letsencrypt
+  registry: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
+    enabled: true
+    domain: "registry.terrakube.docker.internal" # Replace with the real value
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/enable-cors: "true"
+      cert-manager.io/cluster-issuer: letsencrypt
+```
+
+### 5. Deploy Terrakube using helm chart
+
+Now you have all the information to deploy Terrakube, you can use the following example:
+
+Creating the kubernetes namespace:
+```bash
+kubectl create namespace terrakube
+```
+Test the helm chart before installing:
+```bash
+helm install --dry-run --debug --values ./values.yaml terrakube ./terrakube-heml-chart/ -n terrakube
+```
+
+Running the helm chart.
 ```bash
 git clone https://github.com/AzBuilder/terrakube-heml-chart.git
-helm install --debug --values .\sample-values.yaml terrakube .\terrakube-heml-chart\
+
+helm install --debug --values ./values.yaml terrakube ./terrakube-heml-chart/ -n terrakube
 ```

@@ -1,0 +1,26 @@
+{{- if .Values.api.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terrakube-api
+  labels:
+    app: terrakube-api
+spec:
+  replicas: {{ .Values.api.replicaCount }}
+  selector:
+    matchLabels:
+      app: terrakube-api
+  template:
+    metadata:
+      labels:
+        app: terrakube-api
+    spec:
+      containers:
+      - name: terrakube-api
+        image: azbuilder/api-server:{{ .Values.api.version }}
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - secretRef:
+            name: terrakube-api-secrets
+{{ end }}
