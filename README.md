@@ -150,7 +150,11 @@ ingress:
 
 Now you have all the information to deploy Terrakube, you can use the following example:
 
-Creating the kubernetes namespace:
+Clone the helm chart repository and fill the values.yaml file
+```bash
+git clone https://github.com/AzBuilder/terrakube-heml-chart.git
+```
+Create the kubernetes namespace:
 ```bash
 kubectl create namespace terrakube
 ```
@@ -158,10 +162,9 @@ Test the helm chart before installing:
 ```bash
 helm install --dry-run --debug --values ./values.yaml terrakube ./terrakube-heml-chart/ -n terrakube
 ```
-
 Running the helm chart.
 ```bash
-git clone https://github.com/AzBuilder/terrakube-heml-chart.git
-
 helm install --debug --values ./values.yaml terrakube ./terrakube-heml-chart/ -n terrakube
 ```
+
+After installing you should be able to view the app using ui domain inside the values.yaml. Example: https://ui.terrakube.docker.internal
