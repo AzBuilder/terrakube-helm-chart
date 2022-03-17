@@ -1,0 +1,26 @@
+{{- if .Values.registry.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terrakube-registry
+  labels:
+    app: terrakube-registry
+spec:
+  replicas: {{ .Values.registry.replicaCount }}
+  selector:
+    matchLabels:
+      app: terrakube-registry
+  template:
+    metadata:
+      labels:
+        app: terrakube-registry
+    spec:
+      containers:
+      - name: terrakube-registry
+        image: azbuilder/open-registry:{{ .Values.registry.version }}
+        ports:
+        - containerPort: 8075
+        envFrom:
+        - secretRef:
+            name: terrakube-registry-secrets
+{{ end }}

@@ -1,0 +1,28 @@
+{{- if .Values.ingress.registry.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: terrakube-registry-ingress
+  {{- with .Values.ingress.registry.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{ if .Values.ingress.useTls }}
+  tls:
+  - hosts:
+    - {{ .Values.ingress.registry.domain | quote}}
+    secretName: tls-secret-terrakube
+  {{ end }}
+  rules:
+  - host:  {{ .Values.ingress.registry.domain | quote}}
+    http:
+      paths:
+      - path: /(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: terrakube-registry-service
+            port:
+              number: 8075
+{{ end }}

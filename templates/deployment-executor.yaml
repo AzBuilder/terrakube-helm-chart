@@ -1,0 +1,26 @@
+{{- if .Values.executor.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terrakube-executor
+  labels:
+    app: terrakube-executor
+spec:
+  replicas: {{ .Values.executor.replicaCount }}
+  selector:
+    matchLabels:
+      app: terrakube-executor
+  template:
+    metadata:
+      labels:
+        app: terrakube-executor
+    spec:
+      containers:
+      - name: terrakube-executor
+        image: azbuilder/executor:{{ .Values.executor.version }}
+        ports:
+        - containerPort: 8090
+        envFrom:
+        - secretRef:
+            name: terrakube-executor-secrets
+{{ end }}

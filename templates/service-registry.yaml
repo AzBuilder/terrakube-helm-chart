@@ -1,0 +1,13 @@
+{{- if .Values.registry.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: terrakube-registry-service 
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8075
+    targetPort: 8075
+  selector:
+    app: terrakube-registry
+{{ end }}

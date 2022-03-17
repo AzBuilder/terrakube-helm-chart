@@ -5,115 +5,242 @@
         "description": "Service name",
         "type": "string"
       },
-      "securityType": {
-        "type": "string",
-        "enum": ["AZURE"]
+      "security": {
+        "type": "object",
+        "required": ["type", "azure"],
+        "properties": {
+          "type": {
+            "description": "Security Type",
+            "enum": ["AZURE"]
+          },
+          "azure": {
+            "type": "object",
+            "required": ["appIdURI", "appClientId", "appTenantId", "appSecret"],
+            "properties": {
+              "appIdURI": {
+                "description": "Azure Active Directory Application Id URI from Base App",
+                "type": "string"
+              },
+              "appClientId": {
+                "description": "Azure Active Directory Client Id",
+                "type": "string"
+              },
+              "appTenantId": {
+                "description": "Azure Active Directory Tenant Id",
+                "type": "string"
+              },
+              "appSecret": {
+                "description": "Azure Active Directory Client Secret",
+                "type": "string"
+              }
+            }
+          }
+        }
       },
-      "databaseType": {
-        "type": "string",
-        "description": "Supported databse types",
-        "enum": ["H2", "SQL_AZURE", "POSTGRESQL", "MYSQL"]
+      "storage": {
+        "type": "object",
+        "required": ["azure"],
+        "properties": {
+          "azure": {
+            "type": "object",
+            "required": ["storageAccountName", "storageAccountResourceGroup", "storageAccountAccessKey"],
+            "properties": {
+              "storageAccountName": {
+                "description": "Storage Account Name",
+                "type": "string"
+              },
+              "storageAccountResourceGroup": {
+                "description": "Storage Account Resource Group",
+                "type": "string"
+              },
+              "storageAccountAccessKey": {
+                "description": "Storage Account Access Key",
+                "type": "string"
+              }
+            }
+          }
+        }
       },
-      "azureAppIdURI": {
-        "description": "Azure Active Directory Application Id URI from Base App",
-        "type": "string"
+      "api": {
+        "type": "object",
+        "required": ["enabled", "version", "replicaCount", "properties"],
+        "properties": {
+          "enabled": {
+            "description": "Enable API",
+            "type": "boolean"
+          },
+          "version": {
+            "description": "API Version",
+            "type": "string"
+          },
+          "replicaCount": {
+            "description": "Replica count for API",
+            "type": "string"
+          },
+          "properties": {
+            "type": "object",
+            "required": ["databaseType", "databaseHostname", "databaseName", "databaseUser", "databasePassword"],
+            "properties": {
+              "databaseType": {
+                "description": "Supported databse types",
+                "enum": ["H2", "SQL_AZURE", "POSTGRESQL", "MYSQL"]
+              },
+              "databaseHostname": {
+                "description": "Database hostname. Example: terrakube-sample-db.database.windows.net",
+                "type": "string"
+              },
+              "databaseName": {
+                "description": "Database name. Example: terrakube-db",
+                "type": "string"
+              },
+              "databaseUser": {
+                "description": "Database user. Example: SuperAdmin",
+                "type": "string"
+              },
+              "databasePassword": {
+                "description": "Database password. Example: SuperPassword",
+                "type": "string"
+              }
+            }
+          }
+        }
       },
-      "azureAppClientId": {
-        "description": "Azure Active Directory Application Id",
-        "type": "string"
+      "executor": {
+        "type": "object",
+        "required": ["enabled", "version", "replicaCount", "properties"],
+        "properties": {
+          "enabled": {
+            "description": "Enable Executor",
+            "type": "boolean"
+          },
+          "version": {
+            "description": "Executor Docker Version",
+            "type": "string"
+          },
+          "replicaCount": {
+            "description": "Replica count for API",
+            "type": "string"
+          },
+          "properties": {
+            "type": "object",
+            "required": ["toolsRepository", "toolsBranch"],
+            "properties": {
+              "toolsRepository": {
+                "description": "Terrakube Tools repository. Example: https://github.com/AzBuilder/terrakube-extensions",
+                "type": "string"
+              },
+              "toolsBranch": {
+                "description": "Terraukbe Tools branch. Example: main",
+                "type": "string"
+              },
+              "terraformStateType": {
+                "description": "Terraform State implementation",
+                "enum": ["AzureTerraformStateImpl"]
+              },
+              "terraformOutputType": {
+                "description": "Terraform Output implementation",
+                "enum": ["AzureTerraformOutputImpl"]
+              }
+            }
+          }
+        }
       },
-      "azureAppTenantId": {
-        "description": "Azure Active Directory Tenant Id",
-        "type": "string"
+      "registry": {
+        "type": "object",
+        "required": ["enabled", "version", "replicaCount"],
+        "properties": {
+          "enabled": {
+            "description": "Enable Executor",
+            "type": "boolean"
+          },
+          "version": {
+            "description": "Registry Docker Version",
+            "type": "string"
+          },
+          "replicaCount": {
+            "description": "Replica count for Registry",
+            "type": "string"
+          }
+        }
       },
-      "azureAppSecret": {
-        "description": "Azure Active Directory Application Secret",
-        "type": "string"
+      "ui": {
+        "type": "object",
+        "required": ["enabled", "version", "replicaCount"],
+        "properties": {
+          "enabled": {
+            "description": "Enable Executor",
+            "type": "boolean"
+          },
+          "version": {
+            "description": "UI Docker Version",
+            "type": "string"
+          },
+          "replicaCount": {
+            "description": "Replica count for UI",
+            "type": "string"
+          }
+        }
       },
-      "datasourceHostname": {
-        "description": "Database hostname. Example: terrakube-sample-db.database.windows.net",
-        "type": "string"
-      },
-      "datasourceDatabase": {
-        "description": "Database name. Example: terrakube-db",
-        "type": "string"
-      },
-      "datasourceUser": {
-        "description": "Database user. Example: SuperAdmin",
-        "type": "string"
-      },
-      "datasourcePassword": {
-        "description": "Database password. Example: SuperPassword",
-        "type": "string"
-      },
-      "apiDomain": {
-        "description": "Domain where the API will be deployed. Example: sampledomain.me",
-        "type": "string"
-      },
-      "uiDomain": {
-        "description": "Domain where the UI will be deployed. Example: ui.sampledomain.me",
-        "type": "string"
-      },
-      "registryDomain": {
-        "description": "Domain where the private Registry will be deployed. Example: .registry.sampledomain.me",
-        "type": "string"
-      },
-      "terraformStateType": {
-        "type": "string",
-        "description": "Supported databse types",
-        "enum": ["AzureTerraformStateImpl"]
-      },
-      "terraformOutputType": {
-        "type": "string",
-        "description": "Supported databse types",
-        "enum": ["AzureTerraformOutputImpl"]
-      },
-      "azureStorageAccountResourceGroup": {
-        "description": "Azure storage account resource group where the terraform state, output and registry modules will be saved",
-        "type": "string"
-      },
-      "azureStorageAccountName": {
-        "description": "Azure storage account name where the terraform state, output and registry modules will be saved",
-        "type": "string"
-      },
-      "azureStorageAccountAccessKey": {
-        "description": "Azure storage account access key where the terraform state, output and registry modules will be saved",
-        "type": "string"
-      },
-      "apiVersion": {
-        "description": "Docker image version for API",
-        "type": "string"
-      },
-      "uiVersion": {
-        "description": "Docker image version for UI",
-        "type": "string"
-      },
-      "registryVersion": {
-        "description": "Docker image version for Registry",
-        "type": "string"
-      },
-      "executorVersion": {
-        "description": "Docker image version for Executor",
-        "type": "string"
-      },
-      "enableTLS": {
-        "description": "Enable https for UI endpoint",
-        "type": "boolean"
-      },
-      "enableIngressNginx": {
-        "description": "Enable Ingress using Nginx",
-        "type": "boolean"
-      },
-      "enableIngressNginxTLS": {
-        "description": "Docker image version for Executor",
-        "type": "boolean"
+      "ingress": {
+        "type": "object",
+        "required": ["ui", "api", "registry", "useTls"],
+        "properties": {
+          "useTls": {
+            "description": "Enable Https Ingress",
+                "type": "boolean"
+          },
+          "ui": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "description": "Enable ingress UI",
+                "type": "boolean"
+              },
+              "domain": {
+                "description": "UI domain",
+                "type": "string"
+              },
+              "annotations": {
+                "type": "object"
+              }
+            }
+          },
+          "api": {
+            "type": "object",
+            "required": ["enabled", "domain", "annotations"],
+            "properties": {
+              "enabled": {
+                "description": "Enable ingress API",
+                "type": "boolean"
+              },
+              "domain": {
+                "description": "API domain",
+                "type": "string"
+              },
+              "annotations": {
+                "type": "object"
+              }
+            }
+          },
+          "registry": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "description": "Enable ingress UI",
+                "type": "boolean"
+              },
+              "domain": {
+                "description": "Registry domain",
+                "type": "string"
+              },
+              "annotations": {
+                "type": "object"
+              }
+            }
+          }
+        }
       }
     },
-    "required": [
-      "name",
-      "databaseType",
-      "enableIngressNginx"
-    ],
-    "title": "Values",
+    "title": "Terrakube Chart Values",
     "type": "object"
   }
