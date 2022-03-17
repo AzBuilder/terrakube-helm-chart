@@ -167,4 +167,6 @@ Running the helm chart.
 helm install --debug --values ./values.yaml terrakube ./terrakube-heml-chart/ -n terrakube
 ```
 
-After installing you should be able to view the app using ui domain inside the values.yaml. Example: https://ui.terrakube.docker.internal
+After installing you should be able to view the app using ui domain inside the values.yaml. 
+Example: 
+https://ui.terrakube.docker.internal
