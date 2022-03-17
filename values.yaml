@@ -3,7 +3,7 @@ name: ""
 
 ## Azure Active Directory Security
 security:
-  type: ""
+  type: "AZURE"
   azure:
     appIdURI: ""
     appClientId: ""
