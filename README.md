@@ -136,10 +136,10 @@ ingress:
       nginx.ingress.kubernetes.io/rewrite-target: /$2 
       nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
       cert-manager.io/cluster-issuer: letsencrypt
-  registry: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
+  registry: 
     enabled: true
     domain: "registry.terrakube.docker.internal" # Replace with the real value
-    annotations:
+    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
       nginx.ingress.kubernetes.io/enable-cors: "true"
