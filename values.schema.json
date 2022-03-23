@@ -200,6 +200,14 @@
                 "description": "UI domain",
                 "type": "string"
               },
+              "path": {
+                "description": "UI domain",
+                "type": "string"
+              },
+              "pathType": {
+                "description": "UI domain",
+                "type": "string"
+              },
               "annotations": {
                 "type": "object"
               }

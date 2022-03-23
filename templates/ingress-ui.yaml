@@ -18,8 +18,8 @@ spec:
   - host:  {{ .Values.ingress.ui.domain | quote }}
     http:
       paths:
-      - path: /(.*)
-        pathType: Prefix
+      - path: {{ .Values.ingress.ui.path | quote }} 
+        pathType: {{ .Values.ingress.ui.pathType | quote }}
         backend:
           service:
             name: terrakube-ui-service
