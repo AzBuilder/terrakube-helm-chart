@@ -77,6 +77,10 @@
             "description": "Replica count for API",
             "type": "string"
           },
+          "serviceType": {
+            "description": "Kubernetes service type",
+            "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]
+          },
           "properties": {
             "type": "object",
             "required": ["databaseType", "databaseHostname", "databaseName", "databaseUser", "databasePassword"],
@@ -121,6 +125,10 @@
             "description": "Replica count for API",
             "type": "string"
           },
+          "serviceType": {
+            "description": "Kubernetes service type",
+            "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]
+          },
           "properties": {
             "type": "object",
             "required": ["toolsRepository", "toolsBranch"],
@@ -160,6 +168,10 @@
           "replicaCount": {
             "description": "Replica count for Registry",
             "type": "string"
+          },
+          "serviceType": {
+            "description": "Kubernetes service type",
+            "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]
           }
         }
       },
@@ -178,6 +190,10 @@
           "replicaCount": {
             "description": "Replica count for UI",
             "type": "string"
+          },
+          "serviceType": {
+            "description": "Kubernetes service type",
+            "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]
           }
         }
       },

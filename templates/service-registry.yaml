@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: terrakube-registry-service 
 spec:
-  type: ClusterIP
+  type: {{ .Values.registry.serviceType }}
   ports:
   - port: 8075
     targetPort: 8075
