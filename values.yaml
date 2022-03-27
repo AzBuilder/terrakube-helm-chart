@@ -58,12 +58,18 @@ ingress:
   ui:
     enabled: true
     domain: ""
+    path: ""
+    pathType: ""
     annotations: {}
   api:
     enabled: true
     domain: ""
+    path: ""
+    pathType: ""
     annotations: {}
   registry:
     enabled: true
     domain: ""
+    path: ""
+    pathType: ""
     annotations: {}

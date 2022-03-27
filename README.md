@@ -54,6 +54,8 @@ Terrakube require an Azure Storage account to save the state/output for the jobs
 - tfstate (private)
 - tfoutput (private)
 
+To create the Azure storage account you can use the following [terraform module](https://github.com/AzBuilder/terraform-azurerm-terrakube-cloud-storage).
+
 ### 4. Build Yaml file
 
 Once you have completed the above steps you can complete the file values.yaml to deploy the helm chart
@@ -121,6 +123,8 @@ ingress:
   ui:
     enabled: true
     domain: "ui.terrakube.docker.internal" # Replace with the real value
+    path: "/(.*)" # Replace with the real value
+    pathType: "Prefix" # Replace with the real value
     annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
@@ -129,6 +133,8 @@ ingress:
   api:
     enabled: true
     domain: "api.terrakube.docker.internal" # Replace with the real value
+    path: "/(.*)" # Replace with the real value
+    pathType: "Prefix" # Replace with the real value
     annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
@@ -139,6 +145,8 @@ ingress:
   registry: 
     enabled: true
     domain: "registry.terrakube.docker.internal" # Replace with the real value
+    path: "/(.*)" # Replace with the real value
+    pathType: "Prefix" # Replace with the real value
     annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
