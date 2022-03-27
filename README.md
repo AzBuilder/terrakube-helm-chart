@@ -87,6 +87,7 @@ api:
   enabled: true
   version: "2.1.1"
   replicaCount: "1"
+  serviceType: "ClusterIP"
   properties:
     databaseType: "SQL_AZURE" # Replace with "H2" (ONLY FOR TESTING), "SQL_AZURE", "POSTGRESQL" or "MYSQL"
     databaseHostname: "mysuperdatabse.database.windows.net" # Replace with the real value
@@ -99,6 +100,7 @@ executor:
   enabled: true
   version: "1.5.3"
   replicaCount: "1"
+  serviceType: "ClusterIP"
   properties:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions" # Default extension repository
     toolsBranch: "main" #Default branch for extensions
@@ -110,12 +112,14 @@ registry:
   enabled: true
   version: "2.1.1"
   replicaCount: "1"
+  serviceType: "ClusterIP"
 
 ## UI Properties
 ui:
   enabled: true
   version: "0.5.0-beta.2"
   replicaCount: "1"
+  serviceType: "ClusterIP"
 
 ## Ingress properties
 ingress:

@@ -22,6 +22,7 @@ api:
   enabled: true
   version: ""
   replicaCount: ""
+  serviceType: ""
   properties:
     databaseType: ""
     databaseHostname: ""
@@ -34,6 +35,7 @@ executor:
   enabled: true
   version: ""
   replicaCount: ""
+  serviceType: ""
   properties:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
     toolsBranch: "main"
@@ -45,12 +47,14 @@ registry:
   enabled: true
   version: ""
   replicaCount: ""
+  serviceType: ""
 
 ## UI Properties
 ui:
   enabled: true
   version: ""
   replicaCount: ""
+  serviceType: ""
 
 ## Ingress properties
 ingress:
