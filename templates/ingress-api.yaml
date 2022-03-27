@@ -18,18 +18,11 @@ spec:
   - host: {{ .Values.ingress.api.domain | quote }}
     http:
       paths:
-      - path: /service(/|$)(.*)
-        pathType: Prefix
+      - path: {{ .Values.ingress.api.path | quote }} 
+        pathType: {{ .Values.ingress.api.pathType | quote }}
         backend:
           service:
             name: terrakube-api-service
             port:
               number: 8080
-      - path: /open-registry(/|$)(.*)
-        pathType: Prefix
-        backend:
-          service:
-            name: terrakube-registry-service
-            port:
-              number: 8075
 {{ end }}

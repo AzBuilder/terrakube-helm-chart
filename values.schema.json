@@ -201,12 +201,12 @@
                 "type": "string"
               },
               "path": {
-                "description": "UI domain",
+                "description": "Ingress UI path",
                 "type": "string"
               },
               "pathType": {
-                "description": "UI domain",
-                "type": "string"
+                "description": "Ingress UI path type",
+                "enum": ["ImplementationSpecific", "Exact", "Prefix"]
               },
               "annotations": {
                 "type": "object"
@@ -225,6 +225,14 @@
                 "description": "API domain",
                 "type": "string"
               },
+              "path": {
+                "description": "Ingress API path",
+                "type": "string"
+              },
+              "pathType": {
+                "description": "Ingress API path type",
+                "enum": ["ImplementationSpecific", "Exact", "Prefix"]
+              },
               "annotations": {
                 "type": "object"
               }
@@ -240,6 +248,14 @@
               "domain": {
                 "description": "Registry domain",
                 "type": "string"
+              },
+              "path": {
+                "description": "Ingress registry path",
+                "type": "string"
+              },
+              "pathType": {
+                "description": "Ingress registry path type",
+                "enum": ["ImplementationSpecific", "Exact", "Prefix"]
               },
               "annotations": {
                 "type": "object"

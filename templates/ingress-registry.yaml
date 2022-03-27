@@ -18,8 +18,8 @@ spec:
   - host:  {{ .Values.ingress.registry.domain | quote}}
     http:
       paths:
-      - path: /(.*)
-        pathType: Prefix
+      - path: {{ .Values.ingress.registry.path | quote }} 
+        pathType: {{ .Values.ingress.registry.pathType | quote }}
         backend:
           service:
             name: terrakube-registry-service
