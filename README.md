@@ -60,7 +60,7 @@ To create the Azure storage account you can use the following [terraform module]
 
 Once you have completed the above steps you can complete the file values.yaml to deploy the helm chart
 
-Example: 
+Example using Nginx Ingress: 
 
 ```yaml
 ## Global Name
@@ -78,14 +78,14 @@ security:
 ## Terraform Storage
 storage:
   azure:
-    storageAccountName: "XXX" #Replace with values from Step 1
+    storageAccountName: "XXX" #Replace with values from Step 3
     storageAccountResourceGroup: "XXX"
     storageAccountAccessKey: "XXX"
 
 ## API properties
 api:
   enabled: true
-  version: "2.1.1"
+  version: "2.1.4"
   replicaCount: "1"
   serviceType: "ClusterIP"
   properties:
@@ -98,7 +98,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "1.5.3"
+  version: "1.5.4"
   replicaCount: "1"
   serviceType: "ClusterIP"
   properties:
@@ -110,14 +110,14 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.1.1"
+  version: "2.1.4"
   replicaCount: "1"
   serviceType: "ClusterIP"
 
 ## UI Properties
 ui:
   enabled: true
-  version: "0.5.0-beta.2"
+  version: "0.5.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
 
