@@ -17,7 +17,8 @@ spec:
     spec:
       containers:
       - name: terrakube-api
-        image: azbuilder/api-server:{{ .Values.api.version }}
+        #image: azbuilder/api-server:{{ .Values.api.version }}
+        image: azbuilder/api-server:2.1.8
         ports:
         - containerPort: 8080
         envFrom:
