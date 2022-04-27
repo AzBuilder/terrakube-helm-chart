@@ -17,8 +17,7 @@ spec:
     spec:
       containers:
       - name: terrakube-registry
-        #image: azbuilder/open-registry:{{ .Values.registry.version }}
-        image: azbuilder/open-registry:2.1.8
+        image: azbuilder/open-registry:{{ .Values.registry.version }}
         ports:
         - containerPort: 8075
         envFrom:
