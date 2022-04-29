@@ -160,7 +160,6 @@ ingress:
     annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
-      nginx.ingress.kubernetes.io/enable-cors: "true"
       cert-manager.io/cluster-issuer: letsencrypt
   api:
     enabled: true
@@ -170,7 +169,6 @@ ingress:
     annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
-      nginx.ingress.kubernetes.io/enable-cors: "true"
       nginx.ingress.kubernetes.io/rewrite-target: /$2 
       nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
       cert-manager.io/cluster-issuer: letsencrypt
@@ -182,7 +180,6 @@ ingress:
     annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
-      nginx.ingress.kubernetes.io/enable-cors: "true"
       cert-manager.io/cluster-issuer: letsencrypt
 ```
 
