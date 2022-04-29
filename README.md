@@ -88,6 +88,13 @@ api:
   version: "2.1.4"
   replicaCount: "1"
   serviceType: "ClusterIP"
+  resources: #Optional
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
   properties:
     databaseType: "SQL_AZURE" # Replace with "H2" (ONLY FOR TESTING), "SQL_AZURE", "POSTGRESQL" or "MYSQL"
     databaseHostname: "mysuperdatabse.database.windows.net" # Replace with the real value
@@ -101,6 +108,13 @@ executor:
   version: "1.5.4"
   replicaCount: "1"
   serviceType: "ClusterIP"
+  resources: #Optional
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 500m
+      memory: 256Mi
   properties:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions" # Default extension repository
     toolsBranch: "main" #Default branch for extensions
@@ -113,6 +127,13 @@ registry:
   version: "2.1.4"
   replicaCount: "1"
   serviceType: "ClusterIP"
+  resources: #Optional
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
 
 ## UI Properties
 ui:
@@ -120,6 +141,13 @@ ui:
   version: "0.5.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
 
 ## Ingress properties
 ingress:

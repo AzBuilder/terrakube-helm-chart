@@ -18,6 +18,9 @@ spec:
       containers:
       - name: terrakube-executor
         image: azbuilder/executor:{{ .Values.executor.version }}
+        {{- if .Values.executor.resources }}
+        resources: {{- toYaml .Values.executor.resources | nindent 12 }}
+        {{- end }}
         ports:
         - containerPort: 8090
         envFrom:
