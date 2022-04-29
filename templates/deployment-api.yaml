@@ -18,6 +18,9 @@ spec:
       containers:
       - name: terrakube-api
         image: azbuilder/api-server:{{ .Values.api.version }}
+        {{- if .Values.api.resources }}
+        resources: {{- toYaml .Values.api.resources | nindent 12 }}
+        {{- end }}
         ports:
         - containerPort: 8080
         envFrom:

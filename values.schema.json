@@ -81,6 +81,9 @@
             "description": "Kubernetes service type",
             "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]
           },
+          "resources": {
+            "type": "object"
+          },
           "properties": {
             "type": "object",
             "required": ["databaseType", "databaseHostname", "databaseName", "databaseUser", "databasePassword"],
@@ -129,6 +132,9 @@
             "description": "Kubernetes service type",
             "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]
           },
+          "resources": {
+            "type": "object"
+          },
           "properties": {
             "type": "object",
             "required": ["toolsRepository", "toolsBranch"],
@@ -172,6 +178,9 @@
           "serviceType": {
             "description": "Kubernetes service type",
             "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]
+          },
+          "resources": {
+            "type": "object"
           }
         }
       },
@@ -194,6 +203,9 @@
           "serviceType": {
             "description": "Kubernetes service type",
             "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]
+          },
+          "resources": {
+            "type": "object"
           }
         }
       },
