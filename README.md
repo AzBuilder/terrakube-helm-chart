@@ -49,12 +49,22 @@ Once the group it is created we will need to include ***Terrakube APP*** as a me
 
 ### 3. Terrakube Storage
 
+#### 3.1 Azure Storage Account
+
 Terrakube require an Azure Storage account to save the state/output for the jobs and to save the terraform modules when using terraform CLI and it require the following containers:
 - registry (blob)
 - tfstate (private)
 - tfoutput (private)
 
 To create the Azure storage account you can use the following [terraform module](https://github.com/AzBuilder/terraform-azurerm-terrakube-cloud-storage).
+
+#### 3.2 AWS S3
+
+Terrakube require an Aws S3 to save the state/output for the jobs and to save the terraform modules when using terraform CLI and it require the following:
+- Cors Enable for the UI domain
+- ACL Enable
+
+To create the Aws S3 you can use the following [terraform module]() (Work in Progress).
 
 ### 4. Build Yaml file
 
