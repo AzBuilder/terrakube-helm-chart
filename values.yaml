@@ -16,6 +16,11 @@ storage:
     storageAccountName: ""
     storageAccountResourceGroup: ""
     storageAccountAccessKey: ""
+  aws:
+    accessKey: ""
+    secretKey: ""
+    bucketName: ""
+    region: ""
 
 ## API properties
 api:
@@ -41,8 +46,8 @@ executor:
   properties:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
     toolsBranch: "main"
-    terraformStateType: "AzureTerraformStateImpl"
-    terraformOutputType: "AzureTerraformOutputImpl"
+    terraformStateType: ""
+    terraformOutputType: ""
 
 ## Registry properties
 registry:

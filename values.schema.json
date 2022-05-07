@@ -39,7 +39,6 @@
       },
       "storage": {
         "type": "object",
-        "required": ["azure"],
         "properties": {
           "azure": {
             "type": "object",
@@ -55,6 +54,28 @@
               },
               "storageAccountAccessKey": {
                 "description": "Storage Account Access Key",
+                "type": "string"
+              }
+            }
+          },
+          "aws": {
+            "type": "object",
+            "required": ["accessKey", "secretKey", "bucketName", "region"],
+            "properties": {
+              "accessKey": {
+                "description": "AWS Access Key",
+                "type": "string"
+              },
+              "secretKey": {
+                "description": "AWS Secret Key",
+                "type": "string"
+              },
+              "bucketName": {
+                "description": "AWS Bucket name",
+                "type": "string"
+              },
+              "region": {
+                "description": "AWS Region",
                 "type": "string"
               }
             }
@@ -149,11 +170,11 @@
               },
               "terraformStateType": {
                 "description": "Terraform State implementation",
-                "enum": ["AzureTerraformStateImpl"]
+                "enum": ["AzureTerraformStateImpl", "AwsTerraformStateImpl"]
               },
               "terraformOutputType": {
                 "description": "Terraform Output implementation",
-                "enum": ["AzureTerraformOutputImpl"]
+                "enum": ["AzureTerraformOutputImpl", "AwsTerraformOutputImpl"]
               }
             }
           }
