@@ -12,7 +12,7 @@ To install Terrakube in a Kubernetes cluster you will need the following:
   - Mysql
 - Create a YAML file with all the require parameters.
 
-> If you don't have an Azure Active Directory tenatn you can get a free one joining [Microsoft 365 Developer Program]zhttps://developer.microsoft.com/en-us/microsoft-365/dev-program)
+> If you don't have an Azure Active Directory tenatn you can get a free one joining [Microsoft 365 Developer Program](https://developer.microsoft.com/en-us/microsoft-365/dev-program)
 
 ## Instalation
 
