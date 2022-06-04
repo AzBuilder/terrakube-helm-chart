@@ -329,6 +329,7 @@ ingress:
 ```
 
 ***Example using Amazon EKS with Amazon Load Balancer, Amazon S3 Bucket and Postgres database***
+
 We use these domains as an example:
 
 - UI Domain: ***terrakube-ui-dev.aws.dev***
