@@ -5,14 +5,14 @@
 To install Terrakube in a Kubernetes cluster you will need the following:
 
 - Azure Active Directory
-- Azure Storage Account
+- Azure Storage Account or Amazon S3 bucket
 - Supported database:
   - SQL Azure
   - PostgreSQL
   - Mysql
 - Create a YAML file with all the require parameters.
 
-> If you don't have an Azure Active Directory tenatn you can get a free one joining [Microsoft 365 Developer Program](https://developer.microsoft.com/en-us/microsoft-365/dev-program)
+> If you don't have an Azure Active Directory tenant you can get a free one joining [Microsoft 365 Developer Program](https://developer.microsoft.com/en-us/microsoft-365/dev-program)
 
 ## Instalation
 
@@ -40,6 +40,17 @@ Inside ***Terrakube Base*** you can get the following information:
 
 > If you use ***app_name=Terrakube*** the API Scope will be ***api://Terrakube***
 
+The application require the following permissions:
+- User.Read.All
+- Application.Read.All
+- Group.Read.All
+- GroupMember.Read.All
+- Terrakube.Application.Default 
+
+> Azure Active Directory Admin consent is needed inside the Terrakube APP, you can use the following link: https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/RegisteredApps.
+
+
+
 ### 2. Terrakube Admin Group
 
 In order to use Terrakube the following Azure Active Directory Group should be created:
@@ -47,7 +58,7 @@ In order to use Terrakube the following Azure Active Directory Group should be c
 
 Once the group it is created we will need to include ***Terrakube APP*** as a member.
 
-> ***TERRAKUBE_ADMIN*** group members are the only users inside the app that can create ***organization*** and ***teams***
+> ***TERRAKUBE_ADMIN*** group members are the only users inside the app that can create ***organizations*** and ***handle team access***
 
 ### 3. Terrakube Storage
 
@@ -69,7 +80,7 @@ To create the Aws S3 you can use the following [terraform module]() (Work in Pro
 
 ### 4. Build Yaml file
 
-Once you have completed the above steps you can complete the file values.yaml to deploy the helm chart
+Once you have completed the above steps you can complete the file values.yaml to deploy the helm chart, you can check the following examples:
 
 ***Example using Nginx Ingress and Azure Storage Account:***
 
@@ -473,7 +484,7 @@ Now you have all the information to deploy Terrakube, you can use the following 
 
 Clone the helm chart repository and fill the values.yaml file
 ```bash
-git clone https://github.com/AzBuilder/terrakube-heml-chart.git
+git clone https://github.com/AzBuilder/terrakube-helm-chart.git
 ```
 Create the kubernetes namespace:
 ```bash
@@ -481,11 +492,11 @@ kubectl create namespace terrakube
 ```
 Test the helm chart before installing:
 ```bash
-helm install --dry-run --debug --values ./values.yaml terrakube ./terrakube-heml-chart/ -n terrakube
+helm install --dry-run --debug --values ./values.yaml terrakube ./terrakube-helm-chart/ -n terrakube
 ```
 Running the helm chart.
 ```bash
-helm install --debug --values ./values.yaml terrakube ./terrakube-heml-chart/ -n terrakube
+helm install --debug --values ./values.yaml terrakube ./terrakube-helm-chart/ -n terrakube
 ```
 
 After installing you should be able to view the app using ui domain inside the values.yaml. 
