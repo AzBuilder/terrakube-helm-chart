@@ -12,6 +12,8 @@ To install Terrakube in a Kubernetes cluster you will need the following:
   - Mysql
 - Create a YAML file with all the require parameters.
 
+> If you don't have an Azure Active Directory tenatn you can get a free one joining [Microsoft 365 Developer Program]zhttps://developer.microsoft.com/en-us/microsoft-365/dev-program)
+
 ## Instalation
 
 ### 1. Azure Active Directory Registration
@@ -61,7 +63,6 @@ To create the Azure storage account you can use the following [terraform module]
 #### 3.2 AWS S3
 
 Terrakube require an Aws S3 to save the state/output for the jobs and to save the terraform modules when using terraform CLI and it require the following:
-- Cors Enable for the UI domain
 - ACL Enable
 
 To create the Aws S3 you can use the following [terraform module]() (Work in Progress).
@@ -95,7 +96,7 @@ storage:
 ## API properties
 api:
   enabled: true
-  version: "2.2.0"
+  version: "2.4.1"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -115,7 +116,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "1.6.1"
+  version: "1.7.2"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -134,7 +135,7 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.2.0"
+  version: "2.4.1"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -148,7 +149,7 @@ registry:
 ## UI Properties
 ui:
   enabled: true
-  version: "0.7.0"
+  version: "0.7.4"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources:
@@ -218,7 +219,7 @@ storage:
 ## API properties
 api:
   enabled: true
-  version: "2.2.0"
+  version: "2.4.1"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -238,7 +239,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "1.6.1"
+  version: "1.7.2"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -257,7 +258,7 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.2.0"
+  version: "2.4.1"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -271,7 +272,7 @@ registry:
 ## UI Properties
 ui:
   enabled: true
-  version: "0.7.0"
+  version: "0.7.4"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources:
@@ -314,6 +315,156 @@ ingress:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
       cert-manager.io/cluster-issuer: letsencrypt
+```
+
+***Example using Amazon EKS with Amazon Load Balancer, Amazon S3 Bucket and Postgres database***
+We use these domains as an example:
+
+- UI Domain: ***terrakube-ui-dev.aws.dev***
+- Registry Domain: ***terrakube-reg-dev.aws.dev***
+- API Domain: ***terrakube-api-dev.aws.dev***
+
+You will need to change these with some real public domain
+
+```yaml
+## Global Name
+name: "terrakube"
+
+## Azure Active Directory Security
+security:
+  type: "AZURE" # This is the only value supported righ now
+  azure:
+    appIdURI: "XXX" #Replace with values from Step 1
+    appClientId: "XXX"
+    appTenantId: "XXX"
+    appSecret: "XXX"
+
+## Terraform Storage
+storage:
+  aws:
+    accessKey: "XXX"
+    secretKey: "XXX"
+    bucketName: "XXX"
+    region: "XXX"
+
+## API properties
+api:
+  enabled: true
+  version: "2.4.1"
+  replicaCount: "1"
+  serviceType: "NodePort"
+  resources: #Optional
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  properties:
+    databaseType: "POSTGRESQL" # Supported values "SQL_AZURE", "POSTGRESQL" or "MYSQL"
+    databaseHostname: "terrakuaws.postgres.database.aws.com" # Replace with the real value
+    databaseName: "databasename" # Replace with the real value
+    databaseUser: "databaseuser" # Replace with the real value
+    databasePassword: "XXX" # Replace with the real value
+
+## Executor properties
+executor:
+  enabled: true
+  version: "1.7.2"
+  replicaCount: "1"
+  serviceType: "NodePort"
+  resources: #Optional
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 500m
+      memory: 256Mi
+  properties:
+    toolsRepository: "https://github.com/AzBuilder/terrakube-extensions" # Default extension repository
+    toolsBranch: "main" #Default branch for extensions
+    terraformStateType: "AwsTerraformStateImpl" 
+    terraformOutputType: "AwsTerraformOutputImpl" 
+
+## Registry properties
+registry:
+  enabled: true
+  version: "2.4.1"
+  replicaCount: "1"
+  serviceType: "NodePort"
+  resources: #Optional
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+## UI Properties
+ui:
+  enabled: true
+  version: "0.7.4"
+  replicaCount: "1"
+  serviceType: "NodePort"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+## Ingress properties
+ingress:
+  useTls: true
+  ui:
+    enabled: true
+    domain: "terrakube-ui-dev.aws.dev" # Replace with the real domain
+    path: "/" 
+    pathType: "Prefix" 
+    annotations: # This annotations can change based on requirements. The followin is an example using EKS
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:XXXXXX:certificate/XXXXXXXX # Change this for a real certiricate
+      alb.ingress.kubernetes.io/group.name: alb-deployment
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-1-2017-01
+      alb.ingress.kubernetes.io/ssl-redirect: "443"
+      external-dns.alpha.kubernetes.io/hostname: terrakube-ui-dev.aws.dev # Replace with the real domain
+      alb.ingress.kubernetes.io/target-type: ip
+      kubernetes.io/ingress.class: alb
+  api:
+    enabled: true
+    domain: "terrakube-api-dev.aws.dev" # Replace with the real domain
+    path: "/" 
+    pathType: "Prefix" 
+    annotations: # The followin is an example using EKS
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:XXXXXX:certificate/XXXXXXXX # Replace with real certificate
+      alb.ingress.kubernetes.io/group.name: alb-deployment
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-1-2017-01
+      alb.ingress.kubernetes.io/ssl-redirect: "443"
+      external-dns.alpha.kubernetes.io/hostname: terrakube-api-dev.aws.dev # Replace with the real domain
+      alb.ingress.kubernetes.io/target-type: ip
+      kubernetes.io/ingress.class: alb
+  registry: 
+    enabled: true
+    domain: "terrakube-reg-dev.aws.dev" # Replace with the real domain
+    path: "/" 
+    pathType: "Prefix" 
+    annotations: # The followin is an example using EKS
+      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:XXXXXX:certificate/XXXXXXXX # Replace with real certificate
+      alb.ingress.kubernetes.io/group.name: alb-deployment
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-1-2017-01
+      alb.ingress.kubernetes.io/ssl-redirect: "443"
+      external-dns.alpha.kubernetes.io/hostname: terrakube-reg-dev.aws.dev # Replace with the real domain
+      alb.ingress.kubernetes.io/target-type: ip
+      kubernetes.io/ingress.class: alb
 ```
 
 ### 5. Deploy Terrakube using helm chart
