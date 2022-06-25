@@ -78,6 +78,12 @@ Terrakube require an Aws S3 to save the state/output for the jobs and to save th
 
 To create the Aws S3 you can use the following [terraform module]() (Work in Progress).
 
+#### 3.2 GCP Storage 
+
+Terrakube require an Storage bucket to save the state/output for the jobs and to save the terraform modules when using terraform CLI.
+
+To create the Gcp Storage you can use the following [terraform module]() (Work in Progress).
+
 ### 4. Build Yaml file
 
 Once you have completed the above steps you can complete the file values.yaml to deploy the helm chart, you can check the following examples:
@@ -107,7 +113,7 @@ storage:
 ## API properties
 api:
   enabled: true
-  version: "2.4.1"
+  version: "2.5.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -127,7 +133,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "1.7.2"
+  version: "2.5.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -146,7 +152,7 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.4.1"
+  version: "2.5.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -160,7 +166,7 @@ registry:
 ## UI Properties
 ui:
   enabled: true
-  version: "0.7.4"
+  version: "2.5.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources:
@@ -230,7 +236,7 @@ storage:
 ## API properties
 api:
   enabled: true
-  version: "2.4.1"
+  version: "2.5.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -250,7 +256,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "1.7.2"
+  version: "2.5.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -269,7 +275,7 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.4.1"
+  version: "2.5.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -283,7 +289,129 @@ registry:
 ## UI Properties
 ui:
   enabled: true
-  version: "0.7.4"
+  version: "2.5.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+## Ingress properties
+ingress:
+  useTls: true
+  ui:
+    enabled: true
+    domain: "ui.terrakube.docker.internal" # Replace with the real value
+    path: "/(.*)" # Replace with the real value
+    pathType: "Prefix" # Replace with the real value
+    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      cert-manager.io/cluster-issuer: letsencrypt
+  api:
+    enabled: true
+    domain: "api.terrakube.docker.internal" # Replace with the real value
+    path: "/(.*)" # Replace with the real value
+    pathType: "Prefix" # Replace with the real value
+    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /$2 
+      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
+      cert-manager.io/cluster-issuer: letsencrypt
+  registry: 
+    enabled: true
+    domain: "registry.terrakube.docker.internal" # Replace with the real value
+    path: "/(.*)" # Replace with the real value
+    pathType: "Prefix" # Replace with the real value
+    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      cert-manager.io/cluster-issuer: letsencrypt
+```
+
+***Example using Nginx Ingress and Gcp Storage:***
+```yaml
+## Global Name
+name: "terrakube"
+
+## Azure Active Directory Security
+security:
+  type: "AZURE" # This is the only value supported righ now
+  azure:
+    appIdURI: "XXX" #Replace with values from Step 1
+    appClientId: "XXX"
+    appTenantId: "XXX"
+    appSecret: "XXX"
+
+## Terraform Storage
+storage:
+  gcp:
+    projectId: "XXXX"
+    bucketName: "XXX"
+    credentials: "XXX" #<==JSON CREDENTIAL IN BASE64 ENCODING
+
+## API properties
+api:
+  enabled: true
+  version: "2.5.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources: #Optional
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  properties:
+    databaseType: "SQL_AZURE" # Replace with "H2" (ONLY FOR TESTING), "SQL_AZURE", "POSTGRESQL" or "MYSQL"
+    databaseHostname: "mysuperdatabse.database.windows.net" # Replace with the real value
+    databaseName: "databasename" # Replace with the real value
+    databaseUser: "databaseuser" # Replace with the real value
+    databasePassword: "XXX" # Replace with the real value
+
+## Executor properties
+executor:
+  enabled: true
+  version: "2.5.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources: #Optional
+    limits:
+      cpu: 1000m
+      memory: 1024Mi
+    requests:
+      cpu: 500m
+      memory: 256Mi
+  properties:
+    toolsRepository: "https://github.com/AzBuilder/terrakube-extensions" # Default extension repository
+    toolsBranch: "main" #Default branch for extensions
+    terraformStateType: "GcpTerraformStateImpl" 
+    terraformOutputType: "GcpTerraformOutputImpl" 
+
+## Registry properties
+registry:
+  enabled: true
+  version: "2.5.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources: #Optional
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+## UI Properties
+ui:
+  enabled: true
+  version: "2.5.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources:
@@ -362,7 +490,7 @@ storage:
 ## API properties
 api:
   enabled: true
-  version: "2.4.1"
+  version: "2.5.0"
   replicaCount: "1"
   serviceType: "NodePort"
   resources: #Optional
@@ -382,7 +510,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "1.7.2"
+  version: "2.5.0"
   replicaCount: "1"
   serviceType: "NodePort"
   resources: #Optional
@@ -401,7 +529,7 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.4.1"
+  version: "2.5.0"
   replicaCount: "1"
   serviceType: "NodePort"
   resources: #Optional
@@ -415,7 +543,7 @@ registry:
 ## UI Properties
 ui:
   enabled: true
-  version: "0.7.4"
+  version: "2.5.0"
   replicaCount: "1"
   serviceType: "NodePort"
   resources:

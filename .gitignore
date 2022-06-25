@@ -3,3 +3,4 @@ sample-values-post.yaml
 sample-values-mysql.yaml
 sample-values-dev365.yaml
 sample-values-dev365-aws.yaml
+sample-values-dev365-gcp.yaml
