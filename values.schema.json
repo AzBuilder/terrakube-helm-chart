@@ -79,6 +79,24 @@
                 "type": "string"
               }
             }
+          },
+          "gcp": {
+            "type": "object",
+            "required": ["projectId", "bucketName", "credentials"],
+            "properties": {
+              "projectId": {
+                "description": "GCP Project Id",
+                "type": "string"
+              },
+              "bucketName": {
+                "description": "GCP Storage Bucket Name",
+                "type": "string"
+              },
+              "credentials": {
+                "description": "GCP Credentials JSON in Base64 encoding",
+                "type": "string"
+              }
+            }
           }
         }
       },
@@ -170,11 +188,11 @@
               },
               "terraformStateType": {
                 "description": "Terraform State implementation",
-                "enum": ["AzureTerraformStateImpl", "AwsTerraformStateImpl"]
+                "enum": ["AzureTerraformStateImpl", "AwsTerraformStateImpl", "GcpTerraformStateImpl"]
               },
               "terraformOutputType": {
                 "description": "Terraform Output implementation",
-                "enum": ["AzureTerraformOutputImpl", "AwsTerraformOutputImpl"]
+                "enum": ["AzureTerraformOutputImpl", "AwsTerraformOutputImpl", "GcpTerraformOutputImpl"]
               }
             }
           }
