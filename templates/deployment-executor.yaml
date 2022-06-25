@@ -26,4 +26,22 @@ spec:
         envFrom:
         - secretRef:
             name: terrakube-executor-secrets
+        startupProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8090
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8090
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8090
+          initialDelaySeconds: 120
+          periodSeconds: 10
 {{ end }}
