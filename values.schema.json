@@ -123,6 +123,15 @@
           "resources": {
             "type": "object"
           },
+          "affinity": {
+            "type": "object"
+          },
+          "tolerations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
           "properties": {
             "type": "object",
             "required": ["databaseType", "databaseHostname", "databaseName", "databaseUser", "databasePassword"],
@@ -174,6 +183,15 @@
           "resources": {
             "type": "object"
           },
+          "affinity": {
+            "type": "object"
+          },
+          "tolerations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
           "properties": {
             "type": "object",
             "required": ["toolsRepository", "toolsBranch"],
@@ -220,6 +238,15 @@
           },
           "resources": {
             "type": "object"
+          },
+          "affinity": {
+            "type": "object"
+          },
+          "tolerations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
           }
         }
       },
@@ -245,6 +272,15 @@
           },
           "resources": {
             "type": "object"
+          },
+          "affinity": {
+            "type": "object"
+          },
+          "tolerations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
           }
         }
       },

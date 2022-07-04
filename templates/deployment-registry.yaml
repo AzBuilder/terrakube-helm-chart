@@ -44,4 +44,12 @@ spec:
             port: 8075
           initialDelaySeconds: 120
           periodSeconds: 10
+      {{- with .Values.registry.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.registry.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
 {{ end }}
