@@ -26,4 +26,12 @@ spec:
         envFrom:
         - secretRef:
             name: terrakube-ui-secrets
+      {{- with .Values.ui.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.ui.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
 {{ end }}

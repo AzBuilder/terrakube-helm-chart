@@ -607,6 +607,43 @@ ingress:
       kubernetes.io/ingress.class: alb
 ```
 
+### 4.1 Node Affinity, Taints and Tolerations.
+
+The API, Registry, Executor and UI support using affinity, taints and tolerations. Use the following examples as reference:
+
+#### Example API.
+
+```yaml
+api:
+  enabled: true
+  version: "2.5.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  tolerations:
+  - key: "key1"
+    operator: "Equal"
+    value: "value1"
+    effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: name
+            operator: In
+            values:
+            - terrakube
+  properties:
+    databaseType: "H2"
+```
+
 ### 5. Deploy Terrakube using helm chart
 
 Now you have all the information to deploy Terrakube, you can use the following example:
