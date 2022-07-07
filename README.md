@@ -607,7 +607,7 @@ ingress:
       kubernetes.io/ingress.class: alb
 ```
 
-### 4.1 Node Affinity, Taints and Tolerations.
+### 4.1 Node Affinity, NodeSelector, Taints and Tolerations.
 
 The API, Registry, Executor and UI support using affinity, taints and tolerations. Use the following examples as reference:
 
@@ -626,12 +626,14 @@ api:
     requests:
       cpu: 200m
       memory: 256Mi
-  tolerations:
+  tolerations: # OPTIONAL
   - key: "key1"
     operator: "Equal"
     value: "value1"
     effect: "NoSchedule"
-  affinity:
+  nodeSelector: # OPTIONAL
+    disktype: ssd
+  affinity:  # OPTIONAL
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
         nodeSelectorTerms:
