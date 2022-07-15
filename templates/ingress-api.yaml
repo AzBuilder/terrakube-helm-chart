@@ -14,7 +14,7 @@ spec:
     - {{ .Values.ingress.api.domain | quote }}
     secretName: tls-secret-terrakube
   {{ end }}
-  {{ if .Values.ingress.dex.enabled }}
+  {{- if and .Values.ingress.api.enabled .Values.ingress.dex.enabled }}
   rules:
   - host: {{ .Values.ingress.api.domain | quote }}
     http:
@@ -33,5 +33,17 @@ spec:
             name: terrakube-dex-service
             port:
               number: 5556
+  {{ else }}
+  rules:
+  - host: {{ .Values.ingress.api.domain | quote }}
+    http:
+      paths:
+      - path: {{ .Values.ingress.api.path | quote }} 
+        pathType: {{ .Values.ingress.api.pathType | quote }}
+        backend:
+          service:
+            name: terrakube-api-service
+            port:
+              number: 8080
   {{ end }}  
 {{ end }}
