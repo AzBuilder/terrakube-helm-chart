@@ -7,33 +7,15 @@
       },
       "security": {
         "type": "object",
-        "required": ["type", "azure"],
+        "required": ["patSecret", "internalSecret"],
         "properties": {
-          "type": {
-            "description": "Security Type",
-            "enum": ["AZURE"]
+          "patSecret": {
+            "description": "patSecret in base64 encoding",
+            "type": "string"
           },
-          "azure": {
-            "type": "object",
-            "required": ["appIdURI", "appClientId", "appTenantId", "appSecret"],
-            "properties": {
-              "appIdURI": {
-                "description": "Azure Active Directory Application Id URI from Base App",
-                "type": "string"
-              },
-              "appClientId": {
-                "description": "Azure Active Directory Client Id",
-                "type": "string"
-              },
-              "appTenantId": {
-                "description": "Azure Active Directory Tenant Id",
-                "type": "string"
-              },
-              "appSecret": {
-                "description": "Azure Active Directory Client Secret",
-                "type": "string"
-              }
-            }
+          "internalSecret": {
+            "description": "internalSecret in base64 encoding",
+            "type": "string"
           }
         }
       },
@@ -95,6 +77,53 @@
               "credentials": {
                 "description": "GCP Credentials JSON in Base64 encoding",
                 "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "dex": {
+        "type": "object",
+        "required": ["enabled", "version", "replicaCount", "properties"],
+        "properties": {
+          "enabled": {
+            "description": "Enable Dex",
+            "type": "boolean"
+          },
+          "version": {
+            "description": "Dex Version",
+            "type": "string"
+          },
+          "replicaCount": {
+            "description": "Replica count for Dex",
+            "type": "string"
+          },
+          "serviceType": {
+            "description": "Kubernetes service type",
+            "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]
+          },
+          "resources": {
+            "type": "object"
+          },
+          "affinity": {
+            "type": "object"
+          },
+          "nodeSelector": {
+            "type": "object"
+          },
+          "tolerations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "properties": {
+            "type": "object",
+            "required": ["config"],
+            "properties": {
+              "config": {
+                "description": "Dex configuration file",
+                "type": "object"
               }
             }
           }
@@ -306,6 +335,7 @@
           },
           "ui": {
             "type": "object",
+            "required": ["enabled", "annotations", "path", "pathType"],
             "properties": {
               "enabled": {
                 "description": "Enable ingress UI",
@@ -330,7 +360,7 @@
           },
           "api": {
             "type": "object",
-            "required": ["enabled", "domain", "annotations"],
+            "required": ["enabled", "domain", "annotations", "path", "pathType"],
             "properties": {
               "enabled": {
                 "description": "Enable ingress API",
@@ -353,8 +383,30 @@
               }
             }
           },
+          "dex": {
+            "type": "object",
+            "required": ["enabled", "annotations", "path", "pathType"],
+            "properties": {
+              "enabled": {
+                "description": "Enable Dex API",
+                "type": "boolean"
+              },
+              "path": {
+                "description": "Ingress Dex path",
+                "type": "string"
+              },
+              "pathType": {
+                "description": "Ingress Dex path type",
+                "enum": ["ImplementationSpecific", "Exact", "Prefix"]
+              },
+              "annotations": {
+                "type": "object"
+              }
+            }
+          },
           "registry": {
             "type": "object",
+            "required": ["enabled", "annotations", "path", "pathType"],
             "properties": {
               "enabled": {
                 "description": "Enable ingress UI",

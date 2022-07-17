@@ -1,0 +1,54 @@
+{{- if .Values.dex.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terrakube-dex
+  labels:
+    app: terrakube-dex
+spec:
+  replicas: {{ .Values.dex.replicaCount }}
+  selector:
+    matchLabels:
+      app: terrakube-dex
+  template:
+    metadata:
+      labels:
+        app: terrakube-dex
+    spec:
+      containers:
+        - name: terrakube-dex
+          image: ghcr.io/dexidp/dex
+          {{- if .Values.dex.resources }}
+          resources: {{- toYaml .Values.dex.resources | nindent 12 }}
+          {{- end }}
+          args:
+            - dex
+            - serve
+            - --web-http-addr
+            - 0.0.0.0:5556
+            - /etc/dex/config.yaml
+          ports:
+            - name: http
+              containerPort: 5556
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/dex
+              readOnly: true
+      volumes:
+        - name: config
+          secret:
+            secretName: terrakube-dex-secrets
+      {{- with .Values.dex.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dex.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dex.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+{{- end }}

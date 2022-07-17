@@ -4,59 +4,104 @@
 
 To install Terrakube in a Kubernetes cluster you will need the following:
 
-- Azure Active Directory
-- Azure Storage Account or Amazon S3 bucket
+- Azure Storage Account, Amazon S3 bucket or GCP Bucket
 - Supported database:
   - SQL Azure
   - PostgreSQL
   - Mysql
 - Create a YAML file with all the require parameters.
 
-> If you don't have an Azure Active Directory tenant you can get a free one joining [Microsoft 365 Developer Program](https://developer.microsoft.com/en-us/microsoft-365/dev-program)
-
 ## Instalation
 
-### 1. Azure Active Directory Registration
+### 1. Authentication
 
-In order to use Terrakube we need to register the application inside Azure Active Directory, to do this use the following Terraform module using the example name "Terrakube":
+To handle authentication we use [DEX](https://dexidp.io/) to support different providers using [connectors]((https://dexidp.io/docs/connectors/)), you can use any connectors as long it supports the ***groups scope***. 
+For example you can use the following connectors:
+- LDAP
+- GitHub
+- SAML 2.0
+- Gitlab
+- OpenID Connect
+- Google
+- Microsoft
+- OpenShift
+- Etc.
 
-```bash
-git clone https://github.com/AzBuilder/terraform-azurerm-terrakube-app-registration.git
-terraform apply --var "app_name=Terrakube"
+> DEX authentication is only supported from terrakube 2.6.0 and helm chart version 2.0.0 the helm chart values are not backward compatibly with lower version.
+
+Once we have decided which connectors we would like to us we can create Dex configuation. 
+The following in an example of Dex configuration using Azure Active Directory, Github and Gitlab to handle authentication and groups:
+
+```yaml
+    config:
+      issuer: https://api.terrakube.docker.internal/dex
+      storage:
+        type: memory
+      oauth2:
+        responseTypes: ["code", "token", "id_token"] 
+      web:
+        allowedOrigins: ['ui.terrakube.docker.internal']
+  
+      staticClients:
+      - id: microsoft
+        redirectURIs:
+        - 'https://ui.terrakube.docker.internal'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'microsoft'
+        public: true
+      - id: github
+        redirectURIs:
+        - 'https://ui.terrakube.docker.internal'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'github-web'
+        public: true
+      - id: gitlab
+        redirectURIs:
+        - 'https://ui.terrakube.docker.internal'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'gitlab'
+        public: true
+
+      connectors:
+      - type: microsoft
+        id: microsoft
+        name: microsoft
+        config:
+          clientID: "<<CLIENT ID FROM FROM AZURE ACTIVE DIRECTORY>>"
+          clientSecret: "<<CLIENT SECRET FROM AZURE ACTIVE DIRECTORY>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+          tenant: "<<TENANT ID FROM AZURE ACTIVE DIRECTORY>>"
+      - type: github
+        id: github
+        name: gitHub
+        config:
+          clientID: "<<CLIENT ID FROM GITHUB>>"
+          clientSecret: "<<CLIENTE SECRET FROM GITHUB>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+      - type: gitlab
+        id: gitlab
+        name: gitLab
+        config:
+          clientID: "<<CLIENT ID FROM GITLAB>>"
+          clientSecret: "<<CLIENT SECRET FROM GITLAB>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
 ```
 
-The terraform module will create three applications inside Azure Active Directory:
-- Terrakube Base
-- Terrakube APP
-- Terrakube CLI
-
-Inside ***Terrakube App*** you can get the following information:
-- Azure app Client Id
-- Azure app Tenant Id 
-- Azure app Secret
-
-Inside ***Terrakube Base*** you can get the following information:
-- Azure app API Scope
-
-> If you use ***app_name=Terrakube*** the API Scope will be ***api://Terrakube***
-
-The application require the following permissions:
-- User.Read.All
-- Application.Read.All
-- Group.Read.All
-- GroupMember.Read.All
-- Terrakube.Application.Default 
-
-> Azure Active Directory Admin consent is needed inside the Terrakube APP, you can use the following link: https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/RegisteredApps.
-
-
+To learn more about how to build the Dex configuration file please review the following [documentation](https://dexidp.io/docs/)
 
 ### 2. Terrakube Admin Group
 
-In order to use Terrakube the following Azure Active Directory Group should be created:
+In order to use Terrakube a special group should be created, for example:
 - TERRAKUBE_ADMIN
-
-Once the group it is created we will need to include ***Terrakube APP*** as a member.
 
 > ***TERRAKUBE_ADMIN*** group members are the only users inside the app that can create ***organizations*** and ***handle team access***
 
@@ -73,8 +118,7 @@ To create the Azure storage account you can use the following [terraform module]
 
 #### 3.2 AWS S3
 
-Terrakube require an Aws S3 to save the state/output for the jobs and to save the terraform modules when using terraform CLI and it require the following:
-- ACL Enable
+Terrakube require an Aws S3 to save the state/output for the jobs and to save the terraform modules when using terraform CLI, it could be a private bucket.
 
 To create the Aws S3 you can use the following [terraform module]() (Work in Progress).
 
@@ -94,14 +138,14 @@ Once you have completed the above steps you can complete the file values.yaml to
 ## Global Name
 name: "terrakube"
 
-## Azure Active Directory Security
+## Terrakube Security
 security:
-  type: "AZURE" # This is the only value supported righ now
-  azure:
-    appIdURI: "XXX" #Replace with values from Step 1
-    appClientId: "XXX"
-    appTenantId: "XXX"
-    appSecret: "XXX"
+  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X Base64 ejZRSFgheUBOZXAyUURUITUzdmdINDNeUGpSWHlDM1g=
+  patSecret: "ejZRSFgheUBOZXAyUURUITUzdmdINDNeUGpSWHlDM1g=" #<==CHANGE THIS FOR YOUR SECRET
+
+  # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3 Base64 S2JeOGNNZXJQTlpWNmhTITkha2NEKkt1VVBVQmFeQjM=
+  internalSecret: "S2JeOGNNZXJQTlpWNmhTITkha2NEKkt1VVBVQmFeQjM=" #<==CHANGE THIS FOR YOUR SECRET
+  dexIssuerUri: "https://api.terrakube.docker.internal/dex"
 
 ## Terraform Storage
 storage:
@@ -110,10 +154,86 @@ storage:
     storageAccountResourceGroup: "XXX"
     storageAccountAccessKey: "XXX"
 
+## Dex
+dex:
+  enabled: true
+  version: "v2.32.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources:
+    limits:
+      cpu: 512m
+      memory: 256Mi
+    requests:
+      cpu: 256m
+      memory: 128Mi
+  properties:
+    config:
+      issuer: https://api.terrakube.docker.internal/dex
+      storage:
+        type: memory
+      oauth2:
+        responseTypes: ["code", "token", "id_token"] 
+      web:
+        allowedOrigins: ['ui.terrakube.docker.internal']
+  
+      staticClients:
+      - id: microsoft
+        redirectURIs:
+        - 'https://ui.terrakube.docker.internal'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'microsoft'
+        public: true
+      - id: github
+        redirectURIs:
+        - 'https://ui.terrakube.docker.internal'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'github-web'
+        public: true
+      - id: gitlab
+        redirectURIs:
+        - 'https://ui.terrakube.docker.internal'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'gitlab'
+        public: true
+
+      connectors:
+      - type: microsoft
+        id: microsoft
+        name: microsoft
+        config:
+          clientID: "<<CLIENT ID FROM FROM AZURE ACTIVE DIRECTORY>>"
+          clientSecret: "<<CLIENT SECRET FROM AZURE ACTIVE DIRECTORY>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+          tenant: "<<TENANT ID FROM AZURE ACTIVE DIRECTORY>>"
+      - type: github
+        id: github
+        name: gitHub
+        config:
+          clientID: "<<CLIENT ID FROM GITHUB>>"
+          clientSecret: "<<CLIENTE SECRET FROM GITHUB>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+      - type: gitlab
+        id: gitlab
+        name: gitLab
+        config:
+          clientID: "<<CLIENT ID FROM GITLAB>>"
+          clientSecret: "<<CLIENT SECRET FROM GITLAB>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+
 ## API properties
 api:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -133,7 +253,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -152,7 +272,7 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -166,7 +286,7 @@ registry:
 ## UI Properties
 ui:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources:
@@ -209,6 +329,14 @@ ingress:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
       cert-manager.io/cluster-issuer: letsencrypt
+  dex:
+    enabled: false
+    path: "/dex/(.*)" # Replace with the real value
+    pathType: "Prefix" # Replace with the real value
+    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
 ```
 
 ***Example using Nginx Ingress and AWS S3:***
@@ -216,14 +344,14 @@ ingress:
 ## Global Name
 name: "terrakube"
 
-## Azure Active Directory Security
+## Terrakube Security
 security:
-  type: "AZURE" # This is the only value supported righ now
-  azure:
-    appIdURI: "XXX" #Replace with values from Step 1
-    appClientId: "XXX"
-    appTenantId: "XXX"
-    appSecret: "XXX"
+  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X Base64 ejZRSFgheUBOZXAyUURUITUzdmdINDNeUGpSWHlDM1g=
+  patSecret: "ejZRSFgheUBOZXAyUURUITUzdmdINDNeUGpSWHlDM1g=" #<==CHANGE THIS FOR YOUR SECRET
+
+  # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3 Base64 S2JeOGNNZXJQTlpWNmhTITkha2NEKkt1VVBVQmFeQjM=
+  internalSecret: "S2JeOGNNZXJQTlpWNmhTITkha2NEKkt1VVBVQmFeQjM=" #<==CHANGE THIS FOR YOUR SECRET
+  dexIssuerUri: "https://api.terrakube.docker.internal/dex"
 
 ## Terraform Storage
 storage:
@@ -233,10 +361,86 @@ storage:
     bucketName: "XXX"
     region: "XXX"
 
+## Dex
+dex:
+  enabled: true
+  version: "v2.32.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources:
+    limits:
+      cpu: 512m
+      memory: 256Mi
+    requests:
+      cpu: 256m
+      memory: 128Mi
+  properties:
+    config:
+      issuer: https://api.terrakube.docker.internal/dex
+      storage:
+        type: memory
+      oauth2:
+        responseTypes: ["code", "token", "id_token"] 
+      web:
+        allowedOrigins: ['ui.terrakube.docker.internal']
+  
+      staticClients:
+      - id: microsoft
+        redirectURIs:
+        - 'https://ui.terrakube.docker.internal'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'microsoft'
+        public: true
+      - id: github
+        redirectURIs:
+        - 'https://ui.terrakube.docker.internal'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'github-web'
+        public: true
+      - id: gitlab
+        redirectURIs:
+        - 'https://ui.terrakube.docker.internal'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'gitlab'
+        public: true
+
+      connectors:
+      - type: microsoft
+        id: microsoft
+        name: microsoft
+        config:
+          clientID: "<<CLIENT ID FROM FROM AZURE ACTIVE DIRECTORY>>"
+          clientSecret: "<<CLIENT SECRET FROM AZURE ACTIVE DIRECTORY>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+          tenant: "<<TENANT ID FROM AZURE ACTIVE DIRECTORY>>"
+      - type: github
+        id: github
+        name: gitHub
+        config:
+          clientID: "<<CLIENT ID FROM GITHUB>>"
+          clientSecret: "<<CLIENTE SECRET FROM GITHUB>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+      - type: gitlab
+        id: gitlab
+        name: gitLab
+        config:
+          clientID: "<<CLIENT ID FROM GITLAB>>"
+          clientSecret: "<<CLIENT SECRET FROM GITLAB>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+
 ## API properties
 api:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -256,7 +460,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -275,7 +479,7 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -289,7 +493,7 @@ registry:
 ## UI Properties
 ui:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources:
@@ -332,6 +536,14 @@ ingress:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
       cert-manager.io/cluster-issuer: letsencrypt
+  dex:
+    enabled: false
+    path: "/dex/(.*)" # Replace with the real value
+    pathType: "Prefix" # Replace with the real value
+    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
 ```
 
 ***Example using Nginx Ingress and Gcp Storage:***
@@ -339,14 +551,14 @@ ingress:
 ## Global Name
 name: "terrakube"
 
-## Azure Active Directory Security
+## Terrakube Security
 security:
-  type: "AZURE" # This is the only value supported righ now
-  azure:
-    appIdURI: "XXX" #Replace with values from Step 1
-    appClientId: "XXX"
-    appTenantId: "XXX"
-    appSecret: "XXX"
+  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X Base64 ejZRSFgheUBOZXAyUURUITUzdmdINDNeUGpSWHlDM1g=
+  patSecret: "ejZRSFgheUBOZXAyUURUITUzdmdINDNeUGpSWHlDM1g=" #<==CHANGE THIS FOR YOUR SECRET
+
+  # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3 Base64 S2JeOGNNZXJQTlpWNmhTITkha2NEKkt1VVBVQmFeQjM=
+  internalSecret: "S2JeOGNNZXJQTlpWNmhTITkha2NEKkt1VVBVQmFeQjM=" #<==CHANGE THIS FOR YOUR SECRET
+  dexIssuerUri: "https://api.terrakube.docker.internal/dex"
 
 ## Terraform Storage
 storage:
@@ -355,10 +567,86 @@ storage:
     bucketName: "XXX"
     credentials: "XXX" #<==JSON CREDENTIAL IN BASE64 ENCODING
 
+## Dex
+dex:
+  enabled: true
+  version: "v2.32.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources:
+    limits:
+      cpu: 512m
+      memory: 256Mi
+    requests:
+      cpu: 256m
+      memory: 128Mi
+  properties:
+    config:
+      issuer: https://api.terrakube.docker.internal/dex
+      storage:
+        type: memory
+      oauth2:
+        responseTypes: ["code", "token", "id_token"] 
+      web:
+        allowedOrigins: ['ui.terrakube.docker.internal']
+  
+      staticClients:
+      - id: microsoft
+        redirectURIs:
+        - 'https://ui.terrakube.docker.internal'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'microsoft'
+        public: true
+      - id: github
+        redirectURIs:
+        - 'https://ui.terrakube.docker.internal'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'github-web'
+        public: true
+      - id: gitlab
+        redirectURIs:
+        - 'https://ui.terrakube.docker.internal'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'gitlab'
+        public: true
+
+      connectors:
+      - type: microsoft
+        id: microsoft
+        name: microsoft
+        config:
+          clientID: "<<CLIENT ID FROM FROM AZURE ACTIVE DIRECTORY>>"
+          clientSecret: "<<CLIENT SECRET FROM AZURE ACTIVE DIRECTORY>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+          tenant: "<<TENANT ID FROM AZURE ACTIVE DIRECTORY>>"
+      - type: github
+        id: github
+        name: gitHub
+        config:
+          clientID: "<<CLIENT ID FROM GITHUB>>"
+          clientSecret: "<<CLIENTE SECRET FROM GITHUB>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+      - type: gitlab
+        id: gitlab
+        name: gitLab
+        config:
+          clientID: "<<CLIENT ID FROM GITLAB>>"
+          clientSecret: "<<CLIENT SECRET FROM GITLAB>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+
 ## API properties
 api:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -378,7 +666,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -397,7 +685,7 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources: #Optional
@@ -411,7 +699,7 @@ registry:
 ## UI Properties
 ui:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources:
@@ -470,14 +758,14 @@ You will need to change these with some real public domain
 ## Global Name
 name: "terrakube"
 
-## Azure Active Directory Security
+## Terrakube Security
 security:
-  type: "AZURE" # This is the only value supported righ now
-  azure:
-    appIdURI: "XXX" #Replace with values from Step 1
-    appClientId: "XXX"
-    appTenantId: "XXX"
-    appSecret: "XXX"
+  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X Base64 ejZRSFgheUBOZXAyUURUITUzdmdINDNeUGpSWHlDM1g=
+  patSecret: "ejZRSFgheUBOZXAyUURUITUzdmdINDNeUGpSWHlDM1g=" #<==CHANGE THIS FOR YOUR SECRET
+
+  # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3 Base64 S2JeOGNNZXJQTlpWNmhTITkha2NEKkt1VVBVQmFeQjM=
+  internalSecret: "S2JeOGNNZXJQTlpWNmhTITkha2NEKkt1VVBVQmFeQjM=" #<==CHANGE THIS FOR YOUR SECRET
+  dexIssuerUri: "https://api.terrakube.docker.internal/dex"
 
 ## Terraform Storage
 storage:
@@ -490,7 +778,7 @@ storage:
 ## API properties
 api:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "NodePort"
   resources: #Optional
@@ -510,7 +798,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "NodePort"
   resources: #Optional
@@ -529,7 +817,7 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "NodePort"
   resources: #Optional
@@ -543,7 +831,7 @@ registry:
 ## UI Properties
 ui:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "NodePort"
   resources:
