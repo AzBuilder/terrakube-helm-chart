@@ -16,6 +16,18 @@
           "internalSecret": {
             "description": "internalSecret in base64 encoding",
             "type": "string"
+          },
+          "dexIssuerUri": {
+            "description": "internalSecret in base64 encoding",
+            "type": "string"
+          },
+          "dexClientId": {
+            "description": "internalSecret in base64 encoding",
+            "type": "string"
+          },
+          "dexClientScope": {
+            "description": "internalSecret in base64 encoding",
+            "type": "string"
           }
         }
       },
@@ -112,6 +124,18 @@
             "type": "object"
           },
           "tolerations": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "volumes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "volumeMounts": {
             "type": "array",
             "items": {
               "type": "object"

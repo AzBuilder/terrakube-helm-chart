@@ -30,7 +30,7 @@ For example you can use the following connectors:
 > DEX authentication is only supported from terrakube 2.6.0 and helm chart version 2.0.0 the helm chart values are not backward compatibly with lower version.
 
 Once we have decided which connectors we would like to us we can create Dex configuation. 
-The following in an example of Dex configuration using Azure Active Directory, Github and Gitlab to handle authentication and groups:
+The following in an example of Dex configuration using Azure Active Directory, Google Cloud Identit, Github and Gitlab to handle authentication and groups:
 
 ```yaml
     config:
@@ -70,6 +70,15 @@ The following in an example of Dex configuration using Azure Active Directory, G
         - '/device/callback'
         name: 'gitlab'
         public: true
+      - id: google
+        redirectURIs:
+        - 'https://ui.terrakube.docker.com'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'google'
+        public: true
 
       connectors:
       - type: microsoft
@@ -94,16 +103,40 @@ The following in an example of Dex configuration using Azure Active Directory, G
           clientID: "<<CLIENT ID FROM GITLAB>>"
           clientSecret: "<<CLIENT SECRET FROM GITLAB>>"
           redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+      - type: google
+        id: google
+        name: google
+        config:
+          clientID: "<<CLIENT ID FROM GOOGLE CLOUD>>"
+          clientSecret: "<<CLIENT SECRET FROM GOOGLE CLOUD>>"
+          redirectURI: "https://api.terrakube.docker.com/dex/callback"
+          serviceAccountFilePath: "/etc/secrets/gcp-credentials.json"
+          adminEmail: "superAdmin@demo.com"
 ```
 
 To learn more about how to build the Dex configuration file please review the following [documentation](https://dexidp.io/docs/)
 
+- [Azure Active Directory](https://dexidp.io/docs/connectors/microsoft/)
+- [Google Cloud Identity](https://dexidp.io/docs/connectors/google/)
+- [Github](https://dexidp.io/docs/connectors/github/)
+- [Gitlab](https://dexidp.io/docs/connectors/gitlab/)
+
 ### 2. Terrakube Admin Group
 
-In order to use Terrakube a special group should be created, for example:
+In order to use Terrakube you will have to define the one or more administrator groups, for example:
 - TERRAKUBE_ADMIN
 
-> ***TERRAKUBE_ADMIN*** group members are the only users inside the app that can create ***organizations*** and ***handle team access***
+Members of these groups are the only users inside terrakube that can create ***organizations*** and ***handle team access***, to define more than one admin group use the ***security.admins*** separated by ***","***
+
+Example:
+
+```
+security:
+  ...
+  admins: "TERRAKUBE_ADMIN,AZURE_ADMINS,GCP_ADMINS"
+```
+
+> For Google Cloud Identity groups name will be like "groupName@yourdomain.com", For Github Authentication will be like "organizationName:teamName"
 
 ### 3. Terrakube Storage
 
@@ -132,7 +165,190 @@ To create the Gcp Storage you can use the following [terraform module]() (Work i
 
 Once you have completed the above steps you can complete the file values.yaml to deploy the helm chart, you can check the following examples:
 
-***Example using Nginx Ingress and Azure Storage Account:***
+***Google Identity and GCP Storage Bucket***
+
+You will need to include the gcp-credentials.json file inside the secretFiles folder before running the helm install.
+
+```
+## Global Name
+name: "terrakube"
+
+## Terrakube Security
+security:
+  patSecret: "XXXXX"
+  internalSecret: "XXXXX"
+  dexIssuerUri: "https://api.terrakube.docker.com/dex"
+  dexClientId: "google"
+  dexClientScope: "email openid profile offline_access groups"
+
+## Terraform Storage
+storage:
+  gcp:
+    projectId: "XXXXX"
+    bucketName: "XXXXX"
+    credentials: "XXXXX"
+
+## Dex
+dex:
+  enabled: true
+  version: "v2.32.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  volumeMounts:
+    - name: gcp-credentials
+      mountPath: "/etc/secrets"
+      readOnly: true
+  volumes:
+    - name: gcp-credentials
+      secret:
+        secretName: "terrakube-secret-files"
+        items:
+          - key: "gcp-credentials.json"
+            path: "gcp-credentials.json"
+  resources:
+    limits:
+      cpu: 512m
+      memory: 256Mi
+    requests:
+      cpu: 256m
+      memory: 128Mi
+  properties:
+    config:
+      issuer: https://api.terrakube.docker.com/dex
+      storage:
+        type: memory
+      oauth2:
+        responseTypes: ["code", "token", "id_token"] 
+      web:
+        allowedOrigins: ["*"]
+  
+      staticClients:
+      - id: google
+        redirectURIs:
+        - 'https://ui.terrakube.docker.com'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'google'
+        public: true
+
+      connectors:
+      - type: google
+        id: google
+        name: google
+        config:
+          clientID: "XXXXX"
+          clientSecret: "XXXXX"
+          redirectURI: "https://api.terrakube.docker.com/dex/callback"
+          serviceAccountFilePath: "/etc/secrets/gcp-credentials.json"
+          adminEmail: "XXXXX@yourdomain.com"
+
+## API properties
+api:
+  enabled: true
+  version: "2.6.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  properties:
+    databaseType: "H2"
+    DexIssuerUri: "https://api.terrakube.docker.com/dex"
+
+## Executor properties
+executor:
+  enabled: true
+  version: "2.6.0"  
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  properties:
+    toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
+    toolsBranch: "main"
+    terraformStateType: "GcpTerraformStateImpl"
+    terraformOutputType: "GcpTerraformOutputImpl"
+
+## Registry properties
+registry:
+  enabled: true
+  version: "2.6.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+## UI Properties
+ui:
+  enabled: true
+  version: "2.6.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+## Ingress properties
+ingress:
+  useTls: true
+  ui:
+    enabled: true
+    domain: "ui.terrakube.docker.com"
+    path: "/(.*)"
+    pathType: "Prefix" 
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+  api:
+    enabled: true
+    domain: "api.terrakube.docker.com"
+    path: "/(.*)"
+    pathType: "Prefix"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
+  registry:
+    enabled: true
+    domain: "registry.terrakube.docker.com"
+    path: "/(.*)"
+    pathType: "Prefix"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
+  dex:
+    enabled: true
+    path: "/dex/(.*)"
+    pathType: "Prefix"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
+```
+
+
+***Example using Nginx Ingress and Azure Storage Account***
 
 ```yaml
 ## Global Name
@@ -904,7 +1120,7 @@ The API, Registry, Executor and UI support using affinity, taints and toleration
 ```yaml
 api:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources:

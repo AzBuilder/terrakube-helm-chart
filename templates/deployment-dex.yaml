@@ -35,10 +35,16 @@ spec:
             - name: config
               mountPath: /etc/dex
               readOnly: true
+          {{- with .Values.dex.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       volumes:
         - name: config
           secret:
             secretName: terrakube-dex-secrets
+      {{- with .Values.dex.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with .Values.dex.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
