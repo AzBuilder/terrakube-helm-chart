@@ -132,7 +132,6 @@ Example:
 
 ```
 security:
-  ...
   admins: "TERRAKUBE_ADMIN,AZURE_ADMINS,GCP_ADMINS"
 ```
 
@@ -169,7 +168,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 
 You will need to include the gcp-credentials.json file inside the secretFiles folder before running the helm install.
 
-```
+```yaml
 ## Global Name
 name: "terrakube"
 
