@@ -35,6 +35,11 @@ spec:
             - name: config
               mountPath: /etc/dex
               readOnly: true
+          {{- if and (.Values.security).gcpCredentials }}
+            - name: gcp-credentials
+              mountPath: /etc/gcp/secret
+              readOnly: true
+          {{- end }}
           {{- with .Values.dex.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -42,6 +47,17 @@ spec:
         - name: config
           secret:
             secretName: terrakube-dex-secrets
+            items:
+            - key: "config.yaml"
+              path: "config.yaml"
+      {{- if and (.Values.security).gcpCredentials }}
+        - name: gcp-credentials
+          secret:
+            secretName: terrakube-dex-secrets
+            items:
+            - key: "gcp-credentials"
+              path: "gcp-credentials"
+      {{- end }}
       {{- with .Values.dex.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

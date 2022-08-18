@@ -7,7 +7,7 @@
       },
       "security": {
         "type": "object",
-        "required": ["patSecret", "internalSecret"],
+        "required": ["patSecret", "internalSecret", "dexIssuerUri", "adminGroup"],
         "properties": {
           "patSecret": {
             "description": "patSecret in base64 encoding",
@@ -17,16 +17,24 @@
             "description": "internalSecret in base64 encoding",
             "type": "string"
           },
+          "gcpCredentials": {
+            "description": "gcp credentilas json base64 encoding",
+            "type": "string"
+          },
           "dexIssuerUri": {
-            "description": "internalSecret in base64 encoding",
+            "description": "Dex URL",
             "type": "string"
           },
           "dexClientId": {
-            "description": "internalSecret in base64 encoding",
+            "description": "Dex Client Id",
             "type": "string"
           },
           "dexClientScope": {
-            "description": "internalSecret in base64 encoding",
+            "description": "Dex Client Scope",
+            "type": "string"
+          },
+          "adminGroup": {
+            "description": "Terrakube Administrators Group",
             "type": "string"
           }
         }
