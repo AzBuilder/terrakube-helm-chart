@@ -177,7 +177,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 - Amazon AWS Cognito
   - WIP.
 
-### 4.2 Helm Value Properties
+### 4.1 Helm Value Properties
 
 
 | Key                                       | Required | Description                                                            |
@@ -254,8 +254,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | ingress.dex.annontations                  | Yes      | Ingress annotations                                                    |
 
 
-
-### 4.1 Node Affinity, NodeSelector, Taints and Tolerations.
+### 4.2 Node Affinity, NodeSelector, Taints and Tolerations.
 
 The API, Registry, Executor and UI support using affinity, taints and tolerations. Use the following examples as reference:
 
