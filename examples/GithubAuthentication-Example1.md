@@ -1,4 +1,4 @@
-# Terrakube with Azure Authentication
+# Terrakube with Github Authentication
 
 ## Requirements
 
