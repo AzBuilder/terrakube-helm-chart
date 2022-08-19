@@ -4,7 +4,11 @@
 
 To install Terrakube in a Kubernetes cluster you will need the following:
 
-- Dex connector with support for the groups claim.
+- Dex connector with support for the groups claim. For example:
+  - [Azure Active Directory](https://dexidp.io/docs/connectors/microsoft/)
+  - [Google Cloud Identity](https://dexidp.io/docs/connectors/google/)
+  - [Github](https://dexidp.io/docs/connectors/github/)
+  - [Gitlab](https://dexidp.io/docs/connectors/gitlab/)
 - Azure Storage Account, Amazon S3 bucket or GCP Bucket
 - Supported database:
   - SQL Azure
