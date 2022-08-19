@@ -4,61 +4,143 @@
 
 To install Terrakube in a Kubernetes cluster you will need the following:
 
-- Azure Active Directory
-- Azure Storage Account or Amazon S3 bucket
+- Dex connector with support for the groups claim. For example:
+  - [Azure Active Directory](https://dexidp.io/docs/connectors/microsoft/)
+  - [Google Cloud Identity](https://dexidp.io/docs/connectors/google/)
+  - [Github](https://dexidp.io/docs/connectors/github/)
+  - [Gitlab](https://dexidp.io/docs/connectors/gitlab/)
+- Azure Storage Account, Amazon S3 bucket or GCP Bucket
 - Supported database:
   - SQL Azure
   - PostgreSQL
   - Mysql
 - Create a YAML file with all the require parameters.
 
-> If you don't have an Azure Active Directory tenant you can get a free one joining [Microsoft 365 Developer Program](https://developer.microsoft.com/en-us/microsoft-365/dev-program)
-
 ## Instalation
 
-### 1. Azure Active Directory Registration
+### 1. Authentication
 
-In order to use Terrakube we need to register the application inside Azure Active Directory, to do this use the following Terraform module using the example name "Terrakube":
+To handle authentication we use [DEX](https://dexidp.io/) to support different providers using [connectors]((https://dexidp.io/docs/connectors/)), you can use any connectors as long it supports the ***groups scope***. 
+For example you can use the following connectors:
+- LDAP
+- GitHub
+- SAML 2.0
+- Gitlab
+- OpenID Connect
+- Google
+- Microsoft
+- OpenShift
+- Etc.
 
-```bash
-git clone https://github.com/AzBuilder/terraform-azurerm-terrakube-app-registration.git
-terraform apply --var "app_name=Terrakube"
+> DEX authentication is only supported from terrakube 2.6.0 and helm chart version 2.0.0 the helm chart values are not backward compatibly with lower version.
+
+Once we have decided which connectors we would like to us we can create Dex configuation. 
+The following in an example of Dex configuration using Azure Active Directory, Google Cloud Identit, Github and Gitlab to handle authentication and groups:
+
+```yaml
+    config:
+      issuer: https://terrakube-api.domain.com/dex
+      storage:
+        type: memory
+      oauth2:
+        responseTypes: ["code", "token", "id_token"] 
+      web:
+        allowedOrigins: ['*']
+  
+      staticClients:
+      - id: microsoft
+        redirectURIs:
+        - 'https://terrakube-ui.domain.com'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'microsoft'
+        public: true
+      - id: github
+        redirectURIs:
+        - 'https://terrakube-ui.domain.com'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'github-web'
+        public: true
+      - id: gitlab
+        redirectURIs:
+        - 'https://terrakube-ui.domain.com'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'gitlab'
+        public: true
+      - id: google
+        redirectURIs:
+        - 'https://terrakube-ui.domain.com'
+        - 'http://localhost:3000'
+        - 'http://localhost:10001/login'
+        - 'http://localhost:10000/login'
+        - '/device/callback'
+        name: 'google'
+        public: true
+
+      connectors:
+      - type: microsoft
+        id: microsoft
+        name: microsoft
+        config:
+          clientID: "<<CLIENT ID FROM FROM AZURE ACTIVE DIRECTORY>>"
+          clientSecret: "<<CLIENT SECRET FROM AZURE ACTIVE DIRECTORY>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+          tenant: "<<TENANT ID FROM AZURE ACTIVE DIRECTORY>>"
+      - type: github
+        id: github
+        name: gitHub
+        config:
+          clientID: "<<CLIENT ID FROM GITHUB>>"
+          clientSecret: "<<CLIENTE SECRET FROM GITHUB>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+      - type: gitlab
+        id: gitlab
+        name: gitLab
+        config:
+          clientID: "<<CLIENT ID FROM GITLAB>>"
+          clientSecret: "<<CLIENT SECRET FROM GITLAB>>"
+          redirectURI: "https://api.terrakube.docker.internal/dex/callback"
+      - type: google
+        id: google
+        name: google
+        config:
+          clientID: "<<CLIENT ID FROM GOOGLE CLOUD>>"
+          clientSecret: "<<CLIENT SECRET FROM GOOGLE CLOUD>>"
+          redirectURI: "https://api.terrakube.docker.com/dex/callback"
+          serviceAccountFilePath: "/etc/secrets/gcp-credentials.json"
+          adminEmail: "superAdmin@demo.com"
 ```
 
-The terraform module will create three applications inside Azure Active Directory:
-- Terrakube Base
-- Terrakube APP
-- Terrakube CLI
+To learn more about how to build the Dex configuration file please review the following [documentation](https://dexidp.io/docs/)
 
-Inside ***Terrakube App*** you can get the following information:
-- Azure app Client Id
-- Azure app Tenant Id 
-- Azure app Secret
-
-Inside ***Terrakube Base*** you can get the following information:
-- Azure app API Scope
-
-> If you use ***app_name=Terrakube*** the API Scope will be ***api://Terrakube***
-
-The application require the following permissions:
-- User.Read.All
-- Application.Read.All
-- Group.Read.All
-- GroupMember.Read.All
-- Terrakube.Application.Default 
-
-> Azure Active Directory Admin consent is needed inside the Terrakube APP, you can use the following link: https://portal.azure.com/#view/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/~/RegisteredApps.
-
-
+- [Azure Active Directory](https://dexidp.io/docs/connectors/microsoft/)
+- [Google Cloud Identity](https://dexidp.io/docs/connectors/google/)
+- [Github](https://dexidp.io/docs/connectors/github/)
+- [Gitlab](https://dexidp.io/docs/connectors/gitlab/)
 
 ### 2. Terrakube Admin Group
 
-In order to use Terrakube the following Azure Active Directory Group should be created:
+In order to use Terrakube you will have to define the one administrator group, for example:
 - TERRAKUBE_ADMIN
 
-Once the group it is created we will need to include ***Terrakube APP*** as a member.
+Members of these groups are the only users inside terrakube that can create ***organizations*** and ***handle team access***, to define more than one admin group use the ***security.admins*** 
 
-> ***TERRAKUBE_ADMIN*** group members are the only users inside the app that can create ***organizations*** and ***handle team access***
+Example:
+
+```
+security:
+  admins: "TERRAKUBE_ADMIN"
+```
+
+> For Google Cloud Identity groups name will be like "groupName@yourdomain.com", For Github Authentication will be like "organizationName:teamName"
 
 ### 3. Terrakube Storage
 
@@ -73,8 +155,7 @@ To create the Azure storage account you can use the following [terraform module]
 
 #### 3.2 AWS S3
 
-Terrakube require an Aws S3 to save the state/output for the jobs and to save the terraform modules when using terraform CLI and it require the following:
-- ACL Enable
+Terrakube require an Aws S3 to save the state/output for the jobs and to save the terraform modules when using terraform CLI, it could be a private bucket.
 
 To create the Aws S3 you can use the following [terraform module]() (Work in Progress).
 
@@ -86,528 +167,96 @@ To create the Gcp Storage you can use the following [terraform module]() (Work i
 
 ### 4. Build Yaml file
 
-Once you have completed the above steps you can complete the file values.yaml to deploy the helm chart, you can check the following examples:
+Once you have completed the above steps you can complete the file values.yaml to deploy the helm chart, you can check the example folder:
 
-***Example using Nginx Ingress and Azure Storage Account:***
+- Google Identity Authentication 
+  - [Ngnix Ingress + H2 Database + GCP Storage Bucket](examples/GoogleAuthentication-Example1.md)
+  - [Ngnix Ingress + PostgreSQL +  GCP Storage Bucket](examples/GoogleAuthentication-Example3.md)
+  - [Ngnix Ingress + MySQL +  GCP Storage Bucket](examples/GoogleAuthentication-Example3.md)
+- Azure Authentication 
+  - [Ngnix Ingress + H2 Database + Azure Storage Account](examples/AzureAuthentication-Example1.md)
+  - [Ngnix Ingress + SQL Azure + Azure Storage Account](examples/AzureAuthentication-Example2.md)
+  - [Ngnix Ingress + PostgreSQL + Azure Storage Account](examples/AzureAuthentication-Example3.md)
+  - [Amazon Load Balancer + PostgreSQL + S3 Bucket](examples/AzureAuthentication-Example4.md)
+- Amazon AWS Cognito
+  - WIP.
 
-```yaml
-## Global Name
-name: "terrakube"
+### 4.1 Helm Value Properties
 
-## Azure Active Directory Security
-security:
-  type: "AZURE" # This is the only value supported righ now
-  azure:
-    appIdURI: "XXX" #Replace with values from Step 1
-    appClientId: "XXX"
-    appTenantId: "XXX"
-    appSecret: "XXX"
 
-## Terraform Storage
-storage:
-  azure:
-    storageAccountName: "XXX" #Replace with values from Step 3
-    storageAccountResourceGroup: "XXX"
-    storageAccountAccessKey: "XXX"
+| Key                                       | Required | Description                                                            |
+|:------------------------------------------|----------|------------------------------------------------------------------------|
+| name                                      | Yes      | Use "Terrakube"                                                        |
+| security.adminGroup                       | Yes      | Admin group inside Terrakube                                           |
+| security.patSecret                        | Yes      | 32 Character secret to sign personal access token                      |
+| security.internalSecret                   | Yes      | 32 Character secret to sing internal                                   |
+| security.dexClientId                      | Yes      | Based on Dex config file                                               |
+| security.dexClientScope                   | Yes      | Use "email openid profile offline_access groups"                       |
+| security.dexIssuerUri                     | Yes      | Should be "https://apiDomain/dex"                                      |
+| security.gcpCredentials                   | No       | JSON Credentials for Google Identity Authentication                    |
+| storage.gcp.projectId                     | No       | GCP Project Id for the storage                                         |
+| storage.gcp.bucketName                    | No       | GCP Bucket name for the storage                                        |
+| storage.gcp.credentials                   | No       | GCP JSON Credentials for the storage                                   |
+| storage.azure.storageAccountName          | No       | Azure storage account name                                             |
+| storage.azure.storageAccountResourceGroup | No       | Azure storage resource group                                           |
+| storage.azure.storageAccountAccessKey     | No       | Azure storage access key                                               |
+| dex.enabled                               | No       | Enable Dex component                                                   |
+| dex.version                               | Yes      | Dex [version](https://github.com/dexidp/dex/releases)                  |
+| dex.replicaCount                          | Yes      |                                                                        |
+| dex.serviceType                           | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
+| dex.resources                             | No       |                                                                        |
+| dex.properties.config                     | Yes      | Dex configuration file                                                 |
+| dex.volumeMounts                          | No       |                                                                        |
+| dex.volumes                               | No       |                                                                        |
+| api.enabled                               | Yes      | true/false                                                             |
+| api.version                               | Yes      | Terrakube API version                                                  |
+| api.replicaCount                          | Yes      |                                                                        |
+| api.serviceType                           | Yes      |                                                                        |
+| api.properties.databaseType               | Yes      | H2/SQL_AZURE/POSTGRESQL/MYSQL                                          |
+| api.properties.databaseHostname           | No       |                                                                        |
+| api.properties.databaseName               | No       |                                                                        |
+| api.properties.databaseUser               | No       |                                                                        |
+| api.properties.databasePassword           | No       |                                                                        |
+| executor.enabled                          | Yes      | true/false                                                             |
+| executor.version                          | Yes      | Terrakube Executor version                                             |
+| executor.replicaCount                     | Yes      |                                                                        |
+| executor.serviceType                      | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
+| executor.properties.toolsRepository       | Yes      | Example: https://github.com/AzBuilder/terrakube-extensions             |
+| executor.properties.toolsBranch           | Yes      | Example: main                                                          |
+| registry.enabled                          | Yes      |                                                                        |
+| registry.version                          | Yes      |                                                                        |
+| registry.replicaCount                     | Yes      |                                                                        |
+| registry.serviceType                      | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
+| ui.enabled                                | Yes      | true/false                                                             |
+| ui.version                                | Yes      |                                                                        |
+| ui.replicaCount                           | Yes      |                                                                        |
+| ui.serviceType                            | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
+| ingress.ui.useTls                         | Yes      | true/false                                                             |
+| ingress.ui.enabled                        | Yes      | true/false                                                             |
+| ingress.ui.domain                         | Yes      |                                                                        |
+| ingress.ui.path                           | Yes      | ImplementationSpecific/Exact/Prefix                                    |
+| ingress.ui.pathType                       | Yes      |                                                                        |
+| ingress.ui.annotations                    | Yes      | Ingress annotations                                                    |
+| ingress.api.useTls                        | Yes      |                                                                        |
+| ingress.api.enabled                       | Yes      |                                                                        |
+| ingress.api.domain                        | Yes      |                                                                        |
+| ingress.api.path                          | Yes      |                                                                        |
+| ingress.api.pathType                      | Yes      | ImplementationSpecific/Exact/Prefix                                    |
+| ingress.api.annotations                   | Yes      | Ingress annotations                                                    |
+| ingress.registry.useTls                   | Yes      |                                                                        |
+| ingress.registry.enabled                  | Yes      |                                                                        |
+| ingress.registry.domain                   | Yes      |                                                                        |
+| ingress.registry.path                     | Yes      |                                                                        |
+| ingress.registry.pathType                 | Yes      | ImplementationSpecific/Exact/Prefix                                    |
+| ingress.registry.annotations              | Yes      | Ingress annotations                                                    |
+| ingress.dex.enabled                       | Yes      |                                                                        |
+| ingress.dex.domain                        | Yes      |                                                                        |
+| ingress.dex.path                          | Yes      |                                                                        |
+| ingress.dex.pathType                      | Yes      | ImplementationSpecific/Exact/Prefix                                    |
+| ingress.dex.annontations                  | Yes      | Ingress annotations                                                    |
 
-## API properties
-api:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources: #Optional
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-  properties:
-    databaseType: "SQL_AZURE" # Replace with "H2" (ONLY FOR TESTING), "SQL_AZURE", "POSTGRESQL" or "MYSQL"
-    databaseHostname: "mysuperdatabse.database.windows.net" # Replace with the real value
-    databaseName: "databasename" # Replace with the real value
-    databaseUser: "databaseuser" # Replace with the real value
-    databasePassword: "XXX" # Replace with the real value
 
-## Executor properties
-executor:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources: #Optional
-    limits:
-      cpu: 1000m
-      memory: 1024Mi
-    requests:
-      cpu: 500m
-      memory: 256Mi
-  properties:
-    toolsRepository: "https://github.com/AzBuilder/terrakube-extensions" # Default extension repository
-    toolsBranch: "main" #Default branch for extensions
-    terraformStateType: "AzureTerraformStateImpl" # This is the only supported type currently
-    terraformOutputType: "AzureTerraformOutputImpl" # This is the only supported type currently
-
-## Registry properties
-registry:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources: #Optional
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-
-## UI Properties
-ui:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-
-## Ingress properties
-ingress:
-  useTls: true
-  ui:
-    enabled: true
-    domain: "ui.terrakube.docker.internal" # Replace with the real value
-    path: "/(.*)" # Replace with the real value
-    pathType: "Prefix" # Replace with the real value
-    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/use-regex: "true"
-      cert-manager.io/cluster-issuer: letsencrypt
-  api:
-    enabled: true
-    domain: "api.terrakube.docker.internal" # Replace with the real value
-    path: "/(.*)" # Replace with the real value
-    pathType: "Prefix" # Replace with the real value
-    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/use-regex: "true"
-      nginx.ingress.kubernetes.io/rewrite-target: /$2 
-      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
-      cert-manager.io/cluster-issuer: letsencrypt
-  registry: 
-    enabled: true
-    domain: "registry.terrakube.docker.internal" # Replace with the real value
-    path: "/(.*)" # Replace with the real value
-    pathType: "Prefix" # Replace with the real value
-    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/use-regex: "true"
-      cert-manager.io/cluster-issuer: letsencrypt
-```
-
-***Example using Nginx Ingress and AWS S3:***
-```yaml
-## Global Name
-name: "terrakube"
-
-## Azure Active Directory Security
-security:
-  type: "AZURE" # This is the only value supported righ now
-  azure:
-    appIdURI: "XXX" #Replace with values from Step 1
-    appClientId: "XXX"
-    appTenantId: "XXX"
-    appSecret: "XXX"
-
-## Terraform Storage
-storage:
-  aws:
-    accessKey: "XXX"
-    secretKey: "XXX"
-    bucketName: "XXX"
-    region: "XXX"
-
-## API properties
-api:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources: #Optional
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-  properties:
-    databaseType: "SQL_AZURE" # Replace with "H2" (ONLY FOR TESTING), "SQL_AZURE", "POSTGRESQL" or "MYSQL"
-    databaseHostname: "mysuperdatabse.database.windows.net" # Replace with the real value
-    databaseName: "databasename" # Replace with the real value
-    databaseUser: "databaseuser" # Replace with the real value
-    databasePassword: "XXX" # Replace with the real value
-
-## Executor properties
-executor:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources: #Optional
-    limits:
-      cpu: 1000m
-      memory: 1024Mi
-    requests:
-      cpu: 500m
-      memory: 256Mi
-  properties:
-    toolsRepository: "https://github.com/AzBuilder/terrakube-extensions" # Default extension repository
-    toolsBranch: "main" #Default branch for extensions
-    terraformStateType: "AwsTerraformStateImpl" 
-    terraformOutputType: "AwsTerraformOutputImpl" 
-
-## Registry properties
-registry:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources: #Optional
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-
-## UI Properties
-ui:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-
-## Ingress properties
-ingress:
-  useTls: true
-  ui:
-    enabled: true
-    domain: "ui.terrakube.docker.internal" # Replace with the real value
-    path: "/(.*)" # Replace with the real value
-    pathType: "Prefix" # Replace with the real value
-    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/use-regex: "true"
-      cert-manager.io/cluster-issuer: letsencrypt
-  api:
-    enabled: true
-    domain: "api.terrakube.docker.internal" # Replace with the real value
-    path: "/(.*)" # Replace with the real value
-    pathType: "Prefix" # Replace with the real value
-    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/use-regex: "true"
-      nginx.ingress.kubernetes.io/rewrite-target: /$2 
-      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
-      cert-manager.io/cluster-issuer: letsencrypt
-  registry: 
-    enabled: true
-    domain: "registry.terrakube.docker.internal" # Replace with the real value
-    path: "/(.*)" # Replace with the real value
-    pathType: "Prefix" # Replace with the real value
-    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/use-regex: "true"
-      cert-manager.io/cluster-issuer: letsencrypt
-```
-
-***Example using Nginx Ingress and Gcp Storage:***
-```yaml
-## Global Name
-name: "terrakube"
-
-## Azure Active Directory Security
-security:
-  type: "AZURE" # This is the only value supported righ now
-  azure:
-    appIdURI: "XXX" #Replace with values from Step 1
-    appClientId: "XXX"
-    appTenantId: "XXX"
-    appSecret: "XXX"
-
-## Terraform Storage
-storage:
-  gcp:
-    projectId: "XXXX"
-    bucketName: "XXX"
-    credentials: "XXX" #<==JSON CREDENTIAL IN BASE64 ENCODING
-
-## API properties
-api:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources: #Optional
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-  properties:
-    databaseType: "SQL_AZURE" # Replace with "H2" (ONLY FOR TESTING), "SQL_AZURE", "POSTGRESQL" or "MYSQL"
-    databaseHostname: "mysuperdatabse.database.windows.net" # Replace with the real value
-    databaseName: "databasename" # Replace with the real value
-    databaseUser: "databaseuser" # Replace with the real value
-    databasePassword: "XXX" # Replace with the real value
-
-## Executor properties
-executor:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources: #Optional
-    limits:
-      cpu: 1000m
-      memory: 1024Mi
-    requests:
-      cpu: 500m
-      memory: 256Mi
-  properties:
-    toolsRepository: "https://github.com/AzBuilder/terrakube-extensions" # Default extension repository
-    toolsBranch: "main" #Default branch for extensions
-    terraformStateType: "GcpTerraformStateImpl" 
-    terraformOutputType: "GcpTerraformOutputImpl" 
-
-## Registry properties
-registry:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources: #Optional
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-
-## UI Properties
-ui:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-
-## Ingress properties
-ingress:
-  useTls: true
-  ui:
-    enabled: true
-    domain: "ui.terrakube.docker.internal" # Replace with the real value
-    path: "/(.*)" # Replace with the real value
-    pathType: "Prefix" # Replace with the real value
-    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/use-regex: "true"
-      cert-manager.io/cluster-issuer: letsencrypt
-  api:
-    enabled: true
-    domain: "api.terrakube.docker.internal" # Replace with the real value
-    path: "/(.*)" # Replace with the real value
-    pathType: "Prefix" # Replace with the real value
-    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/use-regex: "true"
-      nginx.ingress.kubernetes.io/rewrite-target: /$2 
-      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
-      cert-manager.io/cluster-issuer: letsencrypt
-  registry: 
-    enabled: true
-    domain: "registry.terrakube.docker.internal" # Replace with the real value
-    path: "/(.*)" # Replace with the real value
-    pathType: "Prefix" # Replace with the real value
-    annotations: # This annotations can change based on requirements. The followin is an example using nginx ingress and lets encrypt
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/use-regex: "true"
-      cert-manager.io/cluster-issuer: letsencrypt
-```
-
-***Example using Amazon EKS with Amazon Load Balancer, Amazon S3 Bucket and Postgres database***
-
-We use these domains as an example:
-
-- UI Domain: ***terrakube-ui-dev.aws.dev***
-- Registry Domain: ***terrakube-reg-dev.aws.dev***
-- API Domain: ***terrakube-api-dev.aws.dev***
-
-You will need to change these with some real public domain
-
-```yaml
-## Global Name
-name: "terrakube"
-
-## Azure Active Directory Security
-security:
-  type: "AZURE" # This is the only value supported righ now
-  azure:
-    appIdURI: "XXX" #Replace with values from Step 1
-    appClientId: "XXX"
-    appTenantId: "XXX"
-    appSecret: "XXX"
-
-## Terraform Storage
-storage:
-  aws:
-    accessKey: "XXX"
-    secretKey: "XXX"
-    bucketName: "XXX"
-    region: "XXX"
-
-## API properties
-api:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "NodePort"
-  resources: #Optional
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-  properties:
-    databaseType: "POSTGRESQL" # Supported values "SQL_AZURE", "POSTGRESQL" or "MYSQL"
-    databaseHostname: "terrakuaws.postgres.database.aws.com" # Replace with the real value
-    databaseName: "databasename" # Replace with the real value
-    databaseUser: "databaseuser" # Replace with the real value
-    databasePassword: "XXX" # Replace with the real value
-
-## Executor properties
-executor:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "NodePort"
-  resources: #Optional
-    limits:
-      cpu: 1000m
-      memory: 1024Mi
-    requests:
-      cpu: 500m
-      memory: 256Mi
-  properties:
-    toolsRepository: "https://github.com/AzBuilder/terrakube-extensions" # Default extension repository
-    toolsBranch: "main" #Default branch for extensions
-    terraformStateType: "AwsTerraformStateImpl" 
-    terraformOutputType: "AwsTerraformOutputImpl" 
-
-## Registry properties
-registry:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "NodePort"
-  resources: #Optional
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-
-## UI Properties
-ui:
-  enabled: true
-  version: "2.5.0"
-  replicaCount: "1"
-  serviceType: "NodePort"
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 200m
-      memory: 256Mi
-
-## Ingress properties
-ingress:
-  useTls: true
-  ui:
-    enabled: true
-    domain: "terrakube-ui-dev.aws.dev" # Replace with the real domain
-    path: "/" 
-    pathType: "Prefix" 
-    annotations: # This annotations can change based on requirements. The followin is an example using EKS
-      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
-      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:XXXXXX:certificate/XXXXXXXX # Change this for a real certiricate
-      alb.ingress.kubernetes.io/group.name: alb-deployment
-      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
-      alb.ingress.kubernetes.io/scheme: internet-facing
-      alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-1-2017-01
-      alb.ingress.kubernetes.io/ssl-redirect: "443"
-      external-dns.alpha.kubernetes.io/hostname: terrakube-ui-dev.aws.dev # Replace with the real domain
-      alb.ingress.kubernetes.io/target-type: ip
-      kubernetes.io/ingress.class: alb
-  api:
-    enabled: true
-    domain: "terrakube-api-dev.aws.dev" # Replace with the real domain
-    path: "/" 
-    pathType: "Prefix" 
-    annotations: # The followin is an example using EKS
-      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
-      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:XXXXXX:certificate/XXXXXXXX # Replace with real certificate
-      alb.ingress.kubernetes.io/group.name: alb-deployment
-      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
-      alb.ingress.kubernetes.io/scheme: internet-facing
-      alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-1-2017-01
-      alb.ingress.kubernetes.io/ssl-redirect: "443"
-      external-dns.alpha.kubernetes.io/hostname: terrakube-api-dev.aws.dev # Replace with the real domain
-      alb.ingress.kubernetes.io/target-type: ip
-      kubernetes.io/ingress.class: alb
-  registry: 
-    enabled: true
-    domain: "terrakube-reg-dev.aws.dev" # Replace with the real domain
-    path: "/" 
-    pathType: "Prefix" 
-    annotations: # The followin is an example using EKS
-      alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
-      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:XXXXXX:certificate/XXXXXXXX # Replace with real certificate
-      alb.ingress.kubernetes.io/group.name: alb-deployment
-      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
-      alb.ingress.kubernetes.io/scheme: internet-facing
-      alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-1-2017-01
-      alb.ingress.kubernetes.io/ssl-redirect: "443"
-      external-dns.alpha.kubernetes.io/hostname: terrakube-reg-dev.aws.dev # Replace with the real domain
-      alb.ingress.kubernetes.io/target-type: ip
-      kubernetes.io/ingress.class: alb
-```
-
-### 4.1 Node Affinity, NodeSelector, Taints and Tolerations.
+### 4.2 Node Affinity, NodeSelector, Taints and Tolerations.
 
 The API, Registry, Executor and UI support using affinity, taints and tolerations. Use the following examples as reference:
 
@@ -616,7 +265,7 @@ The API, Registry, Executor and UI support using affinity, taints and toleration
 ```yaml
 api:
   enabled: true
-  version: "2.5.0"
+  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources:

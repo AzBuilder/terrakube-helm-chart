@@ -12,7 +12,7 @@ spec:
   tls:
   - hosts:
     - {{ .Values.ingress.ui.domain | quote }}
-    secretName: tls-secret-terrakube
+    secretName: tls-secret-ui-terrakube
   {{ end }}
   rules:
   - host:  {{ .Values.ingress.ui.domain | quote }}

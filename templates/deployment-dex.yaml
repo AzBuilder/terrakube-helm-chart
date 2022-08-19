@@ -1,0 +1,76 @@
+{{- if .Values.dex.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terrakube-dex
+  labels:
+    app: terrakube-dex
+spec:
+  replicas: {{ .Values.dex.replicaCount }}
+  selector:
+    matchLabels:
+      app: terrakube-dex
+  template:
+    metadata:
+      labels:
+        app: terrakube-dex
+    spec:
+      containers:
+        - name: terrakube-dex
+          image: ghcr.io/dexidp/dex
+          {{- if .Values.dex.resources }}
+          resources: {{- toYaml .Values.dex.resources | nindent 12 }}
+          {{- end }}
+          args:
+            - dex
+            - serve
+            - --web-http-addr
+            - 0.0.0.0:5556
+            - /etc/dex/config.yaml
+          ports:
+            - name: http
+              containerPort: 5556
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/dex
+              readOnly: true
+          {{- if and (.Values.security).gcpCredentials }}
+            - name: gcp-credentials
+              mountPath: /etc/gcp/secret
+              readOnly: true
+          {{- end }}
+          {{- with .Values.dex.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        - name: config
+          secret:
+            secretName: terrakube-dex-secrets
+            items:
+            - key: "config.yaml"
+              path: "config.yaml"
+      {{- if and (.Values.security).gcpCredentials }}
+        - name: gcp-credentials
+          secret:
+            secretName: terrakube-dex-secrets
+            items:
+            - key: "gcp-credentials"
+              path: "gcp-credentials"
+      {{- end }}
+      {{- with .Values.dex.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dex.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dex.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dex.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+{{- end }}

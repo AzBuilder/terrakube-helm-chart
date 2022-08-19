@@ -3,7 +3,8 @@ name: ""
 
 ## Azure Active Directory Security
 security:
-  type: "AZURE"
+  dexIssuerUri: ""
+  adminGroup: "TERRAKUBE_ADMIN"
   azure:
     appIdURI: ""
     appClientId: ""

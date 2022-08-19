@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: terrakube-other-files
+data:
+{{ (.Files.Glob "otherFiles/*").AsConfig | indent 2 }}
+  
