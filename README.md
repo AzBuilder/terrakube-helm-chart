@@ -41,7 +41,7 @@ The following in an example of Dex configuration using Azure Active Directory, G
       oauth2:
         responseTypes: ["code", "token", "id_token"] 
       web:
-        allowedOrigins: ['**']
+        allowedOrigins: ['*']
   
       staticClients:
       - id: microsoft
