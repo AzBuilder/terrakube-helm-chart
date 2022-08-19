@@ -128,8 +128,6 @@ executor:
   properties:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
     toolsBranch: "main"
-    terraformStateType: "GcpTerraformStateImpl"
-    terraformOutputType: "GcpTerraformOutputImpl"
 
 ## Registry properties
 registry:

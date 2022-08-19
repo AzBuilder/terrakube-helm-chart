@@ -101,8 +101,6 @@ executor:
   properties:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
     toolsBranch: "main"
-    terraformStateType: "AwsTerraformStateImpl"
-    terraformOutputType: "AwsTerraformOutputImpl"
 
 ## Registry properties
 registry:

@@ -270,14 +270,6 @@
               "toolsBranch": {
                 "description": "Terraukbe Tools branch. Example: main",
                 "type": "string"
-              },
-              "terraformStateType": {
-                "description": "Terraform State implementation",
-                "enum": ["AzureTerraformStateImpl", "AwsTerraformStateImpl", "GcpTerraformStateImpl"]
-              },
-              "terraformOutputType": {
-                "description": "Terraform Output implementation",
-                "enum": ["AzureTerraformOutputImpl", "AwsTerraformOutputImpl", "GcpTerraformOutputImpl"]
               }
             }
           }

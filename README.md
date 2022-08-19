@@ -217,10 +217,8 @@ Once you have completed the above steps you can complete the file values.yaml to
 | executor.version                          | Yes      | Terrakube Executor version                                             |
 | executor.replicaCount                     | Yes      |                                                                        |
 | executor.serviceType                      | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
-| executor.properties.toolsRepository       | Yes      | https://github.com/AzBuilder/terrakube-extensions                      |
-| executor.properties.toolsBranch           | Yes      | main                                                                   |
-| executor.properties.terraformStateType    | Yes      | AzureTerraformStateImpl/AwsTerraformStateImpl/GcpTerraformStateImpl    |
-| executor.properties.terraformOutputType   | Yes      | AzureTerraformOutputImpl/AwsTerraformOutputImpl/GcpTerraformOutputImpl |
+| executor.properties.toolsRepository       | Yes      | Example: https://github.com/AzBuilder/terrakube-extensions             |
+| executor.properties.toolsBranch           | Yes      | Example: main                                                          |
 | registry.enabled                          | Yes      |                                                                        |
 | registry.version                          | Yes      |                                                                        |
 | registry.replicaCount                     | Yes      |                                                                        |
