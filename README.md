@@ -178,6 +178,8 @@ Once you have completed the above steps you can complete the file values.yaml to
   - [Ngnix Ingress + SQL Azure + Azure Storage Account](examples/AzureAuthentication-Example2.md)
   - [Ngnix Ingress + PostgreSQL + Azure Storage Account](examples/AzureAuthentication-Example3.md)
   - [Amazon Load Balancer + PostgreSQL + S3 Bucket](examples/AzureAuthentication-Example4.md)
+- Github Authentication 
+  - [Ngnix Ingress + H2 Database + Azure Storage Account](examples/GithubAuthentication-Example1.md)
 - Amazon AWS Cognito
   - WIP.
 
