@@ -137,7 +137,7 @@ Example:
 
 ```
 security:
-  admins: "TERRAKUBE_ADMIN"
+  adminGroup: "TERRAKUBE_ADMIN"
 ```
 
 > For Google Cloud Identity groups name will be like "groupName@yourdomain.com", For Github Authentication will be like "organizationName:teamName"
