@@ -181,7 +181,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 - Github Authentication 
   - [Ngnix Ingress + H2 Database + Azure Storage Account](examples/GithubAuthentication-Example1.md)
 - Amazon AWS Cognito
-  - [Ngnix Ingress + H2 Database + Azure Storage Account](examples/CognitoAuthentication-Example1.md)
+  - [Ngnix Ingress + H2 Database + AWS S3 Bucket](examples/CognitoAuthentication-Example1.md)
 
 ### 4.1 Helm Value Properties
 
