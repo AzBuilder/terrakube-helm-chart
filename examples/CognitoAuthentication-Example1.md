@@ -32,6 +32,7 @@ storage:
     secretKey: "<<CHANGE_THIS>>"
     bucketName: "<<CHANGE_THIS>>"
     region: "<<CHANGE_THIS>>"
+    #endpoint: "<<CHANGE_THIS>>" #MinIO support using S3 client
 
 ## Dex
 dex:
