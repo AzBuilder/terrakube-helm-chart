@@ -9,7 +9,7 @@ To install Terrakube in a Kubernetes cluster you will need the following:
   - [Google Cloud Identity](https://dexidp.io/docs/connectors/google/)
   - [Github](https://dexidp.io/docs/connectors/github/)
   - [Gitlab](https://dexidp.io/docs/connectors/gitlab/)
-- Azure Storage Account, Amazon S3 bucket or GCP Bucket
+- Azure Storage Account, Amazon S3 bucket, GCP Bucket and MinIO(Using AWS Endpoint)
 - Supported database:
   - SQL Azure
   - PostgreSQL
@@ -131,7 +131,7 @@ To learn more about how to build the Dex configuration file please review the fo
 In order to use Terrakube you will have to define the one administrator group, for example:
 - TERRAKUBE_ADMIN
 
-Members of these groups are the only users inside terrakube that can create ***organizations*** and ***handle team access***, to define more than one admin group use the ***security.admins*** 
+Members of these groups are the only users inside terrakube that can create ***organizations*** and ***handle team access***
 
 Example:
 
@@ -164,6 +164,12 @@ To create the Aws S3 you can use the following [terraform module]() (Work in Pro
 Terrakube require an Storage bucket to save the state/output for the jobs and to save the terraform modules when using terraform CLI.
 
 To create the Gcp Storage you can use the following [terraform module]() (Work in Progress).
+
+#### 3.3 MinIO 
+
+Terrakube require an Storage bucket to save the state/output for the jobs and to save the terraform modules when using terraform CLI.
+
+To create the MinIO Storage you can use the following [terraform module]() (Work in Progress).
 
 ### 4. Build Yaml file
 
@@ -202,6 +208,11 @@ Once you have completed the above steps you can complete the file values.yaml to
 | storage.azure.storageAccountName          | No       | Azure storage account name                                             |
 | storage.azure.storageAccountResourceGroup | No       | Azure storage resource group                                           |
 | storage.azure.storageAccountAccessKey     | No       | Azure storage access key                                               |
+| storage.aws.accessKey                     | No       | Aws access key                                                         |
+| storage.aws.secretKey                     | No       | Aws secret key                                                         |
+| storage.aws.bucketName                    | No       | Aws bucket name                                                        |
+| storage.aws.region                        | No       | Aws region name (Example: us-east-1)                                   |
+| storage.aws.endpoint                      | No       | Setup custom endpoint (MinIO)                                          |
 | dex.enabled                               | No       | Enable Dex component                                                   |
 | dex.version                               | Yes      | Dex [version](https://github.com/dexidp/dex/releases)                  |
 | dex.replicaCount                          | Yes      |                                                                        |
