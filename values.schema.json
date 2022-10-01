@@ -36,6 +36,12 @@
           "adminGroup": {
             "description": "Terrakube Administrators Group",
             "type": "string"
+          },
+          "caCerts": {
+            "type": "object",
+            "items": {
+              "type": "object"
+            }
           }
         }
       },
@@ -206,6 +212,18 @@
               "type": "object"
             }
           },
+          "volumes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "volumeMounts": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
           "properties": {
             "type": "object",
             "required": ["databaseType", "databaseHostname", "databaseName", "databaseUser", "databasePassword"],
@@ -275,6 +293,18 @@
               "type": "object"
             }
           },
+          "volumes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "volumeMounts": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
           "properties": {
             "type": "object",
             "required": ["toolsRepository", "toolsBranch"],
@@ -326,6 +356,18 @@
               "type": "object"
             },
             "env": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "volumes": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "volumeMounts": {
               "type": "array",
               "items": {
                 "type": "object"
