@@ -200,6 +200,12 @@
               "type": "object"
             }
           },
+          "env": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
           "properties": {
             "type": "object",
             "required": ["databaseType", "databaseHostname", "databaseName", "databaseUser", "databasePassword"],
@@ -263,6 +269,12 @@
               "type": "object"
             }
           },
+          "env": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
           "properties": {
             "type": "object",
             "required": ["toolsRepository", "toolsBranch"],
@@ -312,6 +324,12 @@
             "type": "array",
             "items": {
               "type": "object"
+            },
+            "env": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
             }
           }
         }
