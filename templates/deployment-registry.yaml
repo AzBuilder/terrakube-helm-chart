@@ -23,6 +23,10 @@ spec:
         {{- end }}
         ports:
         - containerPort: 8075
+        {{- with .Values.registry.env }}
+        env:
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
         envFrom:
         - secretRef:
             name: terrakube-registry-secrets

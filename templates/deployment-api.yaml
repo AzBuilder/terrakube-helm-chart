@@ -23,6 +23,10 @@ spec:
         {{- end }}
         ports:
         - containerPort: 8080
+        {{- with .Values.api.env }}
+        env:
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
         envFrom:
         - secretRef:
             name: terrakube-api-secrets
