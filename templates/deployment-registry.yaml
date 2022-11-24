@@ -27,6 +27,10 @@ spec:
         env:
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        volumeMounts:
+          {{- with .Values.registry.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
         envFrom:
         - secretRef:
             name: terrakube-registry-secrets
@@ -59,5 +63,9 @@ spec:
       {{- with .Values.registry.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.registry.volumes }}
+      volumes:
+      {{- toYaml . | nindent 6 }}
       {{- end }}
 {{ end }}

@@ -202,6 +202,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | security.dexClientScope                   | Yes      | Use "email openid profile offline_access groups"                       |
 | security.dexIssuerUri                     | Yes      | Should be "https://apiDomain/dex"                                      |
 | security.gcpCredentials                   | No       | JSON Credentials for Google Identity Authentication                    |
+| security.caCerts                          | No       | Custom CA certificates to be added at runtime                          |
 | storage.gcp.projectId                     | No       | GCP Project Id for the storage                                         |
 | storage.gcp.bucketName                    | No       | GCP Bucket name for the storage                                        |
 | storage.gcp.credentials                   | No       | GCP JSON Credentials for the storage                                   |
@@ -225,6 +226,9 @@ Once you have completed the above steps you can complete the file values.yaml to
 | api.version                               | Yes      | Terrakube API version                                                  |
 | api.replicaCount                          | Yes      |                                                                        |
 | api.serviceType                           | Yes      |                                                                        |
+| api.env                                   | No       |                                                                        |
+| api.volumes                               | No       |                                                                        |
+| api.volumeMounts                          | No       |                                                                        |
 | api.properties.databaseType               | Yes      | H2/SQL_AZURE/POSTGRESQL/MYSQL                                          |
 | api.properties.databaseHostname           | No       |                                                                        |
 | api.properties.databaseName               | No       |                                                                        |
@@ -234,13 +238,22 @@ Once you have completed the above steps you can complete the file values.yaml to
 | executor.version                          | Yes      | Terrakube Executor version                                             |
 | executor.replicaCount                     | Yes      |                                                                        |
 | executor.serviceType                      | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
+| executor.env                              | No       |                                                                        |
+| executor.volumes                          | No       |                                                                        |
+| executor.volumeMounts                     | No       |                                                                        |
 | executor.properties.toolsRepository       | Yes      | Example: https://github.com/AzBuilder/terrakube-extensions             |
 | executor.properties.toolsBranch           | Yes      | Example: main                                                          |
 | registry.enabled                          | Yes      |                                                                        |
 | registry.version                          | Yes      |                                                                        |
 | registry.replicaCount                     | Yes      |                                                                        |
 | registry.serviceType                      | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
+<<<<<<< HEAD
 | registry.properties.DexClientId           | Yes      | Dex Client Id for authentication                                       |
+=======
+| registry.env                              | No       |                                                                        |
+| registry.volumes                          | No       |                                                                        |
+| registry.volumeMounts                     | No       |                                                                        |
+>>>>>>> main
 | ui.enabled                                | Yes      | true/false                                                             |
 | ui.version                                | Yes      |                                                                        |
 | ui.replicaCount                           | Yes      |                                                                        |
@@ -309,7 +322,123 @@ api:
     databaseType: "H2"
 ```
 
-### 5. Deploy Terrakube using helm chart
+### 5. Custom CA certificates at runtime
+
+To add custom CA certificate to Terrakube components use the folowing configuration example:
+
+Example property ***security.caCerts***
+
+```
+security:
+  .....
+  caCerts:
+    terrakubeDemo1.pem: |
+      -----BEGIN CERTIFICATE-----
+      
+      CERTIFICATE DATA
+
+      -----END CERTIFICATE-----
+    terrakubeDemo2.pem: |
+      -----BEGIN CERTIFICATE-----
+      
+      CERTIFICATE DATA
+
+      -----END CERTIFICATE-----
+  ....
+```
+
+Terrakube components configuration with custom CA certificates:
+
+```yaml
+## API properties
+api:
+  enabled: true
+  version: "2.7.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  env:
+  - name: SERVICE_BINDING_ROOT
+    value: /mnt/platform/bindings
+  volumes:
+    - name: ca-certs
+      secret:
+        secretName: terrakube-ca-secrets
+        items:
+        - key: "terrakubeDemo1.pem"
+          path: "terrakubeDemo1.pem"
+        - key: "terrakubeDemo2.pem"
+          path: "terrakubeDemo2.pem"
+        - key: "type"
+          path: "type"
+  volumeMounts:
+  - name: ca-certs
+    mountPath: /mnt/platform/bindings/ca-certificates
+    readOnly: true
+  properties:
+    databaseType: "H2"
+    
+
+## Executor properties
+executor:
+  enabled: true
+  version: "2.7.0"  
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  env:
+  - name: SERVICE_BINDING_ROOT
+    value: /mnt/platform/bindings
+  volumes:
+    - name: ca-certs
+      secret:
+        secretName: terrakube-ca-secrets
+        items:
+        - key: "terrakubeDemo1.pem"
+          path: "terrakubeDemo1.pem"
+        - key: "terrakubeDemo2.pem"
+          path: "terrakubeDemo2.pem"
+        - key: "type"
+          path: "type"
+  volumeMounts:
+  - name: ca-certs
+    mountPath: /mnt/platform/bindings/ca-certificates
+    readOnly: true
+  properties:
+    toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
+    toolsBranch: "main"
+
+## Registry properties
+registry:
+  enabled: true
+  version: "2.7.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  env:
+  - name: SERVICE_BINDING_ROOT
+    value: /mnt/platform/bindings
+  volumes:
+    - name: ca-certs
+      secret:
+        secretName: terrakube-ca-secrets
+        items:
+        - key: "terrakubeDemo1.pem"
+          path: "terrakubeDemo1.pem"
+        - key: "terrakubeDemo2.pem"
+          path: "terrakubeDemo2.pem"
+        - key: "type"
+          path: "type"
+  volumeMounts:
+  - name: ca-certs
+    mountPath: /mnt/platform/bindings/ca-certificates
+    readOnly: true
+```
+
+If the configuration is correct the pods log will show something like this:
+
+```
+Added 2 additional CA certificate(s) to system truststore
+```
+
+### 6. Deploy Terrakube using helm chart
 
 Now you have all the information to deploy Terrakube, you can use the following example:
 
