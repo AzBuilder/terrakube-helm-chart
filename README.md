@@ -247,13 +247,10 @@ Once you have completed the above steps you can complete the file values.yaml to
 | registry.version                          | Yes      |                                                                        |
 | registry.replicaCount                     | Yes      |                                                                        |
 | registry.serviceType                      | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
-<<<<<<< HEAD
 | registry.properties.DexClientId           | Yes      | Dex Client Id for authentication                                       |
-=======
 | registry.env                              | No       |                                                                        |
 | registry.volumes                          | No       |                                                                        |
 | registry.volumeMounts                     | No       |                                                                        |
->>>>>>> main
 | ui.enabled                                | Yes      | true/false                                                             |
 | ui.version                                | Yes      |                                                                        |
 | ui.replicaCount                           | Yes      |                                                                        |
