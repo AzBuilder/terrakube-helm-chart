@@ -331,6 +331,16 @@
                 "type": "object"
               }
             }
+          },
+          "properties": {
+            "type": "object",
+            "required": ["DexClientId"],
+            "properties": {
+              "DexClientId": {
+                "description": "Dex client id for the terraform login",
+                "type": "string"
+              }
+            }
           }
         }
       },
