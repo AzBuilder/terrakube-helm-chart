@@ -80,7 +80,7 @@ dex:
 ## API properties
 api:
   enabled: true
-  version: "2.6.0"
+  version: "2.10.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   properties:
@@ -89,7 +89,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "2.6.0"  
+  version: "2.10.0"  
   replicaCount: "1"
   serviceType: "ClusterIP"
   properties:
@@ -99,14 +99,14 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.6.0"
+  version: "2.10.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
 
 ## UI Properties
 ui:
   enabled: true
-  version: "2.6.0"
+  version: "2.10.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
 
