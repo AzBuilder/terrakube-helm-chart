@@ -8,6 +8,8 @@ To use this examples you will need the following:
 - Google Storage Bucket
 - MySQL
 
+> Before running the helm chart it is require to have a working ingress setup in your cluster (For example Ngnix Ingress but any other ingress should work)
+
 ## YAML Example
 
 Replace ***<<CHANGE_THIS>>*** with the real values
@@ -109,7 +111,7 @@ dex:
 ## API properties
 api:
   enabled: true
-  version: "2.6.0"
+  version: "2.10.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   properties:
@@ -122,7 +124,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "2.6.0"  
+  version: "2.10.0"  
   replicaCount: "1"
   serviceType: "ClusterIP"
   properties:
@@ -132,14 +134,14 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.6.0"
+  version: "2.10.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
 
 ## UI Properties
 ui:
   enabled: true
-  version: "2.6.0"
+  version: "2.10.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
 
