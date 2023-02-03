@@ -10,6 +10,8 @@ To use this examples you will need the following:
   - tfstate (private)
   - tfoutput (private)
 
+> Before running the helm chart it is require to have a working ingress setup in your cluster (For example Ngnix Ingress but any other ingress should work)
+
 ## YAML Example
 
 Replace ***<<CHANGE_THIS>>*** with the real values

@@ -18,6 +18,10 @@ To install Terrakube in a Kubernetes cluster you will need the following:
 
 ## Instalation
 
+## Requirements.
+
+Please make sure to have a kubernetes setup with some ingress setup completed for example Nginx Ingress, but any other kubernetes ingress should work.
+
 ### 1. Authentication
 
 To handle authentication we use [DEX](https://dexidp.io/) to support different providers using [connectors]((https://dexidp.io/docs/connectors/)), you can use any connectors as long it supports the ***groups scope***. 
@@ -126,7 +130,7 @@ To learn more about how to build the Dex configuration file please review the fo
 - [Github](https://dexidp.io/docs/connectors/github/)
 - [Gitlab](https://dexidp.io/docs/connectors/gitlab/)
 
-### 2. Terrakube Admin Group
+### 2. Terrakube Admin Group and Internal Security
 
 In order to use Terrakube you will have to define the one administrator group, for example:
 - TERRAKUBE_ADMIN
@@ -138,7 +142,11 @@ Example:
 ```
 security:
   adminGroup: "TERRAKUBE_ADMIN"
+  patSecret: "<<CHANGE_THIS>>"  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X 
+  internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3 
 ```
+
+> The patSecret and internalSecret should be a 32 character base64 compatible string.
 
 > For Google Cloud Identity groups name will be like "groupName@yourdomain.com", For Github Authentication will be like "organizationName:teamName"
 
