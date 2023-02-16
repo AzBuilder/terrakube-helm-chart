@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   terrakube:
   - apiVersion: v2
+    appVersion: 2.11.0
+    created: "2023-02-16T15:04:20.341448431Z"
+    description: A Helm chart for Kubernetes
+    digest: 81fc66bd7e584129fa66b25fcbec4f9c590d3ce8af921d88a8e26d5975de45be
+    name: terrakube
+    type: application
+    urls:
+    - https://github.com/AzBuilder/terrakube-helm-chart/releases/download/terrakube-2.3.0/terrakube-2.3.0.tgz
+    version: 2.3.0
+  - apiVersion: v2
     appVersion: 1.16.0
     created: "2023-02-16T14:47:29.74649192Z"
     description: A Helm chart for Kubernetes
