@@ -18,6 +18,11 @@ spec:
       containers:
       - name: terrakube-ui
         image: azbuilder/terrakube-ui:{{ .Values.ui.version }}
+        volumeMounts:
+        - name: ui-config
+          mountPath: "/app/env-config.js"
+          subPath: "env-config.js"
+          readOnly: true
         {{- if .Values.ui.resources }}
         resources: {{- toYaml .Values.ui.resources | nindent 12 }}
         {{- end }}
@@ -38,4 +43,11 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+      - name: ui-config
+        secret:
+          secretName: terrakube-ui-secrets
+          items:
+          - key: env-config.js
+            path: env-config.js
 {{ end }}
