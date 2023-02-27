@@ -3,16 +3,16 @@ name: ""
 
 ## Azure Active Directory Security
 security:
-  dexIssuerUri: ""
   adminGroup: "TERRAKUBE_ADMIN"
-  azure:
-    appIdURI: ""
-    appClientId: ""
-    appTenantId: ""
-    appSecret: ""
+  patSecret: ""
+  internalSecret: ""
+  dexClientId: ""
+  dexClientScope: ""
+  dexIssuerUri: ""
 
 ## Terraform Storage
 storage:
+  defaultStorage: true
   azure:
     storageAccountName: ""
     storageAccountResourceGroup: ""
@@ -22,6 +22,34 @@ storage:
     secretKey: ""
     bucketName: ""
     region: ""
+  gcp:
+    projectId: ""
+    bucketName: ""
+    credentials: ""
+  minio:
+    accessKey: ""
+    secretKey: ""
+    bucketName: ""
+    region: ""
+    endpoint: ""
+  default:
+    region: "us-east-1"
+    endpoint: "http://minio:9000"
+
+
+# Default Storage Minio Configuration
+minio:
+  auth:
+    rootUser: "admin"
+    rootPassword: ""
+  defaultBuckets: "terrakube"
+
+# Default Database Postgresql
+postgresql:
+  auth:
+    user: "terrakube"
+    password: "terrakubepassword"
+  database: "terrakube"
 
 ## API properties
 api:
@@ -30,8 +58,9 @@ api:
   replicaCount: ""
   serviceType: ""
   resources: {}
+  defaultDatabase: true
   properties:
-    databaseType: ""
+    databaseType: "H2"
     databaseHostname: ""
     databaseName: ""
     databaseUser: ""

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: terrakube-registry
-        image: azbuilder/open-registry:{{ .Values.registry.version }}
+        image: azbuilder/open-registry:{{ default .Chart.AppVersion .Values.registry.version }}
         {{- if .Values.registry.resources }}
         resources: {{- toYaml .Values.registry.resources | nindent 12 }}
         {{- end }}
