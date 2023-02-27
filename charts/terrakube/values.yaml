@@ -3,13 +3,103 @@ name: "terrakube"
 
 ## Azure Active Directory Security
 security:
-  defaultDex: true
+  useOpenLDAP: true
   adminGroup: "TERRAKUBE_ADMIN"
   patSecret: "bAUaAojZP3XhkuE2rWBtR3gRAHPzQKkx"
   internalSecret: "AxxPdgpCi72f8WhMXCTGhtfMRp6AuBfj"
-  dexClientId: ""
-  dexClientScope: ""
-  dexIssuerUri: ""
+  dexClientId: "example-app"
+  dexClientScope: "email openid profile offline_access groups"
+  dexIssuerUri: "https://terrakube-api.minikube.net/dex"
+
+## Dex
+dex:
+  enabled: true
+  version: "v2.32.0"
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  resources:
+    limits:
+      cpu: 512m
+      memory: 256Mi
+    requests:
+      cpu: 256m
+      memory: 128Mi
+  properties:
+    config:
+      issuer: https://terrakube-api.minikube.net/dex
+
+      storage:
+        type: memory
+      web:
+        http: 0.0.0.0:5556
+        allowedOrigins: ['*']
+        skipApprovalScreen: true
+      oauth2:
+        responseTypes: ["code", "token", "id_token"] 
+
+      connectors:
+      - type: ldap
+        name: OpenLDAP
+        id: ldap
+        config:
+          # The following configurations seem to work with OpenLDAP:
+          #
+          # 1) Plain LDAP, without TLS:
+          host: terrakube-openldap-service:389
+          insecureNoSSL: true
+          #
+          # 2) LDAPS without certificate validation:
+          #host: localhost:636
+          #insecureNoSSL: false
+          #insecureSkipVerify: true
+          #
+          # 3) LDAPS with certificate validation:
+          #host: YOUR-HOSTNAME:636
+          #insecureNoSSL: false
+          #insecureSkipVerify: false
+          #rootCAData: 'CERT'
+          # ...where CERT="$( base64 -w 0 your-cert.crt )"
+
+          # This would normally be a read-only user.
+          bindDN: cn=admin,dc=example,dc=org
+          bindPW: admin
+
+          usernamePrompt: Email Address
+
+          userSearch:
+            baseDN: ou=People,dc=example,dc=org
+            filter: "(objectClass=person)"
+            username: mail
+            # "DN" (case sensitive) is a special attribute name. It indicates that
+            # this value should be taken from the entity's DN not an attribute on
+            # the entity.
+            idAttr: DN
+            emailAttr: mail
+            nameAttr: cn
+
+          roupSearch:
+            baseDN: ou=Groups,dc=example,dc=org
+            filter: "(objectClass=groupOfNames)"
+
+            userMatchers:
+              # A user is a member of a group when their DN matches
+              # the value of a "member" attribute on the group entity.
+            - userAttr: DN
+              groupAttr: member
+
+            # The group name should be the "cn" value.
+            nameAttr: cn
+
+      staticClients:
+      - id: example-app
+        redirectURIs:
+        - 'terrakube-ui.minikube.net'
+        - '/device/callback'
+        - 'http://localhost:10000/login'
+        - 'http://localhost:10001/login'
+        name: 'example-app'
+        public: true
+
 
 ## Terraform Storage
 storage:
@@ -32,15 +122,9 @@ storage:
     projectId: ""
     bucketName: ""
     credentials: ""
-  minio:
-    accessKey: ""
-    secretKey: ""
-    bucketName: ""
-    region: ""
-    endpoint: ""
   default:
     region: "us-east-1"
-    endpoint: "http://minio:9000"
+    endpoint: "http://terrakube-minio:9000"
 
 
 # Default Storage Minio Configuration
@@ -83,8 +167,6 @@ executor:
   properties:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
     toolsBranch: "main"
-    terraformStateType: ""
-    terraformOutputType: ""
 
 ## Registry properties
 registry:
@@ -107,19 +189,35 @@ ingress:
   useTls: true
   ui:
     enabled: true
-    domain: ""
-    path: ""
-    pathType: ""
-    annotations: {}
+    domain: "terrakube-ui.minikube.net"
+    path: "/(.*)"
+    pathType: "Prefix" 
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
   api:
     enabled: true
-    domain: ""
-    path: ""
-    pathType: ""
-    annotations: {}
+    domain: "terrakube-api..minikube.net"
+    path: "/(.*)"
+    pathType: "Prefix"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
   registry:
     enabled: true
-    domain: ""
-    path: ""
-    pathType: ""
-    annotations: {}
+    domain: "terrakube-reg.minikube.net"
+    path: "/(.*)"
+    pathType: "Prefix"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
+  dex:
+    enabled: true
+    path: "/dex/(.*)"
+    pathType: "Prefix"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"

@@ -1,0 +1,39 @@
+{{- if .Values.security.useOpenLDAP -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: terrakube-openldap
+  labels:
+    app: terrakube-openldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: terrakube-openldap
+  template:
+    metadata:
+      labels:
+        app: terrakube-openldap
+    spec:
+      containers:
+      - name: terrakube-openldap
+        image: osixia/openldap:1.4.0
+        args: ["--copy-service"]
+        env:
+        - name: LDAP_TLS_VERIFY_CLIENT
+          value: "try"
+        ports:
+        - containerPort: 389
+        volumeMounts:
+        - name: openldap-config
+          mountPath: "/container/service/slapd/assets/config/bootstrap/ldif/custom/config-ldap.ldif"
+          subPath: "config-ldap.ldif"
+          readOnly: true
+      volumes:
+        - name: openldap-config
+          secret:
+            secretName: terrakube-openldap-secrets
+            items:
+            - key: "config-ldap.ldif"
+              path: "config-ldap.ldif"
+{{ end }}

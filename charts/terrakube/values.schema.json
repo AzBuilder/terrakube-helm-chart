@@ -7,9 +7,9 @@
       },
       "security": {
         "type": "object",
-        "required": ["patSecret", "internalSecret", "dexIssuerUri", "adminGroup", "defaultDex"],
+        "required": ["patSecret", "internalSecret", "dexIssuerUri", "adminGroup", "useOpenLDAP"],
         "properties": {
-          "defaultDex": {
+          "useOpenLDAP": {
             "description": "patSecret in base64 encoding",
             "type": "boolean"
           },
@@ -239,7 +239,7 @@
       },
       "api": {
         "type": "object",
-        "required": ["enabled", "replicaCount", "properties", "defaultDatabase"],
+        "required": ["enabled", "replicaCount", "properties", "defaultDatabase", "loadSampleData"],
         "properties": {
           "enabled": {
             "description": "Enable API",
@@ -252,6 +252,10 @@
           "replicaCount": {
             "description": "Replica count for API",
             "type": "string"
+          },
+          "loadSampleData": {
+            "description": "Load Sample Terrakube Data",
+            "type": "boolean"
           },
           "serviceType": {
             "description": "Kubernetes service type",
@@ -528,7 +532,7 @@
           },
           "api": {
             "type": "object",
-            "required": ["enabled", "domain", "annotations", "path", "pathType", "loadSampleData"],
+            "required": ["enabled", "domain", "annotations", "path", "pathType"],
             "properties": {
               "enabled": {
                 "description": "Enable ingress API",
@@ -537,10 +541,6 @@
               "domain": {
                 "description": "API domain",
                 "type": "string"
-              },
-              "loadSampleData": {
-                "description": "Load Sample Data",
-                "type": "boolean"
               },
               "path": {
                 "description": "Ingress API path",
