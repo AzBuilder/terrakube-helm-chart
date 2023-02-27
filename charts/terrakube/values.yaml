@@ -3,6 +3,7 @@ name: "terrakube"
 
 ## Azure Active Directory Security
 security:
+  defaultDex: true
   adminGroup: "TERRAKUBE_ADMIN"
   patSecret: "bAUaAojZP3XhkuE2rWBtR3gRAHPzQKkx"
   internalSecret: "AxxPdgpCi72f8WhMXCTGhtfMRp6AuBfj"
@@ -64,6 +65,7 @@ api:
   serviceType: "ClusterIP"
   resources: {}
   defaultDatabase: true
+  loadSampleData: true
   properties:
     databaseType: "POSTGRESQL"
     databaseHostname: ""

@@ -7,8 +7,12 @@
       },
       "security": {
         "type": "object",
-        "required": ["patSecret", "internalSecret", "dexIssuerUri", "adminGroup"],
+        "required": ["patSecret", "internalSecret", "dexIssuerUri", "adminGroup", "defaultDex"],
         "properties": {
+          "defaultDex": {
+            "description": "patSecret in base64 encoding",
+            "type": "boolean"
+          },
           "patSecret": {
             "description": "patSecret in base64 encoding",
             "type": "string"
@@ -524,7 +528,7 @@
           },
           "api": {
             "type": "object",
-            "required": ["enabled", "domain", "annotations", "path", "pathType"],
+            "required": ["enabled", "domain", "annotations", "path", "pathType", "loadSampleData"],
             "properties": {
               "enabled": {
                 "description": "Enable ingress API",
@@ -533,6 +537,10 @@
               "domain": {
                 "description": "API domain",
                 "type": "string"
+              },
+              "loadSampleData": {
+                "description": "Load Sample Data",
+                "type": "boolean"
               },
               "path": {
                 "description": "Ingress API path",

@@ -15,7 +15,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 2.3.1
+version: 3.0.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
@@ -31,5 +31,5 @@ dependencies:
 
 - name: postgresql
   version: "12.2.1"
-  condition: apit.defaultStorage
+  condition: api.defaultStorage
   repository: "https://charts.bitnami.com/bitnami"
