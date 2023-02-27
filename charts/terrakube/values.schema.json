@@ -89,6 +89,24 @@
               "region": {
                 "description": "AWS Region",
                 "type": "string"
+              }
+            }
+          },
+          "minio": {
+            "type": "object",
+            "required": ["accessKey", "secretKey", "bucketName", "endpoint"],
+            "properties": {
+              "accessKey": {
+                "description": "AWS Access Key",
+                "type": "string"
+              },
+              "secretKey": {
+                "description": "AWS Secret Key",
+                "type": "string"
+              },
+              "bucketName": {
+                "description": "AWS Bucket name",
+                "type": "string"
               },
               "endpoint": {
                 "description": "Custom S3 Endpoint",

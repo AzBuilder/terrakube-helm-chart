@@ -22,6 +22,11 @@ storage:
     secretKey: ""
     bucketName: ""
     region: ""
+  minio:
+    accessKey: ""
+    secretKey: ""
+    bucketName: ""
+    endpoint: ""
   gcp:
     projectId: ""
     bucketName: ""
