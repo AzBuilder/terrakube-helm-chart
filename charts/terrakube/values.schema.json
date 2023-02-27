@@ -217,7 +217,7 @@
       },
       "api": {
         "type": "object",
-        "required": ["enabled", "replicaCount", "properties"],
+        "required": ["enabled", "replicaCount", "properties", "defaultDatabase"],
         "properties": {
           "enabled": {
             "description": "Enable API",

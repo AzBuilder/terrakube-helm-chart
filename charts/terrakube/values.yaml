@@ -1,11 +1,11 @@
 ## Global Name
-name: ""
+name: "terrakube"
 
 ## Azure Active Directory Security
 security:
   adminGroup: "TERRAKUBE_ADMIN"
-  patSecret: ""
-  internalSecret: ""
+  patSecret: "bAUaAojZP3XhkuE2rWBtR3gRAHPzQKkx"
+  internalSecret: "AxxPdgpCi72f8WhMXCTGhtfMRp6AuBfj"
   dexClientId: ""
   dexClientScope: ""
   dexIssuerUri: ""
@@ -41,26 +41,26 @@ storage:
 minio:
   auth:
     rootUser: "admin"
-    rootPassword: ""
+    rootPassword: "superadmin"
   defaultBuckets: "terrakube"
 
 # Default Database Postgresql
 postgresql:
   auth:
-    user: "terrakube"
+    username: "terrakube"
     password: "terrakubepassword"
-  database: "terrakube"
+    database: "terrakube"
 
 ## API properties
 api:
   enabled: true
   version: ""
-  replicaCount: ""
-  serviceType: ""
+  replicaCount: "1"
+  serviceType: "ClusterIP"
   resources: {}
   defaultDatabase: true
   properties:
-    databaseType: "H2"
+    databaseType: "POSTGRESQL"
     databaseHostname: ""
     databaseName: ""
     databaseUser: ""
@@ -70,8 +70,8 @@ api:
 executor:
   enabled: true
   version: ""
-  replicaCount: ""
-  serviceType: ""
+  replicaCount: "1"
+  serviceType: "ClusterIP"
   resources: {}
   properties:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
@@ -83,16 +83,16 @@ executor:
 registry:
   enabled: true
   version: ""
-  replicaCount: ""
-  serviceType: ""
+  replicaCount: "1"
+  serviceType: "ClusterIP"
   resources: {}
 
 ## UI Properties
 ui:
   enabled: true
   version: ""
-  replicaCount: ""
-  serviceType: ""
+  replicaCount: "1"
+  serviceType: "ClusterIP"
   resources: {}
 
 ## Ingress properties
