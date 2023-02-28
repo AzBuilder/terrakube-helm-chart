@@ -1,6 +1,30 @@
 # Terrakube Helm Chart
 
-## Requirements
+## Helm Repository
+
+## Usage
+
+[Helm](https://helm.sh) must be installed to use the charts.  Please refer to
+Helm's [documentation](https://helm.sh/docs) to get started.
+
+Once Helm has been set up correctly, add the repo as follows:
+
+  helm repo add terrakube-repo https://AzBuilder.github.io/terrakube-helm-chart
+
+If you had already added this repo earlier, run `helm repo update` to retrieve
+the latest versions of the packages.  You can then run `helm search repo
+terrakube-repo` to see the charts.
+
+To install the chart:
+    
+    kubectl create namespace terrakube
+    helm install terrakube terrakube-repo/terrakube -n terrakube
+
+To uninstall the chart:
+
+    helm delete terrakube -n terrrakube
+
+## Advance Installation
 
 To install Terrakube in a Kubernetes cluster you will need the following:
 
@@ -466,25 +490,4 @@ helm install --debug --values ./values.yaml terrakube ./terrakube-helm-chart/ -n
 
 After installing you should be able to view the app using ui domain inside the values.yaml. 
 
-### 7. Helm Repository
 
-## Usage
-
-[Helm](https://helm.sh) must be installed to use the charts.  Please refer to
-Helm's [documentation](https://helm.sh/docs) to get started.
-
-Once Helm has been set up correctly, add the repo as follows:
-
-  helm repo add terrakube-repo https://AzBuilder.github.io/terrakube-helm-chart
-
-If you had already added this repo earlier, run `helm repo update` to retrieve
-the latest versions of the packages.  You can then run `helm search repo
-terrakube-repo` to see the charts.
-
-To install the <chart-name> chart:
-
-    helm install my-<chart-name> terrakube-repo/terrakube
-
-To uninstall the chart:
-
-    helm delete my-<chart-name>
