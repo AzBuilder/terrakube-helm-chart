@@ -52,8 +52,8 @@
       "storage": {
         "type": "object",
         "properties": {
-          "enabled": {
-            "description": "Enable Dex",
+          "defaultStorage": {
+            "description": "Enable Default Storage",
             "type": "boolean"
           },
           "azure": {
@@ -134,32 +134,6 @@
                 "description": "GCP Credentials JSON in Base64 encoding",
                 "type": "string"
               }
-            }
-          }
-        },
-        "minio": {
-          "type": "object",
-          "required": ["accessKey", "secretKey", "bucketName", "region"],
-          "properties": {
-            "accessKey": {
-              "description": "AWS Access Key",
-              "type": "string"
-            },
-            "secretKey": {
-              "description": "AWS Secret Key",
-              "type": "string"
-            },
-            "bucketName": {
-              "description": "AWS Bucket name",
-              "type": "string"
-            },
-            "region": {
-              "description": "AWS Region",
-              "type": "string"
-            },
-            "endpoint": {
-              "description": "Custom S3 Endpoint",
-              "type": "string"
             }
           }
         },
