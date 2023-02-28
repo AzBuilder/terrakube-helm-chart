@@ -77,7 +77,7 @@ dex:
             emailAttr: mail
             nameAttr: cn
 
-          roupSearch:
+          GroupSearch:
             baseDN: ou=Groups,dc=example,dc=org
             filter: "(objectClass=groupOfNames)"
 
