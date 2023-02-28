@@ -24,6 +24,10 @@ To uninstall the chart:
 
     helm delete terrakube -n terrrakube
 
+## Minikube
+
+To quickly test Terrakube in Minikube please follow [this](https://docs.terrakube.org/getting-started/deployment/minikube)
+
 ## Advance Installation
 
 To install Terrakube in a Kubernetes cluster you will need the following:
@@ -481,11 +485,11 @@ kubectl create namespace terrakube
 ```
 Test the helm chart before installing:
 ```bash
-helm install --dry-run --debug --values ./values.yaml terrakube ./terrakube-helm-chart/ -n terrakube
+helm install --debug --dry-run --values ./values.yaml terrakube ./terrakube-helm-chart/charts/terrakube/ -n terrakube
 ```
 Running the helm chart.
 ```bash
-helm install --debug --values ./values.yaml terrakube ./terrakube-helm-chart/ -n terrakube
+helm install --debug --values ./values.yaml terrakube ./terrakube-helm-chart/charts/terrakube/ -n terrakube
 ```
 
 After installing you should be able to view the app using ui domain inside the values.yaml. 
