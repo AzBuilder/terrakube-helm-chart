@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: terrakube-ui
-        image: azbuilder/terrakube-ui:{{ .Values.ui.version }}
+        image: azbuilder/terrakube-ui:{{ default .Chart.AppVersion .Values.ui.version }}
         volumeMounts:
         - name: ui-config
           mountPath: "/app/env-config.js"

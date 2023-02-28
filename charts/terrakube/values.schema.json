@@ -7,8 +7,12 @@
       },
       "security": {
         "type": "object",
-        "required": ["patSecret", "internalSecret", "dexIssuerUri", "adminGroup"],
+        "required": ["patSecret", "internalSecret", "dexIssuerUri", "adminGroup", "useOpenLDAP"],
         "properties": {
+          "useOpenLDAP": {
+            "description": "patSecret in base64 encoding",
+            "type": "boolean"
+          },
           "patSecret": {
             "description": "patSecret in base64 encoding",
             "type": "string"
@@ -48,6 +52,10 @@
       "storage": {
         "type": "object",
         "properties": {
+          "enabled": {
+            "description": "Enable Dex",
+            "type": "boolean"
+          },
           "azure": {
             "type": "object",
             "required": ["storageAccountName", "storageAccountResourceGroup", "storageAccountAccessKey"],
@@ -85,6 +93,24 @@
               "region": {
                 "description": "AWS Region",
                 "type": "string"
+              }
+            }
+          },
+          "minio": {
+            "type": "object",
+            "required": ["accessKey", "secretKey", "bucketName", "endpoint"],
+            "properties": {
+              "accessKey": {
+                "description": "AWS Access Key",
+                "type": "string"
+              },
+              "secretKey": {
+                "description": "AWS Secret Key",
+                "type": "string"
+              },
+              "bucketName": {
+                "description": "AWS Bucket name",
+                "type": "string"
               },
               "endpoint": {
                 "description": "Custom S3 Endpoint",
@@ -108,6 +134,46 @@
                 "description": "GCP Credentials JSON in Base64 encoding",
                 "type": "string"
               }
+            }
+          }
+        },
+        "minio": {
+          "type": "object",
+          "required": ["accessKey", "secretKey", "bucketName", "region"],
+          "properties": {
+            "accessKey": {
+              "description": "AWS Access Key",
+              "type": "string"
+            },
+            "secretKey": {
+              "description": "AWS Secret Key",
+              "type": "string"
+            },
+            "bucketName": {
+              "description": "AWS Bucket name",
+              "type": "string"
+            },
+            "region": {
+              "description": "AWS Region",
+              "type": "string"
+            },
+            "endpoint": {
+              "description": "Custom S3 Endpoint",
+              "type": "string"
+            }
+          }
+        },
+        "default": {
+          "type": "object",
+          "required": ["bucketName", "region"],
+          "properties": {
+            "region": {
+              "description": "AWS Region",
+              "type": "string"
+            },
+            "endpoint": {
+              "description": "Custom S3 Endpoint",
+              "type": "string"
             }
           }
         }
@@ -173,7 +239,7 @@
       },
       "api": {
         "type": "object",
-        "required": ["enabled", "version", "replicaCount", "properties"],
+        "required": ["enabled", "replicaCount", "properties", "defaultDatabase", "loadSampleData"],
         "properties": {
           "enabled": {
             "description": "Enable API",
@@ -186,6 +252,10 @@
           "replicaCount": {
             "description": "Replica count for API",
             "type": "string"
+          },
+          "loadSampleData": {
+            "description": "Load Sample Terrakube Data",
+            "type": "boolean"
           },
           "serviceType": {
             "description": "Kubernetes service type",
@@ -224,6 +294,10 @@
               "type": "object"
             }
           },
+          "defaultDatabase": {
+            "description": "Enable Default Database",
+            "type": "boolean"
+          },
           "properties": {
             "type": "object",
             "required": ["databaseType", "databaseHostname", "databaseName", "databaseUser", "databasePassword"],
@@ -254,7 +328,7 @@
       },
       "executor": {
         "type": "object",
-        "required": ["enabled", "version", "replicaCount", "properties"],
+        "required": ["enabled", "replicaCount", "properties"],
         "properties": {
           "enabled": {
             "description": "Enable Executor",
@@ -323,7 +397,7 @@
       },
       "registry": {
         "type": "object",
-        "required": ["enabled", "version", "replicaCount"],
+        "required": ["enabled", "replicaCount"],
         "properties": {
           "enabled": {
             "description": "Enable Executor",
@@ -388,7 +462,7 @@
       },
       "ui": {
         "type": "object",
-        "required": ["enabled", "version", "replicaCount"],
+        "required": ["enabled", "replicaCount"],
         "properties": {
           "enabled": {
             "description": "Enable Executor",
