@@ -93,7 +93,7 @@ dex:
       staticClients:
       - id: example-app
         redirectURIs:
-        - 'https://terrakube-ui.minikube.net'
+        - 'http://terrakube-ui.minikube.net'
         - '/device/callback'
         - 'http://localhost:10000/login'
         - 'http://localhost:10001/login'
