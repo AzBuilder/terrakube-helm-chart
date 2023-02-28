@@ -45,7 +45,7 @@ dex:
           # The following configurations seem to work with OpenLDAP:
           #
           # 1) Plain LDAP, without TLS:
-          host: terrakube-openldap-service:389
+          host: terrakube-openldap-service:1389
           insecureNoSSL: true
           #
           # 2) LDAPS without certificate validation:
@@ -197,7 +197,7 @@ ingress:
       nginx.ingress.kubernetes.io/use-regex: "true"
   api:
     enabled: true
-    domain: "terrakube-api..minikube.net"
+    domain: "terrakube-api.minikube.net"
     path: "/(.*)"
     pathType: "Prefix"
     annotations:
