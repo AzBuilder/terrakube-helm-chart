@@ -186,7 +186,7 @@ ui:
 
 ## Ingress properties
 ingress:
-  useTls: true
+  useTls: false
   ui:
     enabled: true
     domain: "terrakube-ui.minikube.net"
