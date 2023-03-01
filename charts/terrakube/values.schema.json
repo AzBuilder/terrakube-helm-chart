@@ -152,65 +152,6 @@
           }
         }
       },
-      "dex": {
-        "type": "object",
-        "required": ["enabled", "version", "replicaCount", "properties"],
-        "properties": {
-          "enabled": {
-            "description": "Enable Dex",
-            "type": "boolean"
-          },
-          "version": {
-            "description": "Dex Version",
-            "type": "string"
-          },
-          "replicaCount": {
-            "description": "Replica count for Dex",
-            "type": "string"
-          },
-          "serviceType": {
-            "description": "Kubernetes service type",
-            "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]
-          },
-          "resources": {
-            "type": "object"
-          },
-          "affinity": {
-            "type": "object"
-          },
-          "nodeSelector": {
-            "type": "object"
-          },
-          "tolerations": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
-          },
-          "volumes": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
-          },
-          "volumeMounts": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
-          },
-          "properties": {
-            "type": "object",
-            "required": ["config"],
-            "properties": {
-              "config": {
-                "description": "Dex configuration file",
-                "type": "object"
-              }
-            }
-          }
-        }
-      },
       "api": {
         "type": "object",
         "required": ["enabled", "replicaCount", "properties", "defaultDatabase", "loadSampleData"],

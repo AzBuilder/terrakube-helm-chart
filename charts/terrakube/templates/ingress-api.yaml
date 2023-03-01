@@ -30,7 +30,7 @@ spec:
         pathType: {{ .Values.ingress.dex.pathType | quote }}
         backend:
           service:
-            name: terrakube-dex-service
+            name: {{ .Release.Name }}-dex
             port:
               number: 5556
   {{ else }}

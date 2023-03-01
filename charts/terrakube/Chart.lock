@@ -5,5 +5,8 @@ dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 12.2.1
-digest: sha256:ae73bdc92f0cd31b41df6bf9d48a67310e096bc96dde482c633ccadaa8eb1779
-generated: "2023-02-27T14:09:04.088104-06:00"
+- name: dex
+  repository: https://charts.dexidp.io
+  version: 0.13.0
+digest: sha256:1ca277c677e49b3d27d12e23cddefcf21d0cfbd22d45f6c70a27b7cd973acf48
+generated: "2023-03-01T11:42:14.9041738-06:00"
