@@ -17,16 +17,21 @@ spec:
     spec:
       containers:
       - name: terrakube-openldap
-        image: osixia/openldap:1.4.0
-        args: ["--copy-service"]
+        image: bitnami/openldap:2.6.4-debian-11-r4
         env:
-        - name: LDAP_TLS_VERIFY_CLIENT
-          value: "try"
+        - name: LDAP_ADMIN_USERNAME
+          value: "admin"
+        - name: LDAP_ADMIN_PASSWORD
+          value: "admin"
+        - name: LDAP_ROOT
+          value: "dc=example,dc=org"
+        - name: LDAP_CUSTOM_LDIF_DIR
+          value: "/ldifs"
         ports:
-        - containerPort: 389
+        - containerPort: 1389
         volumeMounts:
         - name: openldap-config
-          mountPath: "/container/service/slapd/assets/config/bootstrap/ldif/custom/config-ldap.ldif"
+          mountPath: "/ldifs/config-ldap.ldif"
           subPath: "config-ldap.ldif"
           readOnly: true
       volumes:
