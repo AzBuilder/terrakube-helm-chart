@@ -11,6 +11,7 @@ security:
   dexClientScope: "email openid profile offline_access groups"
   dexIssuerUri: "http://terrakube-api.minikube.net/dex"
 
+
 ## Dex
 dex:
   enabled: true
@@ -152,6 +153,7 @@ api:
   resources: {}
   defaultDatabase: true
   loadSampleData: true
+  terraformReleasesUrl: "https://releases.hashicorp.com/terraform/index.json"
   properties:
     databaseType: "POSTGRESQL"
     databaseHostname: ""
