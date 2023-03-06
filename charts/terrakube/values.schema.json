@@ -154,7 +154,7 @@
       },
       "api": {
         "type": "object",
-        "required": ["enabled", "replicaCount", "properties", "defaultDatabase", "loadSampleData"],
+        "required": ["enabled", "replicaCount", "properties", "defaultDatabase", "loadSampleData", "terraformReleasesUrl"],
         "properties": {
           "enabled": {
             "description": "Enable API",
@@ -175,6 +175,10 @@
           "serviceType": {
             "description": "Kubernetes service type",
             "enum": ["ClusterIP", "NodePort", "LoadBalancer", "ExternalName"]
+          },
+          "terraformReleasesUrl": {
+            "description": "custom terraform releases url",
+            "type": "string"
           },
           "resources": {
             "type": "object"
