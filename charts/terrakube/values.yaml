@@ -10,11 +10,13 @@ security:
   dexClientId: "example-app"
   dexClientScope: "email openid profile offline_access groups"
   dexIssuerUri: "http://terrakube-api.minikube.net/dex"
+  existingSecret: false
 
 
 ## Dex
 dex:
   enabled: true
+  existingSecret: false
   config:
     issuer: http://terrakube-api.minikube.net/dex
 
@@ -146,6 +148,7 @@ postgresql:
 
 ## API properties
 api:
+  existingSecret: false
   enabled: true
   version: ""
   replicaCount: "1"
@@ -163,6 +166,7 @@ api:
 
 ## Executor properties
 executor:
+  existingSecret: false
   enabled: true
   version: ""
   replicaCount: "1"
@@ -175,6 +179,7 @@ executor:
 ## Registry properties
 registry:
   enabled: true
+  existingSecret: false
   version: ""
   replicaCount: "1"
   serviceType: "ClusterIP"
@@ -183,6 +188,7 @@ registry:
 ## UI Properties
 ui:
   enabled: true
+  existingSecret: false
   version: ""
   replicaCount: "1"
   serviceType: "ClusterIP"
