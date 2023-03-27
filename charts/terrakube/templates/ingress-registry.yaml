@@ -8,7 +8,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{ if .Values.ingress.useTls }}
+  {{ if and .Values.ingress.useTls .Values.ingress.includeTlsHosts }}
   tls:
   - hosts:
     - {{ .Values.ingress.registry.domain | quote}}
