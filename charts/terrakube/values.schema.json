@@ -424,6 +424,10 @@
             "description": "Enable Https Ingress",
                 "type": "boolean"
           },
+          "includeTlsHosts": {
+            "description": "Include spec.tls.hosts inside ingress config",
+                "type": "boolean"
+          },
           "ui": {
             "type": "object",
             "required": ["enabled", "annotations", "path", "pathType"],
