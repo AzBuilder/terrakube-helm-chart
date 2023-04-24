@@ -39,7 +39,7 @@ spec:
       volumes:
         - name: openldap-config
           secret:
-            secretName: terrakube-openldap-secrets
+            secretName: {{ .Values.security.ldapConfigSecretName }}
             items:
             - key: "config-ldap.ldif"
               path: "config-ldap.ldif"

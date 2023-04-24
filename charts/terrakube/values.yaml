@@ -11,7 +11,7 @@ security:
   dexClientScope: "email openid profile offline_access groups"
   dexIssuerUri: "http://terrakube-api.minikube.net/dex"
   existingSecret: false
-
+  ldapConfigSecretName: terrakube-openldap-secrets
 
 ## Dex
 dex:
@@ -27,7 +27,7 @@ dex:
       allowedOrigins: ['*']
       skipApprovalScreen: true
     oauth2:
-      responseTypes: ["code", "token", "id_token"] 
+      responseTypes: ["code", "token", "id_token"]
 
     connectors:
     - type: ldap
@@ -103,7 +103,7 @@ dex:
     mountPath: /etc/gcp/secret
     readOnly: true
 
-    
+
 
 
 ## Terraform Storage
@@ -202,7 +202,8 @@ ingress:
     enabled: true
     domain: "terrakube-ui.minikube.net"
     path: "/(.*)"
-    pathType: "Prefix" 
+    pathType: "Prefix"
+    tlsSecretName: tls-secret-ui-terrakube
     annotations:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
@@ -211,6 +212,7 @@ ingress:
     domain: "terrakube-api.minikube.net"
     path: "/(.*)"
     pathType: "Prefix"
+    tlsSecretName: tls-secret-api-terrakube
     annotations:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
@@ -220,6 +222,7 @@ ingress:
     domain: "terrakube-reg.minikube.net"
     path: "/(.*)"
     pathType: "Prefix"
+    tlsSecretName: tls-secret-reg-terrakube
     annotations:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"

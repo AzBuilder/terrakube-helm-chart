@@ -12,13 +12,13 @@ spec:
   tls:
   - hosts:
     - {{ .Values.ingress.ui.domain | quote }}
-    secretName: tls-secret-ui-terrakube
+    secretName: {{ .Values.ingress.ui.tlsSecretName }}
   {{ end }}
   rules:
   - host:  {{ .Values.ingress.ui.domain | quote }}
     http:
       paths:
-      - path: {{ .Values.ingress.ui.path | quote }} 
+      - path: {{ .Values.ingress.ui.path | quote }}
         pathType: {{ .Values.ingress.ui.pathType | quote }}
         backend:
           service:
