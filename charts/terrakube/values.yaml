@@ -146,6 +146,13 @@ postgresql:
     password: "terrakubepassword"
     database: "terrakube"
 
+# Default Redis Configuration
+redis:
+  architecture: "standalone"
+  auth:
+    enabled: true
+    password: "7p9iWVeRV4S944"
+
 ## API properties
 api:
   existingSecret: false
