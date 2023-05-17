@@ -14,7 +14,7 @@ spec:
     - {{ .Values.ingress.api.domain | quote }}
     secretName: {{ .Values.ingress.api.tlsSecretName }}
   {{ end }}
-  {{- if and .Values.ingress.api.enabled .Values.ingress.dex.enabled }}
+  {{- if and .Values.ingress.api.enabled .Values.ingress.dex.enabled .Values.ingress.dex.enabled  }}
   rules:
   - host: {{ .Values.ingress.api.domain | quote }}
     http:
