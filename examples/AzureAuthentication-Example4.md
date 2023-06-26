@@ -13,7 +13,7 @@ To use this examples you will need the following:
 
 ## YAML Example
 
-Replace ***<<CHANGE_THIS>>*** with the real values
+Replace **_<<CHANGE_THIS>>_** with the real values
 
 ```Yaml
 ## Global Name
@@ -22,8 +22,8 @@ name: "terrakube"
 ## Terrakube Security
 security:
   adminGroup: "<<CHANGE_THIS>>" # This should be your Azure AD group name
-  patSecret: "<<CHANGE_THIS>>"  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X 
-  internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3 
+  patSecret: "<<CHANGE_THIS>>"  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X
+  internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3
   dexClientId: "microsoft"
   dexClientScope: "email openid profile offline_access groups"
   dexIssuerUri: "https://terrakube-api.domain.com/dex" # Change for your real domain
@@ -55,11 +55,11 @@ dex:
       storage:
         type: memory
       oauth2:
-        responseTypes: ["code", "token", "id_token"] 
+        responseTypes: ["code", "token", "id_token"]
         skipApprovalScreen: true
       web:
         allowedOrigins: ['*']
-  
+
       staticClients:
       - id: microsoft
         redirectURIs:
@@ -84,7 +84,7 @@ dex:
 ## API properties
 api:
   enabled: true
-  version: "2.10.0"
+  version: "2.14.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   properties:
@@ -97,7 +97,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "2.10.0"  
+  version: "2.14.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   properties:
@@ -107,14 +107,14 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.10.0"
+  version: "2.14.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
 
 ## UI Properties
 ui:
   enabled: true
-  version: "2.10.0"
+  version: "2.14.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
 
@@ -125,7 +125,7 @@ ingress:
     enabled: true
     domain: "terrakube-ui.domain.com" # Change for your real domain
     path: "/(.*)"
-    pathType: "Prefix" 
+    pathType: "Prefix"
     annotations: # This annotations can change based on requirements. The followin is an example using EKS
       alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
       alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:XXXXXX:certificate/XXXXXXXX # Change this for a real certiricate
