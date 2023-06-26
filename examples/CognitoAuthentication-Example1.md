@@ -4,7 +4,7 @@
 
 To use this examples you will need the following:
 
-- AWS Cognito 
+- AWS Cognito
 - AWS S3 Bucket
 - PostgreSQL
 
@@ -12,7 +12,7 @@ To use this examples you will need the following:
 
 ## YAML Example
 
-Replace ***<<CHANGE_THIS>>*** with the real values
+Replace **_<<CHANGE_THIS>>_** with the real values
 
 ```Yaml
 ## Global Name
@@ -21,8 +21,8 @@ name: "terrakube"
 ## Terrakube Security
 security:
   adminGroup: "<<CHANGE_THIS>>" # The value should be a cognito group (example: TERRAKUBE_ADMIN)
-  patSecret: "<<CHANGE_THIS>>"  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X 
-  internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3 
+  patSecret: "<<CHANGE_THIS>>"  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X
+  internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3
   dexClientId: "cognito"
   dexClientScope: "email openid profile offline_access groups"
   dexIssuerUri: "<<CHANGE_THIS>>" #The value should be like https://terrakube-api.yourdomain.com/dex
@@ -55,11 +55,11 @@ dex:
       storage:
         type: memory
       oauth2:
-        responseTypes: ["code", "token", "id_token"] 
+        responseTypes: ["code", "token", "id_token"]
         skipApprovalScreen: true
       web:
         allowedOrigins: ["*"]
-  
+
       staticClients:
       - id: cognito
         redirectURIs:
@@ -87,13 +87,13 @@ dex:
           insecureSkipEmailVerified: true
           insecureEnableGroups: true
           userNameKey: "cognito:username"
-          claimMapping: 
+          claimMapping:
             groups: "cognito:groups"
 
 ## API properties
 api:
   enabled: true
-  version: "2.10.0"
+  version: "2.14.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   properties:
@@ -106,7 +106,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "2.10.0"  
+  version: "2.14.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   properties:
@@ -116,14 +116,14 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.10.0"
+  version: "2.14.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
 
 ## UI Properties
 ui:
   enabled: true
-  version: "2.10.0"
+  version: "2.14.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
 
@@ -134,7 +134,7 @@ ingress:
     enabled: true
     domain: "terrakube-ui.yourdomain.com"
     path: "/(.*)"
-    pathType: "Prefix" 
+    pathType: "Prefix"
     annotations:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"

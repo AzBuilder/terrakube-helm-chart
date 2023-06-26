@@ -6,6 +6,7 @@ To use this examples you will need the following:
 
 - Github Organization with some Teams [setup](https://dexidp.io/docs/connectors/github/)
 - Azure Storage Account with these containers:
+
   - registry (blob)
   - tfstate (private)
   - tfoutput (private)
@@ -14,7 +15,7 @@ To use this examples you will need the following:
 
 ## YAML Example
 
-Replace ***<<CHANGE_THIS>>*** with the real values
+Replace **_<<CHANGE_THIS>>_** with the real values
 
 ```Yaml
 ## Global Name
@@ -23,8 +24,8 @@ name: "terrakube"
 ## Terrakube Security
 security:
   adminGroup: "<<CHANGE_THIS>>" # This should be your Github team the format is OrganizationName:TeamName
-  patSecret: "<<CHANGE_THIS>>"  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X 
-  internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3 
+  patSecret: "<<CHANGE_THIS>>"  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X
+  internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3
   dexClientId: "github"
   dexClientScope: "email openid profile offline_access groups"
   dexIssuerUri: "https://terrakube-api.domain.com/dex" # Change for your real domain
@@ -54,11 +55,11 @@ dex:
       storage:
         type: memory
       oauth2:
-        responseTypes: ["code", "token", "id_token"] 
+        responseTypes: ["code", "token", "id_token"]
         skipApprovalScreen: true
       web:
         allowedOrigins: ["*"]
-  
+
       staticClients:
       - id: github
         redirectURIs:
@@ -82,7 +83,7 @@ dex:
 ## API properties
 api:
   enabled: true
-  version: "2.10.0"
+  version: "2.14.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   properties:
@@ -91,7 +92,7 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "2.10.0"  
+  version: "2.14.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   properties:
@@ -101,14 +102,14 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.10.0"
+  version: "2.14.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
 
 ## UI Properties
 ui:
   enabled: true
-  version: "2.10.0"
+  version: "2.14.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
 
@@ -119,7 +120,7 @@ ingress:
     enabled: true
     domain: "terrakube-ui.domain.com" # Change for your real domain
     path: "/(.*)"
-    pathType: "Prefix" 
+    pathType: "Prefix"
     annotations:
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
