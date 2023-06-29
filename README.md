@@ -16,7 +16,7 @@ the latest versions of the packages.  You can then run `helm search repo
 terrakube-repo` to see the charts.
 
 To install the chart:
-    
+
     kubectl create namespace terrakube
     helm install terrakube terrakube-repo/terrakube -n terrakube
 
@@ -52,7 +52,7 @@ Please make sure to have a kubernetes setup with some ingress setup completed fo
 
 ### 1. Authentication
 
-To handle authentication we use [DEX](https://dexidp.io/) to support different providers using [connectors]((https://dexidp.io/docs/connectors/)), you can use any connectors as long it supports the ***groups scope***. 
+To handle authentication we use [DEX](https://dexidp.io/) to support different providers using [connectors]((https://dexidp.io/docs/connectors/)), you can use any connectors as long it supports the ***groups scope***.
 For example you can use the following connectors:
 - LDAP
 - GitHub
@@ -66,7 +66,7 @@ For example you can use the following connectors:
 
 > DEX authentication is only supported from terrakube 2.6.0 and helm chart version 2.0.0 the helm chart values are not backward compatibly with lower version.
 
-Once we have decided which connectors we would like to us we can create Dex configuation. 
+Once we have decided which connectors we would like to us we can create Dex configuation.
 The following in an example of Dex configuration using Azure Active Directory, Google Cloud Identit, Github and Gitlab to handle authentication and groups:
 
 ```yaml
@@ -75,10 +75,10 @@ The following in an example of Dex configuration using Azure Active Directory, G
       storage:
         type: memory
       oauth2:
-        responseTypes: ["code", "token", "id_token"] 
+        responseTypes: ["code", "token", "id_token"]
       web:
         allowedOrigins: ['*']
-  
+
       staticClients:
       - id: microsoft
         redirectURIs:
@@ -170,8 +170,8 @@ Example:
 ```
 security:
   adminGroup: "TERRAKUBE_ADMIN"
-  patSecret: "<<CHANGE_THIS>>"  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X 
-  internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3 
+  patSecret: "<<CHANGE_THIS>>"  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X
+  internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3
 ```
 
 > The patSecret and internalSecret should be a 32 character base64 compatible string.
@@ -195,13 +195,13 @@ Terrakube require an Aws S3 to save the state/output for the jobs and to save th
 
 To create the Aws S3 you can use the following [terraform module]() (Work in Progress).
 
-#### 3.2 GCP Storage 
+#### 3.2 GCP Storage
 
 Terrakube require an Storage bucket to save the state/output for the jobs and to save the terraform modules when using terraform CLI.
 
 To create the Gcp Storage you can use the following [terraform module]() (Work in Progress).
 
-#### 3.3 MinIO 
+#### 3.3 MinIO
 
 Terrakube require an Storage bucket to save the state/output for the jobs and to save the terraform modules when using terraform CLI.
 
@@ -211,16 +211,16 @@ To create the MinIO Storage you can use the following [terraform module]() (Work
 
 Once you have completed the above steps you can complete the file values.yaml to deploy the helm chart, you can check the example folder:
 
-- Google Identity Authentication 
+- Google Identity Authentication
   - [Ngnix Ingress + H2 Database + GCP Storage Bucket](examples/GoogleAuthentication-Example1.md)
   - [Ngnix Ingress + PostgreSQL +  GCP Storage Bucket](examples/GoogleAuthentication-Example3.md)
   - [Ngnix Ingress + MySQL +  GCP Storage Bucket](examples/GoogleAuthentication-Example3.md)
-- Azure Authentication 
+- Azure Authentication
   - [Ngnix Ingress + H2 Database + Azure Storage Account](examples/AzureAuthentication-Example1.md)
   - [Ngnix Ingress + SQL Azure + Azure Storage Account](examples/AzureAuthentication-Example2.md)
   - [Ngnix Ingress + PostgreSQL + Azure Storage Account](examples/AzureAuthentication-Example3.md)
   - [Amazon Load Balancer + PostgreSQL + S3 Bucket](examples/AzureAuthentication-Example4.md)
-- Github Authentication 
+- Github Authentication
   - [Ngnix Ingress + H2 Database + Azure Storage Account](examples/GithubAuthentication-Example1.md)
 - Amazon AWS Cognito
   - [Ngnix Ingress + H2 Database + AWS S3 Bucket](examples/CognitoAuthentication-Example1.md)
@@ -261,6 +261,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | api.enabled                               | Yes      | true/false                                                             |
 | api.version                               | Yes      | Terrakube API version                                                  |
 | api.replicaCount                          | Yes      |                                                                        |
+| api.serviceAccountName                    | No       | Kubernetes Service Account name                                        |
 | api.serviceType                           | Yes      |                                                                        |
 | api.env                                   | No       |                                                                        |
 | api.volumes                               | No       |                                                                        |
@@ -273,6 +274,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | executor.enabled                          | Yes      | true/false                                                             |
 | executor.version                          | Yes      | Terrakube Executor version                                             |
 | executor.replicaCount                     | Yes      |                                                                        |
+| executor.serviceAccountName               | No       | Kubernetes Service Account name                                        |
 | executor.serviceType                      | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
 | executor.env                              | No       |                                                                        |
 | executor.volumes                          | No       |                                                                        |
@@ -282,6 +284,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | registry.enabled                          | Yes      |                                                                        |
 | registry.version                          | Yes      |                                                                        |
 | registry.replicaCount                     | Yes      |                                                                        |
+| registry.serviceAccountName               | No       | Kubernetes Service Account name                                        |
 | registry.serviceType                      | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
 | registry.properties.DexClientId           | Yes      | Dex Client Id for authentication                                       |
 | registry.env                              | No       |                                                                        |
@@ -290,6 +293,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | ui.enabled                                | Yes      | true/false                                                             |
 | ui.version                                | Yes      |                                                                        |
 | ui.replicaCount                           | Yes      |                                                                        |
+| ui.serviceAccountName                     | No       | Kubernetes Service Account name                                        |
 | ui.serviceType                            | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
 | ingress.ui.useTls                         | Yes      | true/false                                                             |
 | ingress.ui.enabled                        | Yes      | true/false                                                             |
@@ -367,13 +371,13 @@ security:
   caCerts:
     terrakubeDemo1.pem: |
       -----BEGIN CERTIFICATE-----
-      
+
       CERTIFICATE DATA
 
       -----END CERTIFICATE-----
     terrakubeDemo2.pem: |
       -----BEGIN CERTIFICATE-----
-      
+
       CERTIFICATE DATA
 
       -----END CERTIFICATE-----
@@ -409,12 +413,12 @@ api:
     readOnly: true
   properties:
     databaseType: "H2"
-    
+
 
 ## Executor properties
 executor:
   enabled: true
-  version: "2.7.0"  
+  version: "2.7.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   env:
@@ -492,6 +496,6 @@ Running the helm chart.
 helm install --debug --values ./values.yaml terrakube ./terrakube-helm-chart/charts/terrakube/ -n terrakube
 ```
 
-After installing you should be able to view the app using ui domain inside the values.yaml. 
+After installing you should be able to view the app using ui domain inside the values.yaml.
 
 

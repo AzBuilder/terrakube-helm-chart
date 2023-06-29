@@ -52,4 +52,7 @@ spec:
           items:
           - key: env-config.js
             path: env-config.js
+      {{- with .Values.ui.serviceAccountName }}
+      serviceAccountName: {{ quote . }}
+      {{- end }}
 {{ end }}

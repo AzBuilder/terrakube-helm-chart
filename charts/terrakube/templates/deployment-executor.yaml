@@ -70,4 +70,7 @@ spec:
       volumes:
       {{- toYaml . | nindent 6 }}
       {{- end }}
+      {{- with .Values.executor.serviceAccountName }}
+      serviceAccountName: {{ quote . }}
+      {{- end }}
 {{ end }}
