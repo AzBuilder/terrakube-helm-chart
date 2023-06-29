@@ -160,6 +160,7 @@ api:
   version: ""
   replicaCount: "1"
   serviceType: "ClusterIP"
+  serviceAccountName: ""
   resources: {}
   defaultDatabase: true
   loadSampleData: true
@@ -178,6 +179,7 @@ executor:
   version: ""
   replicaCount: "1"
   serviceType: "ClusterIP"
+  serviceAccountName: ""
   resources: {}
   properties:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
@@ -190,6 +192,7 @@ registry:
   version: ""
   replicaCount: "1"
   serviceType: "ClusterIP"
+  serviceAccountName: ""
   resources: {}
 
 ## UI Properties
@@ -199,6 +202,7 @@ ui:
   version: ""
   replicaCount: "1"
   serviceType: "ClusterIP"
+  serviceAccountName: ""
   resources: {}
 
 ## Ingress properties
