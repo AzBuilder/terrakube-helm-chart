@@ -26,7 +26,7 @@ To uninstall the chart:
 
 ## Minikube
 
-To quickly test Terrakube in Minikube please follow [this](https://docs.terrakube.org/getting-started/deployment/minikube)
+To quickly test Terrakube in Minikube please follow [this](https://docs.terrakube.io/getting-started/deployment/minikube)
 
 ## Advance Installation
 
@@ -236,9 +236,9 @@ Once you have completed the above steps you can complete the file values.yaml to
 | security.internalSecret                   | Yes      | 32 Character secret to sing internal                                   |
 | security.dexClientId                      | Yes      | Based on Dex config file                                               |
 | security.dexClientScope                   | Yes      | Use "email openid profile offline_access groups"                       |
-| security.dexIssuerUri                     | Yes      | Should be "https://apiDomain/dex"                                      |
 | security.gcpCredentials                   | No       | JSON Credentials for Google Identity Authentication                    |
 | security.caCerts                          | No       | Custom CA certificates to be added at runtime                          |
+| storage.defaultStorage                    | No       | Enable default storage using minio helm chart                          |
 | storage.gcp.projectId                     | No       | GCP Project Id for the storage                                         |
 | storage.gcp.bucketName                    | No       | GCP Bucket name for the storage                                        |
 | storage.gcp.credentials                   | No       | GCP JSON Credentials for the storage                                   |
@@ -251,14 +251,12 @@ Once you have completed the above steps you can complete the file values.yaml to
 | storage.aws.region                        | No       | Aws region name (Example: us-east-1)                                   |
 | storage.aws.endpoint                      | No       | Setup custom endpoint (MinIO)                                          |
 | dex.enabled                               | No       | Enable Dex component                                                   |
-| dex.version                               | Yes      | Dex [version](https://github.com/dexidp/dex/releases)                  |
-| dex.replicaCount                          | Yes      |                                                                        |
-| dex.serviceType                           | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
-| dex.resources                             | No       |                                                                        |
-| dex.properties.config                     | Yes      | Dex configuration file                                                 |
-| dex.volumeMounts                          | No       |                                                                        |
-| dex.volumes                               | No       |                                                                        |
+| dex.*                                     | No       | Setup based on https://github.com/dexidp/helm-charts                   |
+| minio.*                                   | No       | Setup based on https://github.com/bitnami/charts/tree/main/bitnami/minio    |
+| postgres.*                                | No       | Setup based on https://github.com/bitnami/charts/tree/main/bitnami/postgres |
+| redis.*                                   | No       | Setup based on https://github.com/bitnami/charts/tree/main/bitnami/redis    |
 | api.enabled                               | Yes      | true/false                                                             |
+| api.defaultDatabase                       | No       | Enable default database using postgresql helm chart                    |
 | api.version                               | Yes      | Terrakube API version                                                  |
 | api.replicaCount                          | Yes      |                                                                        |
 | api.serviceAccountName                    | No       | Kubernetes Service Account name                                        |
@@ -286,7 +284,6 @@ Once you have completed the above steps you can complete the file values.yaml to
 | registry.replicaCount                     | Yes      |                                                                        |
 | registry.serviceAccountName               | No       | Kubernetes Service Account name                                        |
 | registry.serviceType                      | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
-| registry.properties.DexClientId           | Yes      | Dex Client Id for authentication                                       |
 | registry.env                              | No       |                                                                        |
 | registry.volumes                          | No       |                                                                        |
 | registry.volumeMounts                     | No       |                                                                        |
@@ -329,7 +326,6 @@ The API, Registry, Executor and UI support using affinity, taints and toleration
 ```yaml
 api:
   enabled: true
-  version: "2.6.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   resources:
@@ -390,7 +386,6 @@ Terrakube components configuration with custom CA certificates:
 ## API properties
 api:
   enabled: true
-  version: "2.7.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   env:
@@ -418,7 +413,6 @@ api:
 ## Executor properties
 executor:
   enabled: true
-  version: "2.7.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   env:
@@ -446,7 +440,6 @@ executor:
 ## Registry properties
 registry:
   enabled: true
-  version: "2.7.0"
   replicaCount: "1"
   serviceType: "ClusterIP"
   env:
