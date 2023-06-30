@@ -28,10 +28,10 @@ security:
   internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3
   dexClientId: "github"
   dexClientScope: "email openid profile offline_access groups"
-  dexIssuerUri: "https://terrakube-api.domain.com/dex" # Change for your real domain
 
 ## Terraform Storage
 storage:
+  defaultStorage: false
   azure:
     storageAccountName: "<<CHANGE_THIS>>"
     storageAccountResourceGroup: "<<CHANGE_THIS>>"
@@ -39,79 +39,36 @@ storage:
 
 dex:
   enabled: true
-  version: "v2.32.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources:
-    limits:
-      cpu: 512m
-      memory: 256Mi
-    requests:
-      cpu: 256m
-      memory: 128Mi
-  properties:
-    config:
-      issuer: https://terrakube-api.domain.com/dex
-      storage:
-        type: memory
-      oauth2:
-        responseTypes: ["code", "token", "id_token"]
-        skipApprovalScreen: true
-      web:
-        allowedOrigins: ["*"]
+  config:
+    issuer: https://terrakube-api.domain.com/dex
+    storage:
+      type: memory
+    oauth2:
+      responseTypes: ["code", "token", "id_token"]
+      skipApprovalScreen: true
+    web:
+      allowedOrigins: ["*"]
 
-      staticClients:
-      - id: github
-        redirectURIs:
-        - 'https://terrakube-ui.domain.com'
-        - 'http://localhost:10001/login'
-        - 'http://localhost:10000/login'
-        - '/device/callback'
-        name: 'github'
-        public: true
+    staticClients:
+    - id: github
+      redirectURIs:
+      - 'https://terrakube-ui.domain.com'
+      - 'http://localhost:10001/login'
+      - 'http://localhost:10000/login'
+      - '/device/callback'
+      name: 'github'
+      public: true
 
-      connectors:
-      - type: github
-        id: github
-        name: gitHub
-        config:
-          clientID: "<<CHANGE_THIS>>"
-          clientSecret: "<<CHANGE_THIS>>"
-          redirectURI: "https://terrakube-api.domain.com/dex/callback"
-          loadAllGroups: true
+    connectors:
+    - type: github
+      id: github
+      name: gitHub
+      config:
+        clientID: "<<CHANGE_THIS>>"
+        clientSecret: "<<CHANGE_THIS>>"
+        redirectURI: "https://terrakube-api.domain.com/dex/callback"
+        loadAllGroups: true
 
-## API properties
-api:
-  enabled: true
-  version: "2.14.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  properties:
-    databaseType: "H2"
-
-## Executor properties
-executor:
-  enabled: true
-  version: "2.14.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  properties:
-    toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
-    toolsBranch: "main"
-
-## Registry properties
-registry:
-  enabled: true
-  version: "2.14.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-
-## UI Properties
-ui:
-  enabled: true
-  version: "2.14.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
 
 ## Ingress properties
 ingress:

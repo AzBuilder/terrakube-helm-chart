@@ -24,7 +24,6 @@ security:
   internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3
   dexClientId: "google"
   dexClientScope: "email openid profile offline_access groups"
-  dexIssuerUri: "<<CHANGE_THIS>>" #The value should be like https://terrakube-api.yourdomain.com/dex
   gcpCredentials: |
     ## GCP JSON CREDENTIALS for service account with API Scope https://www.googleapis.com/auth/admin.directory.group.readonly
     {
@@ -43,6 +42,7 @@ security:
 
 ## Terraform Storage
 storage:
+  defaultStorage: false
   gcp:
     projectId: "<<CHANGE_THIS>>"
     bucketName: "<<CHANGE_THIS>>"
@@ -61,84 +61,39 @@ storage:
         "client_x509_cert_url": ""
       }
 
-
 ## Dex
 dex:
   enabled: true
-  version: "v2.32.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  resources:
-    limits:
-      cpu: 512m
-      memory: 256Mi
-    requests:
-      cpu: 256m
-      memory: 128Mi
-  properties:
-    config:
-      issuer: https://terrakube-api.yourdomain.com/dex #<<CHANGE_THIS>>
-      storage:
-        type: memory
-      oauth2:
-        responseTypes: ["code", "token", "id_token"]
-      web:
-        allowedOrigins: ["*"]
+  config:
+    issuer: https://terrakube-api.yourdomain.com/dex #<<CHANGE_THIS>>
+    storage:
+      type: memory
+    oauth2:
+      responseTypes: ["code", "token", "id_token"]
+    web:
+      allowedOrigins: ["*"]
 
-      staticClients:
-      - id: google
-        redirectURIs:
-        - 'https://terrakube-ui.yourdomain.com' #<<CHANGE_THIS>>
-        - 'http://localhost:3000'
-        - 'http://localhost:10001/login'
-        - 'http://localhost:10000/login'
-        - '/device/callback'
-        name: 'google'
-        public: true
+    staticClients:
+    - id: google
+      redirectURIs:
+      - 'https://terrakube-ui.yourdomain.com' #<<CHANGE_THIS>>
+      - 'http://localhost:3000'
+      - 'http://localhost:10001/login'
+      - 'http://localhost:10000/login'
+      - '/device/callback'
+      name: 'google'
+      public: true
 
-      connectors:
-      - type: google
-        id: google
-        name: google
-        config:
-          clientID: "<<CHANGE_THIS>>"
-          clientSecret: "<<CHANGE_THIS>>"
-          redirectURI: "https://terrakube-api.yourdomain.com/dex/callback"
-          serviceAccountFilePath: "/etc/gcp/secret/gcp-credentials" # GCP CREDENTIAL FILE WILL BE IN THIS PATH
-          adminEmail: "<<CHANGE_THIS>>"
-
-## API properties
-api:
-  enabled: true
-  version: "2.14.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  properties:
-    databaseType: "H2"
-
-## Executor properties
-executor:
-  enabled: true
-  version: "2.14.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-  properties:
-    toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
-    toolsBranch: "main"
-
-## Registry properties
-registry:
-  enabled: true
-  version: "2.14.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
-
-## UI Properties
-ui:
-  enabled: true
-  version: "2.14.0"
-  replicaCount: "1"
-  serviceType: "ClusterIP"
+    connectors:
+    - type: google
+      id: google
+      name: google
+      config:
+        clientID: "<<CHANGE_THIS>>"
+        clientSecret: "<<CHANGE_THIS>>"
+        redirectURI: "https://terrakube-api.yourdomain.com/dex/callback"
+        serviceAccountFilePath: "/etc/gcp/secret/gcp-credentials" # GCP CREDENTIAL FILE WILL BE IN THIS PATH
+        adminEmail: "<<CHANGE_THIS>>"
 
 ## Ingress properties
 ingress:
