@@ -171,6 +171,10 @@ api:
     databaseName: ""
     databaseUser: ""
     databasePassword: ""
+    databaseSslMode: "disable"
+
+## SslMode values are disable, allow, prefer, require, verify-ca, verify-full. Default mode is "disable".   
+## Reference: https://jdbc.postgresql.org/documentation/publicapi/org/postgresql/PGProperty.html#SSL_MODE
 
 ## Executor properties
 executor:
