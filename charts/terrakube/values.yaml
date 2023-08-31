@@ -172,6 +172,9 @@ api:
     databaseUser: ""
     databasePassword: ""
     databaseSslMode: "disable"
+    databasePort: "3306"
+
+## The database port is only used for mysql databases
 
 ## SslMode values are disable, allow, prefer, require, verify-ca, verify-full. Default mode is "disable".   
 ## Reference: https://jdbc.postgresql.org/documentation/publicapi/org/postgresql/PGProperty.html#SSL_MODE
