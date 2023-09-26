@@ -165,6 +165,12 @@ api:
   defaultDatabase: true
   loadSampleData: true
   terraformReleasesUrl: "https://releases.hashicorp.com/terraform/index.json"
+  cache:
+    moduleCacheMaxTotal: "128"
+    moduleCacheMaxIdle: "128"
+    moduleCacheMinIdle: "64"
+    moduleCacheTimeout: "600000"
+    moduleCacheSchedule: "0 */3 * ? * *"
   properties:
     databaseType: "POSTGRESQL"
     databaseHostname: ""
@@ -173,6 +179,7 @@ api:
     databasePassword: ""
     databaseSslMode: "disable"
     databasePort: "3306"
+
 
 ## The database port is only used for mysql databases
 
