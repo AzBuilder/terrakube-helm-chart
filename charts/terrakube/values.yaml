@@ -223,7 +223,6 @@ ui:
 ingress:
   useTls: false
   includeTlsHosts: true
-  ingressClassName: nginx
   ui:
     enabled: true
     domain: "terrakube-ui.minikube.net"
