@@ -223,40 +223,37 @@ ui:
 ingress:
   useTls: false
   includeTlsHosts: true
+  ingressClassName: nginx
   ui:
     enabled: true
     domain: "terrakube-ui.minikube.net"
-    path: "/(.*)"
+    path: "/"
     pathType: "Prefix"
     tlsSecretName: tls-secret-ui-terrakube
     annotations:
-      kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
   api:
     enabled: true
     domain: "terrakube-api.minikube.net"
-    path: "/(.*)"
+    path: "/"
     pathType: "Prefix"
     tlsSecretName: tls-secret-api-terrakube
     annotations:
-      kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
       nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
   registry:
     enabled: true
     domain: "terrakube-reg.minikube.net"
-    path: "/(.*)"
+    path: "/"
     pathType: "Prefix"
     tlsSecretName: tls-secret-reg-terrakube
     annotations:
-      kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
       nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
   dex:
     enabled: true
-    path: "/dex/(.*)"
+    path: "/dex/"
     pathType: "Prefix"
     annotations:
-      kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/use-regex: "true"
       nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
