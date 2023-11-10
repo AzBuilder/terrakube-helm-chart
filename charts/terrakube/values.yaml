@@ -163,6 +163,7 @@ api:
   serviceAccountName: ""
   resources: {}
   defaultDatabase: true
+  defaultRedis: true
   loadSampleData: true
   terraformReleasesUrl: "https://releases.hashicorp.com/terraform/index.json"
   cache:
@@ -179,6 +180,8 @@ api:
     databasePassword: ""
     databaseSslMode: "disable"
     databasePort: "3306"
+    redisHostname: ""
+    redisPassword: ""
 
 
 ## The database port is only used for mysql databases

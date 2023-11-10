@@ -256,6 +256,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | postgres.*                                | No       | Setup based on https://github.com/bitnami/charts/tree/main/bitnami/postgres |
 | redis.*                                   | No       | Setup based on https://github.com/bitnami/charts/tree/main/bitnami/redis    |
 | api.enabled                               | Yes      | true/false                                                             |
+| api.defaultRedis                          | No       | Enable default Redis using Bitnami helm chart                          |
 | api.defaultDatabase                       | No       | Enable default database using postgresql helm chart                    |
 | api.version                               | Yes      | Terrakube API version                                                  |
 | api.replicaCount                          | Yes      |                                                                        |
