@@ -41,4 +41,5 @@ dependencies:
 
 - name: redis
   version: "17.10.1"
+  condition: api.defaultRedis
   repository: "https://charts.bitnami.com/bitnami"

@@ -154,7 +154,7 @@
       },
       "api": {
         "type": "object",
-        "required": ["enabled", "replicaCount", "properties", "defaultDatabase", "loadSampleData", "terraformReleasesUrl"],
+        "required": ["enabled", "replicaCount", "properties", "defaultDatabase", "defaultRedis", "loadSampleData", "terraformReleasesUrl"],
         "properties": {
           "enabled": {
             "description": "Enable API",
@@ -215,6 +215,10 @@
           },
           "defaultDatabase": {
             "description": "Enable Default Database",
+            "type": "boolean"
+          },
+          "defaultRedis": {
+            "description": "Enable Default Redis",
             "type": "boolean"
           },
           "properties": {
