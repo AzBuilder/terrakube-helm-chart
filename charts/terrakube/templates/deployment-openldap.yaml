@@ -14,6 +14,9 @@ spec:
     metadata:
       labels:
         app: terrakube-openldap
+        {{- with .Values.openldap.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/secret-openldap.yaml") . | sha256sum }}
     spec:
