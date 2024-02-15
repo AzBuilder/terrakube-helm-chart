@@ -14,6 +14,9 @@ spec:
     metadata:
       labels:
         app: terrakube-registry
+        {{- with .Values.registry.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/secrets-registry.yaml") . | sha256sum }}
     spec:

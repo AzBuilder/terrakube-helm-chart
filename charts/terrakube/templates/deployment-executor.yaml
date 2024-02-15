@@ -14,6 +14,9 @@ spec:
     metadata:
       labels:
         app: terrakube-executor
+        {{- with .Values.executor.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/secrets-executor.yaml") . | sha256sum }}
     spec:

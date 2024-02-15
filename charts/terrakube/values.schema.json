@@ -195,6 +195,9 @@
               "type": "object"
             }
           },
+          "podLabels": {
+            "type": "object"
+          },
           "env": {
             "type": "array",
             "items": {
@@ -249,6 +252,14 @@
           }
         }
       },
+      "openldap": {
+        "type": "object",
+        "properties": {
+          "podLabels": {
+            "type": "object"
+          }
+        }
+      },
       "executor": {
         "type": "object",
         "required": ["enabled", "replicaCount", "properties"],
@@ -283,6 +294,9 @@
             "items": {
               "type": "object"
             }
+          },
+          "podLabels": {
+            "type": "object"
           },
           "env": {
             "type": "array",
@@ -345,6 +359,9 @@
             "type": "object"
           },
           "nodeSelector": {
+            "type": "object"
+          },
+          "podLabels": {
             "type": "object"
           },
           "tolerations": {
@@ -417,6 +434,9 @@
             "items": {
               "type": "object"
             }
+          },
+          "podLabels": {
+            "type": "object"
           }
         }
       },
