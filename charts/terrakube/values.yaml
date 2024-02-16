@@ -13,6 +13,10 @@ security:
   existingSecret: false
   ldapConfigSecretName: terrakube-openldap-secrets
 
+## OpenLdap
+openldap:
+  podLabels: {}
+
 ## Dex
 dex:
   enabled: true
@@ -162,6 +166,7 @@ api:
   serviceType: "ClusterIP"
   serviceAccountName: ""
   resources: {}
+  podLabels: {}
   defaultDatabase: true
   defaultRedis: true
   loadSampleData: true
@@ -198,6 +203,7 @@ executor:
   serviceType: "ClusterIP"
   serviceAccountName: ""
   resources: {}
+  podLabels: {}
   properties:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
     toolsBranch: "main"
@@ -211,6 +217,7 @@ registry:
   serviceType: "ClusterIP"
   serviceAccountName: ""
   resources: {}
+  podLabels: {}
 
 ## UI Properties
 ui:
@@ -221,6 +228,7 @@ ui:
   serviceType: "ClusterIP"
   serviceAccountName: ""
   resources: {}
+  podLabels: {}
 
 ## Ingress properties
 ingress:
