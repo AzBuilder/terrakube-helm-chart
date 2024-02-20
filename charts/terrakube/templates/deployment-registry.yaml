@@ -76,4 +76,8 @@ spec:
       {{- with .Values.registry.serviceAccountName }}
       serviceAccountName: {{ quote . }}
       {{- end }}
+      {{- with .Values.registry.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
 {{ end }}

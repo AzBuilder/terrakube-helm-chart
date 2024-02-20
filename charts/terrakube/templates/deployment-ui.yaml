@@ -58,4 +58,8 @@ spec:
       {{- with .Values.ui.serviceAccountName }}
       serviceAccountName: {{ quote . }}
       {{- end }}
+      {{- with .Values.ui.securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
 {{ end }}
