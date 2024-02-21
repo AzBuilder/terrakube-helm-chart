@@ -271,6 +271,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | api.properties.databaseUser               | No       |                                                                        |
 | api.properties.databasePassword           | No       |                                                                        |
 | api.securityContext                       | No       | Fill securityContext field                                             |
+| api.containerSecurityContext              | No       | Fill securityContext field in the container spec                       |
 | executor.enabled                          | Yes      | true/false                                                             |
 | executor.version                          | Yes      | Terrakube Executor version                                             |
 | executor.replicaCount                     | Yes      |                                                                        |
@@ -282,6 +283,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | executor.properties.toolsRepository       | Yes      | Example: https://github.com/AzBuilder/terrakube-extensions             |
 | executor.properties.toolsBranch           | Yes      | Example: main                                                          |
 | executor.securityContext                  | No       | Fill securityContext field                                             |
+| executor.containerSecurityContext         | No       | Fill securityContext field in the container spec                       |
 | registry.enabled                          | Yes      |                                                                        |
 | registry.version                          | Yes      |                                                                        |
 | registry.replicaCount                     | Yes      |                                                                        |
@@ -291,12 +293,14 @@ Once you have completed the above steps you can complete the file values.yaml to
 | registry.volumes                          | No       |                                                                        |
 | registry.volumeMounts                     | No       |                                                                        |
 | registry.securityContext                  | No       | Fill securityContext field                                             |
+| registry.containerSecurityContext         | No       | Fill securityContext field in the container spec                       |
 | ui.enabled                                | Yes      | true/false                                                             |
 | ui.version                                | Yes      |                                                                        |
 | ui.replicaCount                           | Yes      |                                                                        |
 | ui.serviceAccountName                     | No       | Kubernetes Service Account name                                        |
 | ui.serviceType                            | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
 | ui.securityContext                        | No       | Fill securityContext field                                             |
+| ui.containerSecurityContext               | No       | Fill securityContext field in the container spec                       |
 | ingress.ui.useTls                         | Yes      | true/false                                                             |
 | ingress.ui.enabled                        | Yes      | true/false                                                             |
 | ingress.ui.domain                         | Yes      |                                                                        |
