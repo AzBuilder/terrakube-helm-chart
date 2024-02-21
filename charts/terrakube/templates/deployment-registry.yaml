@@ -57,6 +57,10 @@ spec:
             port: 8075
           initialDelaySeconds: 120
           periodSeconds: 10
+        {{- with .Values.executor.containerSecurityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
       {{- with .Values.registry.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}

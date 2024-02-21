@@ -39,6 +39,10 @@ spec:
           mountPath: "/ldifs/config-ldap.ldif"
           subPath: "config-ldap.ldif"
           readOnly: true
+        {{- with .Values.executor.containerSecurityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
       volumes:
         - name: openldap-config
           secret:
