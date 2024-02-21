@@ -17,6 +17,7 @@ security:
 openldap:
   podLabels: {}
   securityContext: {}
+  containerSecurityContext: {}
 
 ## Dex
 dex:
@@ -173,6 +174,7 @@ api:
   loadSampleData: true
   terraformReleasesUrl: "https://releases.hashicorp.com/terraform/index.json"
   securityContext: {}
+  containerSecurityContext: {}
   cache:
     moduleCacheMaxTotal: "128"
     moduleCacheMaxIdle: "128"
@@ -210,6 +212,7 @@ executor:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
     toolsBranch: "main"
   securityContext: {}
+  containerSecurityContext: {}
 ## Registry properties
 registry:
   enabled: true
@@ -221,6 +224,7 @@ registry:
   resources: {}
   podLabels: {}
   securityContext: {}
+  containerSecurityContext: {}
 
 ## UI Properties
 ui:
@@ -233,6 +237,7 @@ ui:
   resources: {}
   podLabels: {}
   securityContext: {}
+  containerSecurityContext: {}
 
 ## Ingress properties
 ingress:

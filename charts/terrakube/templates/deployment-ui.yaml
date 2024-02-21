@@ -36,6 +36,10 @@ spec:
         envFrom:
         - secretRef:
             name: terrakube-ui-secrets
+        {{- with .Values.executor.containerSecurityContext }}
+        securityContext:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
       {{- with .Values.ui.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
