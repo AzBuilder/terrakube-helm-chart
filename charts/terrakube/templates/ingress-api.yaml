@@ -8,7 +8,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.registry.ingressClassName | nginx }}
+  ingressClassName: {{ .Values.ingress.api.ingressClassName | nginx }}
   {{ if and .Values.ingress.useTls .Values.ingress.includeTlsHosts }}
   tls:
   - hosts:
