@@ -248,6 +248,7 @@ ingress:
     domain: "terrakube-ui.minikube.net"
     path: "/"
     pathType: "Prefix"
+    ingressClassName: "nginx"
     tlsSecretName: tls-secret-ui-terrakube
     annotations:
       nginx.ingress.kubernetes.io/use-regex: "true"
@@ -256,6 +257,7 @@ ingress:
     domain: "terrakube-api.minikube.net"
     path: "/"
     pathType: "Prefix"
+    ingressClassName: "nginx"
     tlsSecretName: tls-secret-api-terrakube
     annotations:
       nginx.ingress.kubernetes.io/use-regex: "true"
@@ -265,6 +267,7 @@ ingress:
     domain: "terrakube-reg.minikube.net"
     path: "/"
     pathType: "Prefix"
+    ingressClassName: "nginx"
     tlsSecretName: tls-secret-reg-terrakube
     annotations:
       nginx.ingress.kubernetes.io/use-regex: "true"

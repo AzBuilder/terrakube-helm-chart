@@ -301,18 +301,21 @@ Once you have completed the above steps you can complete the file values.yaml to
 | ui.serviceType                            | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
 | ui.securityContext                        | No       | Fill securityContext field                                             |
 | ui.containerSecurityContext               | No       | Fill securityContext field in the container spec                       |
+| ingress.ui.ingressClassName               | Yes      | Default is set to nginx                                                |
 | ingress.ui.useTls                         | Yes      | true/false                                                             |
 | ingress.ui.enabled                        | Yes      | true/false                                                             |
 | ingress.ui.domain                         | Yes      |                                                                        |
 | ingress.ui.path                           | Yes      | ImplementationSpecific/Exact/Prefix                                    |
 | ingress.ui.pathType                       | Yes      |                                                                        |
 | ingress.ui.annotations                    | Yes      | Ingress annotations                                                    |
+| ingress.api.ingressClassName              | Yes      | Default is set to nginx                                                |
 | ingress.api.useTls                        | Yes      |                                                                        |
 | ingress.api.enabled                       | Yes      |                                                                        |
 | ingress.api.domain                        | Yes      |                                                                        |
 | ingress.api.path                          | Yes      |                                                                        |
 | ingress.api.pathType                      | Yes      | ImplementationSpecific/Exact/Prefix                                    |
 | ingress.api.annotations                   | Yes      | Ingress annotations                                                    |
+| ingress.registry.ingressClassName         | Yes      | Default is set to nginx                                                |
 | ingress.registry.useTls                   | Yes      |                                                                        |
 | ingress.registry.enabled                  | Yes      |                                                                        |
 | ingress.registry.domain                   | Yes      |                                                                        |
