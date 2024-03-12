@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: terrakube-executor
-        image: azbuilder/executor:{{ default .Chart.AppVersion .Values.executor.version }}
+        image: {{ .Values.executor.image }}:{{ default .Chart.AppVersion .Values.executor.version }}
         {{- if .Values.executor.resources }}
         resources: {{- toYaml .Values.executor.resources | nindent 12 }}
         {{- end }}

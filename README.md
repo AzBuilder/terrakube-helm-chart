@@ -258,6 +258,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | api.enabled                               | Yes      | true/false                                                             |
 | api.defaultRedis                          | No       | Enable default Redis using Bitnami helm chart                          |
 | api.defaultDatabase                       | No       | Enable default database using postgresql helm chart                    |
+| api.image                                 | No       | API image repository                                                   |
 | api.version                               | Yes      | Terrakube API version                                                  |
 | api.replicaCount                          | Yes      |                                                                        |
 | api.serviceAccountName                    | No       | Kubernetes Service Account name                                        |
@@ -273,6 +274,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | api.securityContext                       | No       | Fill securityContext field                                             |
 | api.containerSecurityContext              | No       | Fill securityContext field in the container spec                       |
 | executor.enabled                          | Yes      | true/false                                                             |
+| executor.image                            | No       | Executor image repository                                              |
 | executor.version                          | Yes      | Terrakube Executor version                                             |
 | executor.replicaCount                     | Yes      |                                                                        |
 | executor.serviceAccountName               | No       | Kubernetes Service Account name                                        |
@@ -285,6 +287,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | executor.securityContext                  | No       | Fill securityContext field                                             |
 | executor.containerSecurityContext         | No       | Fill securityContext field in the container spec                       |
 | registry.enabled                          | Yes      |                                                                        |
+| registry.image                            | No       | Registry image repository                                              |
 | registry.version                          | Yes      |                                                                        |
 | registry.replicaCount                     | Yes      |                                                                        |
 | registry.serviceAccountName               | No       | Kubernetes Service Account name                                        |
@@ -295,6 +298,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | registry.securityContext                  | No       | Fill securityContext field                                             |
 | registry.containerSecurityContext         | No       | Fill securityContext field in the container spec                       |
 | ui.enabled                                | Yes      | true/false                                                             |
+| ui.image                                  | No       | UI image repository                                                    |
 | ui.version                                | Yes      |                                                                        |
 | ui.replicaCount                           | Yes      |                                                                        |
 | ui.serviceAccountName                     | No       | Kubernetes Service Account name                                        |
