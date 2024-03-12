@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: terrakube-api
-        image: azbuilder/api-server:{{ default .Chart.AppVersion .Values.api.version }}
+        image: {{ .Values.api.image }}:{{ default .Chart.AppVersion .Values.api.version }}
         {{- if .Values.api.resources }}
         resources: {{- toYaml .Values.api.resources | nindent 12 }}
         {{- end }}

@@ -163,6 +163,7 @@ redis:
 api:
   existingSecret: false
   enabled: true
+  image: azbuilder/api-server
   version: ""
   replicaCount: "1"
   serviceType: "ClusterIP"
@@ -202,6 +203,7 @@ api:
 executor:
   existingSecret: false
   enabled: true
+  image: "azbuilder/executor"
   version: ""
   replicaCount: "1"
   serviceType: "ClusterIP"
@@ -217,6 +219,7 @@ executor:
 registry:
   enabled: true
   existingSecret: false
+  image: azbuilder/open-registry
   version: ""
   replicaCount: "1"
   serviceType: "ClusterIP"
@@ -230,6 +233,7 @@ registry:
 ui:
   enabled: true
   existingSecret: false
+  image: azbuilder/terrakube-ui
   version: ""
   replicaCount: "1"
   serviceType: "ClusterIP"
