@@ -210,6 +210,7 @@ executor:
   serviceAccountName: ""
   resources: {}
   podLabels: {}
+  apiServiceUrl: "http://terrakube-api-service:8080"
   properties:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
     toolsBranch: "main"
