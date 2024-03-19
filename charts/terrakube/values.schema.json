@@ -272,6 +272,10 @@
             "description": "Executor Docker Version",
             "type": "string"
           },
+          "apiServiceUrl": {
+            "description": "Terrakube service where the executor will connect",
+            "type": "string"
+          },
           "replicaCount": {
             "description": "Replica count for API",
             "type": "string"
