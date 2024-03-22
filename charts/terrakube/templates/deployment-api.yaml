@@ -37,8 +37,20 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
         envFrom:
-        - secretRef:
-            name: terrakube-api-secrets
+        {{- range .Values.api.secrets }}
+          {{- if .items }}
+          {{- range .items }}
+            - name: {{ .name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.name }}
+                  key: {{ .key }}
+          {{- end }}
+          {{- else }}
+            - secretRef:
+                name: {{ .name }}
+          {{- end }}
+        {{- end }}
         startupProbe:
           httpGet:
             path: /actuator/health
