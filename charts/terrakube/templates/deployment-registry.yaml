@@ -38,17 +38,8 @@ spec:
           {{- end }}
         envFrom:
         {{- range .Values.registry.secrets }}
-          {{- if .item }}
-            - name: {{ .name }}
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .item.name }}
-                  key: {{ .item.key }}
-          {{- end }}
-          {{- else }}
             - secretRef:
                 name: {{ .name }}
-          {{- end }}
         {{- end }}
         startupProbe:
           httpGet:
