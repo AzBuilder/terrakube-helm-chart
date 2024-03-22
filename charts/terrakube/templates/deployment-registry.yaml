@@ -38,13 +38,12 @@ spec:
           {{- end }}
         envFrom:
         {{- range .Values.registry.secrets }}
-          {{- if .items }}
-          {{- range .items }}
+          {{- if .item }}
             - name: {{ .name }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ $.name }}
-                  key: {{ .key }}
+                  name: {{ .item.name }}
+                  key: {{ .item.key }}
           {{- end }}
           {{- else }}
             - secretRef:
