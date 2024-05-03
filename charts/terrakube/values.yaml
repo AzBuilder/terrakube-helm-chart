@@ -187,6 +187,7 @@ api:
     databaseHostname: ""
     databaseName: ""
     databaseUser: ""
+    databaseSchema: "public"
     databasePassword: ""
     databaseSslMode: "disable"
     databasePort: "3306"
