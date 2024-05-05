@@ -4,7 +4,7 @@
 
 To use this examples you will need the following:
 
-- Azure Active Directory for Authentication
+- Entra ID Directory ( formerly known as Azure AD Directory ) 
 - Amazon EKS + Load Balancer
 - S3 Bucket
 - PostgreSQL Database
@@ -21,7 +21,7 @@ name: "terrakube"
 
 ## Terrakube Security
 security:
-  adminGroup: "<<CHANGE_THIS>>" # This should be your Azure AD group name
+  adminGroup: "<<CHANGE_THIS>>" # This should be your Entra ID (formerly Azure AD) group name
   patSecret: "<<CHANGE_THIS>>"  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X
   internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3
   dexClientId: "microsoft"
@@ -39,7 +39,7 @@ storage:
 ## Dex
 dex:
   config:
-    issuer: https://terrakube-api.sandbox.terrakube.org/dex
+    issuer: https://<<CHANGE_THIS>>/dex # Change this to your terrakube api url for example terrakube-api.example.com
     storage:
       type: memory
     oauth2:
@@ -51,7 +51,7 @@ dex:
     staticClients:
     - id: microsoft
       redirectURIs:
-      - 'https://terrakube-api.domain.com'
+      - 'https://<<CHANGE_THIS>>' # Change this to your Terrakube UI URL for example terrakube.example.com
       - 'http://localhost:10001/login'
       - 'http://localhost:10000/login'
       - '/device/callback'
@@ -65,7 +65,7 @@ dex:
       config:
         clientID: "<<CHANGE_THIS>>"
         clientSecret: "<<CHANGE_THIS>>"
-        redirectURI: "https://terrakube-api.domain.com/dex/callback"
+        redirectURI: "https://<<CHANGE_THIS>>/dex/callback" # Change this to your terrakube api url for example terrakube-api.example.com
         tenant: "<<CHANGE_THIS>>"
 
 ## API properties
@@ -75,7 +75,7 @@ api:
   serviceType: "ClusterIP"
   properties:
     databaseType: "POSTGRESQL"
-    databaseHostname: "terrakubedb.database.azure.com" #Change with the real value
+    databaseHostname: "<<CHANGE_THIS>>" #Change with the real value for example terrakubedb.database.azure.com
     databaseName: "<<CHANGE_THIS>>"
     databaseUser: "<<CHANGE_THIS>>"
     databasePassword: "<<CHANGE_THIS>>"
@@ -85,7 +85,7 @@ ingress:
   useTls: true
   ui:
     enabled: true
-    domain: "terrakube-ui.domain.com" # Change for your real domain
+    domain: "<<CHANGE_THIS>>" # Change this to your Terrakube UI URL for example terrakube.example.com
     path: "/(.*)"
     pathType: "Prefix"
     annotations: # This annotations can change based on requirements. The followin is an example using EKS
@@ -101,7 +101,7 @@ ingress:
       kubernetes.io/ingress.class: alb
   api:
     enabled: true
-    domain: "terrakube-api.domain.com" # Change for your real domain
+    domain: "<<CHANGE_THIS>>" # Change this to your terrakube api url for example terrakube-api.example.com
     path: "/(.*)"
     pathType: "Prefix"
     annotations: # This annotations can change based on requirements. The followin is an example using EKS
@@ -117,7 +117,7 @@ ingress:
       kubernetes.io/ingress.class: alb
   registry:
     enabled: true
-    domain: "terrakube-reg.domain.com" # Change for your real domain
+    domain: "<<CHANGE_THIS>>" # Change this to your terrakube registry url for example terrakube-registry.example.com
     path: "/(.*)"
     pathType: "Prefix"
     annotations: # This annotations can change based on requirements. The followin is an example using EKS
