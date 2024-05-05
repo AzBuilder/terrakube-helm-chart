@@ -4,7 +4,7 @@
 
 To use this examples you will need the following:
 
-Entra ID Directory ( formerly known as Azure AD Directory ) 
+- Entra ID Directory ( formerly known as Azure AD Directory ) 
 - Azure Storage Account with these containers:
   - registry (blob)
   - tfstate (private)
