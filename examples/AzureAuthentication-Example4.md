@@ -21,7 +21,7 @@ name: "terrakube"
 
 ## Terrakube Security
 security:
-  adminGroup: "<<CHANGE_THIS>>" # This should be your Azure AD group name
+  adminGroup: "<<CHANGE_THIS>>" # This should be your Entra ID (formerly Azure AD) group name
   patSecret: "<<CHANGE_THIS>>"  # Sample Key 32 characters z6QHX!y@Nep2QDT!53vgH43^PjRXyC3X
   internalSecret: "<<CHANGE_THIS>>" # Sample Key 32 characters Kb^8cMerPNZV6hS!9!kcD*KuUPUBa^B3
   dexClientId: "microsoft"
