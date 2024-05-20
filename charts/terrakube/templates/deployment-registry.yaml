@@ -20,6 +20,10 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/secrets-registry.yaml") . | sha256sum }}
     spec:
+      {{- with .Values.registry.imagePullSecrets | default .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - name: terrakube-registry
         image: {{ .Values.registry.image }}:{{ default .Chart.AppVersion .Values.registry.version }}

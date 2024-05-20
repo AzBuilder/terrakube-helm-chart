@@ -231,6 +231,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | Key                                       | Required | Description                                                            |
 |:------------------------------------------|----------|------------------------------------------------------------------------|
 | name                                      | Yes      | Use "Terrakube"                                                        |
+| global.imagePullSecrets                   | No       | Global Secret used to pull images from private repository              |
 | security.adminGroup                       | Yes      | Admin group inside Terrakube                                           |
 | security.patSecret                        | Yes      | 32 Character secret to sign personal access token                      |
 | security.internalSecret                   | Yes      | 32 Character secret to sing internal                                   |
@@ -273,6 +274,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | api.properties.databasePassword           | No       |                                                                        |
 | api.securityContext                       | No       | Fill securityContext field                                             |
 | api.containerSecurityContext              | No       | Fill securityContext field in the container spec                       |
+| api.imagePullSecrets                      | No       | Specific Secret used to pull images from private repository            |
 | executor.enabled                          | Yes      | true/false                                                             |
 | executor.image                            | No       | Executor image repository                                              |
 | executor.version                          | Yes      | Terrakube Executor version                                             |
@@ -286,6 +288,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | executor.properties.toolsBranch           | Yes      | Example: main                                                          |
 | executor.securityContext                  | No       | Fill securityContext field                                             |
 | executor.containerSecurityContext         | No       | Fill securityContext field in the container spec                       |
+| executor.imagePullSecrets                 | No       | Specific Secret used to pull images from private repository            |
 | registry.enabled                          | Yes      |                                                                        |
 | registry.image                            | No       | Registry image repository                                              |
 | registry.version                          | Yes      |                                                                        |
@@ -297,6 +300,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | registry.volumeMounts                     | No       |                                                                        |
 | registry.securityContext                  | No       | Fill securityContext field                                             |
 | registry.containerSecurityContext         | No       | Fill securityContext field in the container spec                       |
+| registry.imagePullSecrets                 | No       | Specific Secret used to pull images from private repository            |
 | ui.enabled                                | Yes      | true/false                                                             |
 | ui.image                                  | No       | UI image repository                                                    |
 | ui.version                                | Yes      |                                                                        |
@@ -305,6 +309,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | ui.serviceType                            | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
 | ui.securityContext                        | No       | Fill securityContext field                                             |
 | ui.containerSecurityContext               | No       | Fill securityContext field in the container spec                       |
+| ui.imagePullSecrets                       | No       | Specific Secret used to pull images from private repository            |
 | ingress.ui.ingressClassName               | Yes      | Default is set to nginx                                                |
 | ingress.ui.useTls                         | Yes      | true/false                                                             |
 | ingress.ui.enabled                        | Yes      | true/false                                                             |
