@@ -1,6 +1,9 @@
 ## Global Name
 name: "terrakube"
 
+global:
+  imagePullSecrets: []
+
 ## Azure Active Directory Security
 security:
   useOpenLDAP: true
@@ -176,6 +179,7 @@ api:
   terraformReleasesUrl: "https://releases.hashicorp.com/terraform/index.json"
   securityContext: {}
   containerSecurityContext: {}
+  imagePullSecrets: []
   cache:
     moduleCacheMaxTotal: "128"
     moduleCacheMaxIdle: "128"
@@ -217,6 +221,7 @@ executor:
     toolsBranch: "main"
   securityContext: {}
   containerSecurityContext: {}
+  imagePullSecrets: []
 ## Registry properties
 registry:
   enabled: true
@@ -230,6 +235,7 @@ registry:
   podLabels: {}
   securityContext: {}
   containerSecurityContext: {}
+  imagePullSecrets: []
 
 ## UI Properties
 ui:
@@ -244,6 +250,7 @@ ui:
   podLabels: {}
   securityContext: {}
   containerSecurityContext: {}
+  imagePullSecrets: []
 
 ## Ingress properties
 ingress:

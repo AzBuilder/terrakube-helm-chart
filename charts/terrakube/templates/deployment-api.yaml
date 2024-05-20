@@ -20,6 +20,10 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/secrets-api.yaml") . | sha256sum }}
     spec:
+      {{- with .Values.api.imagePullSecrets | default .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - name: terrakube-api
         image: {{ .Values.api.image }}:{{ default .Chart.AppVersion .Values.api.version }}

@@ -20,6 +20,10 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/secrets-executor.yaml") . | sha256sum }}
     spec:
+      {{- with .Values.executor.imagePullSecrets | default .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - name: terrakube-executor
         image: {{ .Values.executor.image }}:{{ default .Chart.AppVersion .Values.executor.version }}
