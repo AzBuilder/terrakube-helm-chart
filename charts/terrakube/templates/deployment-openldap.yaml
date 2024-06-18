@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: terrakube-openldap
-        image: bitnami/openldap:2.6.4-debian-11-r4
+        image: {{ .Values.openldap.image }}:{{ .Values.openldap.version }}
         env:
         - name: LDAP_ADMIN_USERNAME
           value: "admin"
