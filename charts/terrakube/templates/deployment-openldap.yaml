@@ -20,6 +20,10 @@ spec:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/secret-openldap.yaml") . | sha256sum }}
     spec:
+      {{- with .Values.openldap.imagePullSecrets | default .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
       - name: terrakube-openldap
         image: {{ .Values.openldap.image }}:{{ .Values.openldap.version }}
