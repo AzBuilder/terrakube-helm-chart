@@ -18,6 +18,7 @@ security:
 
 ## OpenLdap
 openldap:
+  imagePullSecrets: []
   podLabels: {}
   securityContext: {}
   containerSecurityContext: {}
