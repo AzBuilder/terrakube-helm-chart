@@ -29,11 +29,11 @@ spec:
         image: {{ .Values.openldap.image }}:{{ .Values.openldap.version }}
         env:
         - name: LDAP_ADMIN_USERNAME
-          value: "admin"
+          value: {{ .Values.openldap.adminUser }}
         - name: LDAP_ADMIN_PASSWORD
-          value: "admin"
+          value: {{ .Values.openldap.adminPass }}
         - name: LDAP_ROOT
-          value: "dc=example,dc=org"
+          value: {{ .Values.openldap.baseRoot }}
         - name: LDAP_CUSTOM_LDIF_DIR
           value: "/ldifs"
         ports:
