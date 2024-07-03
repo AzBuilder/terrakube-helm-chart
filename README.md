@@ -239,6 +239,15 @@ Once you have completed the above steps you can complete the file values.yaml to
 | security.dexClientScope                   | Yes      | Use "email openid profile offline_access groups"                       |
 | security.gcpCredentials                   | No       | JSON Credentials for Google Identity Authentication                    |
 | security.caCerts                          | No       | Custom CA certificates to be added at runtime                          |
+| openldap.adminUser                        | Yes      | LDAP deployment admin user                                             |
+| openldap.adminPass                        | Yes      | LDAP deployment admin password                                         |
+| openldap.baseRoot                         | Yes      | LDAP baseDN (or suffix) of the LDAP tree                               |
+| openldap.image                            | Yes      | LDAP deployment image repository                                       |
+| openldap.version                          | Yes      | LDAP deployment image tag                                              |
+| openldap.imagePullSecrets                 | No       | Secret used to pull images from private repository                     |
+| openldap.podLabels                        | No       | Pod labels for LDAP deployment                                         |
+| openldap.securityContext                  | No       | Security context for LDAP deployment                                   |
+| openldap.containerSecurityContext         | No       | Container security context for LDAP deployment                         |
 | storage.defaultStorage                    | No       | Enable default storage using minio helm chart                          |
 | storage.gcp.projectId                     | No       | GCP Project Id for the storage                                         |
 | storage.gcp.bucketName                    | No       | GCP Bucket name for the storage                                        |

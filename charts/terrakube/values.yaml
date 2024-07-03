@@ -18,9 +18,12 @@ security:
 
 ## OpenLdap
 openldap:
-  imagePullSecrets: []
+  adminUser: "admin"
+  adminPass: "admin"
+  baseRoot: "dc=example,dc=org"
   image: "bitnami/openldap"
   version: "2.6.4-debian-11-r4"
+  imagePullSecrets: []
   podLabels: {}
   securityContext: {}
   containerSecurityContext: {}
