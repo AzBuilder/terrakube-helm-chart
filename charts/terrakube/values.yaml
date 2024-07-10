@@ -260,11 +260,13 @@ ui:
 
 ## Ingress properties
 ingress:
-  useTls: false
+  useTls: true
   includeTlsHosts: true
   ui:
     enabled: true
-    domain: "terrakube-ui.minikube.net"
+    domains: 
+    - "terrakube-ui.minikube.net"
+    - "terrakube-ui.example.net"
     path: "/"
     pathType: "Prefix"
     ingressClassName: "nginx"
@@ -273,7 +275,9 @@ ingress:
       nginx.ingress.kubernetes.io/use-regex: "true"
   api:
     enabled: true
-    domain: "terrakube-api.minikube.net"
+    domains: 
+    - "terrakube-api.minikube.net"
+    - "terrakube-api.example.net"
     path: "/"
     pathType: "Prefix"
     ingressClassName: "nginx"
@@ -283,7 +287,9 @@ ingress:
       nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
   registry:
     enabled: true
-    domain: "terrakube-reg.minikube.net"
+    domains: 
+    - "terrakube-reg.minikube.net"
+    - "terrakube-reg.example.net"
     path: "/"
     pathType: "Prefix"
     ingressClassName: "nginx"

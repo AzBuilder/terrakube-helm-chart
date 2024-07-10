@@ -9,21 +9,25 @@ metadata:
   {{- end }}
 spec:
   ingressClassName: {{ default "nginx" .Values.ingress.ui.ingressClassName }}
-  {{ if and .Values.ingress.useTls .Values.ingress.includeTlsHosts }}
+  {{- if and .Values.ingress.useTls .Values.ingress.includeTlsHosts }}
   tls:
   - hosts:
-    - {{ .Values.ingress.ui.domain | quote }}
+    {{- range .Values.ingress.ui.domains }}
+    - {{ . | quote }}
+    {{- end }}
     secretName: {{ .Values.ingress.ui.tlsSecretName }}
-  {{ end }}
+  {{- end }}
   rules:
-  - host:  {{ .Values.ingress.ui.domain | quote }}
+  {{- range .Values.ingress.ui.domains }}
+  - host:  {{ . | quote }}
     http:
       paths:
-      - path: {{ .Values.ingress.ui.path | quote }}
-        pathType: {{ .Values.ingress.ui.pathType | quote }}
+      - path: {{ $.Values.ingress.ui.path | quote }}
+        pathType: {{ $.Values.ingress.ui.pathType | quote }}
         backend:
           service:
             name: terrakube-ui-service
             port:
               number: 8080
+  {{- end }}
 {{ end }}

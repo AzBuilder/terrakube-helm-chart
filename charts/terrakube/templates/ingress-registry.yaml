@@ -12,18 +12,22 @@ spec:
   {{ if and .Values.ingress.useTls .Values.ingress.includeTlsHosts }}
   tls:
   - hosts:
-    - {{ .Values.ingress.registry.domain | quote}}
+    {{- range .Values.ingress.registry.domains }}
+    - {{ . | quote}}
+    {{- end }}
     secretName: {{ .Values.ingress.registry.tlsSecretName }}
   {{ end }}
   rules:
-  - host:  {{ .Values.ingress.registry.domain | quote}}
+  {{- range .Values.ingress.registry.domains }}
+  - host:  {{ . | quote}}
     http:
       paths:
-      - path: {{ .Values.ingress.registry.path | quote }}
-        pathType: {{ .Values.ingress.registry.pathType | quote }}
+      - path: {{ $.Values.ingress.registry.path | quote }}
+        pathType: {{ $.Values.ingress.registry.pathType | quote }}
         backend:
           service:
             name: terrakube-registry-service
             port:
               number: 8075
+  {{- end }}
 {{ end }}

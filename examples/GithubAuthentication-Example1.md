@@ -75,7 +75,8 @@ ingress:
   useTls: true
   ui:
     enabled: true
-    domain: "terrakube-ui.domain.com" # Change for your real domain
+    domains: 
+    - "terrakube-ui.domain.com" # Change for your real domain
     path: "/(.*)"
     pathType: "Prefix"
     annotations:
@@ -84,7 +85,8 @@ ingress:
       cert-manager.io/cluster-issuer: letsencrypt
   api:
     enabled: true
-    domain: "terrakube-api.domain.com" # Change for your real domain
+    domains: 
+    - "terrakube-api.domain.com" # Change for your real domain
     path: "/(.*)"
     pathType: "Prefix"
     annotations:
@@ -94,7 +96,8 @@ ingress:
       cert-manager.io/cluster-issuer: letsencrypt
   registry:
     enabled: true
-    domain: "terrakube-reg.domain.com" # Change for your real domain
+    domains: 
+    - "terrakube-reg.domain.com" # Change for your real domain
     path: "/(.*)"
     pathType: "Prefix"
     annotations:

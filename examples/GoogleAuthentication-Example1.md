@@ -100,7 +100,8 @@ ingress:
   useTls: true
   ui:
     enabled: true
-    domain: "terrakube-ui.yourdomain.com"
+    domains: 
+    - "terrakube-ui.yourdomain.com"
     path: "/(.*)"
     pathType: "Prefix"
     annotations:
@@ -109,7 +110,8 @@ ingress:
       cert-manager.io/cluster-issuer: letsencrypt
   api:
     enabled: true
-    domain: "terrakube-api.yourdomain.com"
+    domains: 
+    - "terrakube-api.yourdomain.com"
     path: "/(.*)"
     pathType: "Prefix"
     annotations:
@@ -119,7 +121,8 @@ ingress:
       cert-manager.io/cluster-issuer: letsencrypt
   registry:
     enabled: true
-    domain: "terrakube-reg.yourdomain.com"
+    domains: 
+    - "terrakube-reg.yourdomain.com"
     path: "/(.*)"
     pathType: "Prefix"
     annotations:

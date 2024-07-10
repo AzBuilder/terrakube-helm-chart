@@ -446,7 +446,7 @@
       },
       "ingress": {
         "type": "object",
-        "required": ["ui", "api", "registry", "useTls"],
+        "required": ["ui", "domains", "api", "registry", "useTls"],
         "properties": {
           "useTls": {
             "description": "Enable Https Ingress",
@@ -464,9 +464,12 @@
                 "description": "Enable ingress UI",
                 "type": "boolean"
               },
-              "domain": {
-                "description": "UI domain",
-                "type": "string"
+              "domains": {
+                "description": "UI domains",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               },
               "path": {
                 "description": "Ingress UI path",
@@ -483,15 +486,18 @@
           },
           "api": {
             "type": "object",
-            "required": ["enabled", "domain", "annotations", "path", "pathType"],
+            "required": ["enabled", "domains", "annotations", "path", "pathType"],
             "properties": {
               "enabled": {
                 "description": "Enable ingress API",
                 "type": "boolean"
               },
-              "domain": {
-                "description": "API domain",
-                "type": "string"
+              "domains": {
+                "description": "API domains",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               },
               "path": {
                 "description": "Ingress API path",
@@ -529,15 +535,17 @@
           },
           "registry": {
             "type": "object",
-            "required": ["enabled", "annotations", "path", "pathType"],
+            "required": ["enabled", "domains", "annotations", "path", "pathType"],
             "properties": {
               "enabled": {
                 "description": "Enable ingress UI",
                 "type": "boolean"
               },
-              "domain": {
-                "description": "Registry domain",
-                "type": "string"
+              "domains": {
+                "description": "Registry domains",
+                "type": "array",
+                "items": {
+                  "type": "string"
               },
               "path": {
                 "description": "Ingress registry path",

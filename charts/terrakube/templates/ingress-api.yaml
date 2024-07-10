@@ -12,39 +12,45 @@ spec:
   {{ if and .Values.ingress.useTls .Values.ingress.includeTlsHosts }}
   tls:
   - hosts:
-    - {{ .Values.ingress.api.domain | quote }}
+    {{- range .Values.ingress.api.domains }}
+    - {{ . | quote }}
+    {{- end }}
     secretName: {{ .Values.ingress.api.tlsSecretName }}
   {{ end }}
   {{- if and .Values.ingress.api.enabled .Values.ingress.dex.enabled .Values.ingress.dex.enabled  }}
   rules:
-  - host: {{ .Values.ingress.api.domain | quote }}
+  {{- range .Values.ingress.api.domains }}
+  - host: {{ . | quote }}
     http:
       paths:
-      - path: {{ .Values.ingress.api.path | quote }}
-        pathType: {{ .Values.ingress.api.pathType | quote }}
+      - path: {{ $.Values.ingress.api.path | quote }}
+        pathType: {{ $.Values.ingress.api.pathType | quote }}
         backend:
           service:
             name: terrakube-api-service
             port:
               number: 8080
-      - path: {{ .Values.ingress.dex.path | quote }}
-        pathType: {{ .Values.ingress.dex.pathType | quote }}
+      - path: {{ . | quote }}
+        pathType: {{ $.Values.ingress.dex.pathType | quote }}
         backend:
           service:
-            name: {{ .Release.Name }}-dex
+            name: {{ .Release.name }}-dex
             port:
               number: 5556
+      {{- end }}
   {{ else }}
   rules:
-  - host: {{ .Values.ingress.api.domain | quote }}
+  {{- range .Values.ingress.api.domains }}
+  - host: {{ . | quote }}
     http:
       paths:
-      - path: {{ .Values.ingress.api.path | quote }}
-        pathType: {{ .Values.ingress.api.pathType | quote }}
+      - path: {{ $.Values.ingress.api.path | quote }}
+        pathType: {{ $.Values.ingress.api.pathType | quote }}
         backend:
           service:
             name: terrakube-api-service
             port:
               number: 8080
+  {{- end }}
   {{ end }}
 {{ end }}

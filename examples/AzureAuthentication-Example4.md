@@ -85,7 +85,8 @@ ingress:
   useTls: true
   ui:
     enabled: true
-    domain: "<<CHANGE_THIS>>" # Change this to your Terrakube UI URL for example terrakube.example.com
+    domains: 
+    - "<<CHANGE_THIS>>" # Change this to your Terrakube UI URL for example terrakube.example.com
     path: "/(.*)"
     pathType: "Prefix"
     annotations: # This annotations can change based on requirements. The followin is an example using EKS
@@ -101,7 +102,8 @@ ingress:
       kubernetes.io/ingress.class: alb
   api:
     enabled: true
-    domain: "<<CHANGE_THIS>>" # Change this to your terrakube api url for example terrakube-api.example.com
+    domains: 
+    - "<<CHANGE_THIS>>" # Change this to your terrakube api url for example terrakube-api.example.com
     path: "/(.*)"
     pathType: "Prefix"
     annotations: # This annotations can change based on requirements. The followin is an example using EKS
@@ -117,7 +119,8 @@ ingress:
       kubernetes.io/ingress.class: alb
   registry:
     enabled: true
-    domain: "<<CHANGE_THIS>>" # Change this to your terrakube registry url for example terrakube-registry.example.com
+    domains: 
+    - "<<CHANGE_THIS>>" # Change this to your terrakube registry url for example terrakube-registry.example.com
     path: "/(.*)"
     pathType: "Prefix"
     annotations: # This annotations can change based on requirements. The followin is an example using EKS

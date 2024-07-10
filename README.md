@@ -322,26 +322,25 @@ Once you have completed the above steps you can complete the file values.yaml to
 | ingress.ui.ingressClassName               | Yes      | Default is set to nginx                                                |
 | ingress.ui.useTls                         | Yes      | true/false                                                             |
 | ingress.ui.enabled                        | Yes      | true/false                                                             |
-| ingress.ui.domain                         | Yes      |                                                                        |
+| ingress.ui.domains                        | Yes      |                                                                        |
 | ingress.ui.path                           | Yes      | ImplementationSpecific/Exact/Prefix                                    |
 | ingress.ui.pathType                       | Yes      |                                                                        |
 | ingress.ui.annotations                    | Yes      | Ingress annotations                                                    |
 | ingress.api.ingressClassName              | Yes      | Default is set to nginx                                                |
 | ingress.api.useTls                        | Yes      |                                                                        |
 | ingress.api.enabled                       | Yes      |                                                                        |
-| ingress.api.domain                        | Yes      |                                                                        |
+| ingress.api.domains                       | Yes      |                                                                        |
 | ingress.api.path                          | Yes      |                                                                        |
 | ingress.api.pathType                      | Yes      | ImplementationSpecific/Exact/Prefix                                    |
 | ingress.api.annotations                   | Yes      | Ingress annotations                                                    |
 | ingress.registry.ingressClassName         | Yes      | Default is set to nginx                                                |
 | ingress.registry.useTls                   | Yes      |                                                                        |
 | ingress.registry.enabled                  | Yes      |                                                                        |
-| ingress.registry.domain                   | Yes      |                                                                        |
+| ingress.registry.domains                  | Yes      |                                                                        |
 | ingress.registry.path                     | Yes      |                                                                        |
 | ingress.registry.pathType                 | Yes      | ImplementationSpecific/Exact/Prefix                                    |
 | ingress.registry.annotations              | Yes      | Ingress annotations                                                    |
 | ingress.dex.enabled                       | Yes      |                                                                        |
-| ingress.dex.domain                        | Yes      |                                                                        |
 | ingress.dex.path                          | Yes      |                                                                        |
 | ingress.dex.pathType                      | Yes      | ImplementationSpecific/Exact/Prefix                                    |
 | ingress.dex.annontations                  | Yes      | Ingress annotations                                                    |
