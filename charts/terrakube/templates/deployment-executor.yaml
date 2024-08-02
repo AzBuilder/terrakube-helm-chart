@@ -43,7 +43,7 @@ spec:
         envFrom:
         {{- range .Values.executor.secrets }}
             - secretRef:
-                name: {{ .name }}
+                name: {{ . | quote }}
         {{- end }}
         startupProbe:
           httpGet:
