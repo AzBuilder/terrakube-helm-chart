@@ -177,6 +177,10 @@ api:
   replicaCount: "1"
   serviceType: "ClusterIP"
   serviceAccountName: ""
+  rbac:
+    create: false
+    roleName: "terrakube-api-role"
+    roleBindingName: "terrakube-api-role-binding"
   secrets:
    - terrakube-api-secrets
   resources: {}

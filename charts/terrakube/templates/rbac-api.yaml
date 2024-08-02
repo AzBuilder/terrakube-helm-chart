@@ -1,0 +1,27 @@
+{{- if .Values.api.rbac.create -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.api.serviceAccountName }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Values.api.rbac.roleName }}
+rules:
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Values.api.rbac.roleBindingName }}
+subjects:
+- kind: ServiceAccount
+  name: {{ .Values.api.serviceAccountName }}
+roleRef:
+  kind: Role
+  name: {{ .Values.api.rbac.roleName }}
+  apiGroup: rbac.authorization.k8s.io
+{{ end }}
