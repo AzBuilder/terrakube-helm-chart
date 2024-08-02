@@ -41,8 +41,10 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
         envFrom:
-        - secretRef:
-            name: terrakube-registry-secrets
+        {{- range .Values.registry.secrets }}
+            - secretRef:
+                name: {{ .name }}
+        {{- end }}
         startupProbe:
           httpGet:
             path: /actuator/health

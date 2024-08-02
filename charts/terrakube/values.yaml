@@ -177,6 +177,8 @@ api:
   replicaCount: "1"
   serviceType: "ClusterIP"
   serviceAccountName: ""
+  secrets:
+   - terrakube-api-secrets
   resources: {}
   podLabels: {}
   defaultDatabase: true
@@ -219,6 +221,8 @@ executor:
   replicaCount: "1"
   serviceType: "ClusterIP"
   serviceAccountName: ""
+  secrets:
+   - terrakube-executor-secrets
   resources: {}
   podLabels: {}
   apiServiceUrl: "http://terrakube-api-service:8080"
@@ -237,6 +241,8 @@ registry:
   replicaCount: "1"
   serviceType: "ClusterIP"
   serviceAccountName: ""
+  secrets:
+   - terrakube-registry-secrets
   resources: {}
   podLabels: {}
   securityContext: {}
