@@ -24,6 +24,7 @@ openldap:
   image: "bitnami/openldap"
   version: "2.6.4-debian-11-r4"
   imagePullSecrets: []
+  initContainers: []
   podLabels: {}
   securityContext: {}
   containerSecurityContext: {}
@@ -192,6 +193,7 @@ api:
   securityContext: {}
   containerSecurityContext: {}
   imagePullSecrets: []
+  initContainers: []
   cache:
     moduleCacheMaxTotal: "128"
     moduleCacheMaxIdle: "128"
@@ -236,6 +238,8 @@ executor:
   securityContext: {}
   containerSecurityContext: {}
   imagePullSecrets: []
+  initContainers: []
+
 ## Registry properties
 registry:
   enabled: true
@@ -252,6 +256,7 @@ registry:
   securityContext: {}
   containerSecurityContext: {}
   imagePullSecrets: []
+  initContainers: []
 
 ## UI Properties
 ui:
@@ -267,6 +272,7 @@ ui:
   securityContext: {}
   containerSecurityContext: {}
   imagePullSecrets: []
+  initContainers: []
 
 ## Ingress properties
 ingress:
