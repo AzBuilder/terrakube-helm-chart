@@ -245,6 +245,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | openldap.image                            | Yes      | LDAP deployment image repository                                       |
 | openldap.version                          | Yes      | LDAP deployment image tag                                              |
 | openldap.imagePullSecrets                 | No       | Secret used to pull images from private repository                     |
+| openldap.initContainers                   | No       | Init containers for LDAP deployment                                    |
 | openldap.podLabels                        | No       | Pod labels for LDAP deployment                                         |
 | openldap.securityContext                  | No       | Security context for LDAP deployment                                   |
 | openldap.containerSecurityContext         | No       | Container security context for LDAP deployment                         |
@@ -284,6 +285,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | api.securityContext                       | No       | Fill securityContext field                                             |
 | api.containerSecurityContext              | No       | Fill securityContext field in the container spec                       |
 | api.imagePullSecrets                      | No       | Specific Secret used to pull images from private repository            |
+| api.initContainers                        | No       | Init containers for API deployment                                     |
 | executor.enabled                          | Yes      | true/false                                                             |
 | executor.image                            | No       | Executor image repository                                              |
 | executor.version                          | Yes      | Terrakube Executor version                                             |
@@ -298,6 +300,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | executor.securityContext                  | No       | Fill securityContext field                                             |
 | executor.containerSecurityContext         | No       | Fill securityContext field in the container spec                       |
 | executor.imagePullSecrets                 | No       | Specific Secret used to pull images from private repository            |
+| executor.initContainers                   | No       | Init containers for executor deployment                                |
 | registry.enabled                          | Yes      |                                                                        |
 | registry.image                            | No       | Registry image repository                                              |
 | registry.version                          | Yes      |                                                                        |
@@ -310,6 +313,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | registry.securityContext                  | No       | Fill securityContext field                                             |
 | registry.containerSecurityContext         | No       | Fill securityContext field in the container spec                       |
 | registry.imagePullSecrets                 | No       | Specific Secret used to pull images from private repository            |
+| registry.initContainers                   | No       | Init containers for registry deployment                                |
 | ui.enabled                                | Yes      | true/false                                                             |
 | ui.image                                  | No       | UI image repository                                                    |
 | ui.version                                | Yes      |                                                                        |
@@ -319,6 +323,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | ui.securityContext                        | No       | Fill securityContext field                                             |
 | ui.containerSecurityContext               | No       | Fill securityContext field in the container spec                       |
 | ui.imagePullSecrets                       | No       | Specific Secret used to pull images from private repository            |
+| ui.initContainers                         | No       | Init containers for UI deployment                                      |
 | ingress.ui.ingressClassName               | Yes      | Default is set to nginx                                                |
 | ingress.ui.useTls                         | Yes      | true/false                                                             |
 | ingress.ui.enabled                        | Yes      | true/false                                                             |
