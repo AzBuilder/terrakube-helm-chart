@@ -19,6 +19,9 @@ spec:
         {{- end }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/secrets-executor.yaml") . | sha256sum }}
+        {{- with .Values.executor.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       {{- with .Values.executor.imagePullSecrets | default .Values.global.imagePullSecrets }}
       imagePullSecrets:
