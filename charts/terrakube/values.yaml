@@ -231,6 +231,7 @@ executor:
    - terrakube-executor-secrets
   resources: {}
   podLabels: {}
+  podAnnotations: {}
   apiServiceUrl: "http://terrakube-api-service:8080"
   properties:
     toolsRepository: "https://github.com/AzBuilder/terrakube-extensions"
