@@ -302,6 +302,9 @@
           "podLabels": {
             "type": "object"
           },
+          "podAnnotations": {
+            "type": "object"
+          },
           "env": {
             "type": "array",
             "items": {
