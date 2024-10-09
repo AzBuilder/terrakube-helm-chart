@@ -211,6 +211,7 @@ api:
     databasePort: "3306"
     redisHostname: ""
     redisPassword: ""
+    redisPort: "6379"
 
 
 ## The database port is only used for mysql databases
