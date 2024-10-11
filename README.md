@@ -44,7 +44,7 @@ To install Terrakube in a Kubernetes cluster you will need the following:
   - Mysql
 - Create a YAML file with all the require parameters.
 
-## Instalation
+## Installation
 
 ## Requirements.
 
