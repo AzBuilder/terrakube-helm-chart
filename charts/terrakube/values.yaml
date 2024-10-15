@@ -186,6 +186,7 @@ api:
    - terrakube-api-secrets
   resources: {}
   podLabels: {}
+  podAnnotations: {}
   defaultDatabase: true
   defaultRedis: true
   loadSampleData: true
