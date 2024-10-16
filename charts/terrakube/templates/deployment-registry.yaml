@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
-        {{- with .Values.api.podAnnotations }}
+        {{- with .Values.registry.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
         checksum/config: {{ include (print $.Template.BasePath "/secrets-registry.yaml") . | sha256sum }}
