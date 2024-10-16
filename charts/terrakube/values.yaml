@@ -26,6 +26,7 @@ openldap:
   imagePullSecrets: []
   initContainers: []
   podLabels: {}
+  podAnnotations: {}
   securityContext: {}
   containerSecurityContext: {}
 
@@ -255,6 +256,7 @@ registry:
   secrets:
    - terrakube-registry-secrets
   resources: {}
+  podAnnotations: {}
   podLabels: {}
   securityContext: {}
   containerSecurityContext: {}
@@ -272,6 +274,7 @@ ui:
   serviceAccountName: ""
   resources: {}
   podLabels: {}
+  podAnnotations: {}
   securityContext: {}
   containerSecurityContext: {}
   imagePullSecrets: []
