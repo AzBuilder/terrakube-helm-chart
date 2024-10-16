@@ -18,6 +18,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
+        {{- with .Values.api.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
         checksum/config: {{ include (print $.Template.BasePath "/secret-openldap.yaml") . | sha256sum }}
     spec:
       {{- with .Values.openldap.imagePullSecrets | default .Values.global.imagePullSecrets }}
