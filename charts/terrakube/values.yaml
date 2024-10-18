@@ -196,6 +196,10 @@ api:
   containerSecurityContext: {}
   imagePullSecrets: []
   initContainers: []
+  readinessProbe:
+    initialDelaySeconds: 120
+  liveNessProbe:
+    initialDelaySeconds: 10
   cache:
     moduleCacheMaxTotal: "128"
     moduleCacheMaxIdle: "128"
