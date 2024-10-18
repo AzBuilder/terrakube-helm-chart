@@ -246,7 +246,7 @@ executor:
   readinessProbe:
     initialDelaySeconds: 120
   liveNessProbe:
-    initialDelaySeconds: 30
+    initialDelaySeconds: 10
 
 ## Registry properties
 registry:
