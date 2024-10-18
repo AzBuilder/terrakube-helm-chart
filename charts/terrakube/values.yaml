@@ -243,6 +243,10 @@ executor:
   containerSecurityContext: {}
   imagePullSecrets: []
   initContainers: []
+  readinessProbe:
+    initialDelaySeconds: 120
+  liveNessProbe:
+    initialDelaySeconds: 30
 
 ## Registry properties
 registry:
