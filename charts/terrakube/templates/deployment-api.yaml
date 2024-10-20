@@ -56,20 +56,20 @@ spec:
           httpGet:
             path: /actuator/health
             port: 8080
-          failureThreshold: 30
-          periodSeconds: 10
+          failureThreshold: {{ .Values.api.startupProbe.failureThreshold }}
+          periodSeconds: {{ .Values.api.startupProbe.periodSeconds }}
         livenessProbe:
           httpGet:
             path: /actuator/health/liveness
             port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 10
+          initialDelaySeconds: {{ .Values.api.livenessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.api.livenessProbe.periodSeconds }}
         readinessProbe:
           httpGet:
             path: /actuator/health/readiness
             port: 8080
-          initialDelaySeconds: 120
-          periodSeconds: 10
+          initialDelaySeconds: {{ .Values.api.readinessProbe.initialDelaySeconds }}
+          periodSeconds: {{ .Values.api.readinessProbe.periodSeconds }}
         {{- with .Values.api.containerSecurityContext }}
         securityContext:
           {{- toYaml . | nindent 10 }}
