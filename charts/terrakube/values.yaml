@@ -223,6 +223,7 @@ api:
     redisHostname: ""
     redisPassword: ""
     redisPort: "6379"
+    executorUrl: "http://terrakube-executor-service:8090"
 
 
 ## The database port is only used for mysql databases
@@ -338,3 +339,12 @@ ingress:
     annotations:
       nginx.ingress.kubernetes.io/use-regex: "true"
       nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
+  executor:
+    enabled: false
+    domain: "terrakube-executor.minikube.net"
+    path: "/"
+    pathType: "Prefix"
+    ingressClassName: "nginx"
+    tlsSecretName: tls-secret-executor-terrakube    
+    annotations:
+      nginx.ingress.kubernetes.io/use-regex: "true"
