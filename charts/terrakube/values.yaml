@@ -340,7 +340,7 @@ ingress:
       nginx.ingress.kubernetes.io/use-regex: "true"
       nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
   executor:
-    enabled: true
+    enabled: false
     domain: "terrakube-executor.minikube.net"
     path: "/"
     pathType: "Prefix"
