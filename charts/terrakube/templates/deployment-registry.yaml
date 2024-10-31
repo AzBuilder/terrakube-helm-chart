@@ -70,7 +70,7 @@ spec:
             port: 8075
           initialDelaySeconds: 120
           periodSeconds: 10
-        {{- with .Values.executor.containerSecurityContext }}
+        {{- with .Values.registry.containerSecurityContext }}
         securityContext:
           {{- toYaml . | nindent 10 }}
         {{- end }}
