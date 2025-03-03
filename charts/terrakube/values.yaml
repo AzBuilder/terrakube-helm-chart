@@ -321,7 +321,7 @@ ingress:
     tlsSecretName: tls-secret-api-terrakube
     annotations:
       nginx.ingress.kubernetes.io/use-regex: "true"
-      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
+      nginx.ingress.kubernetes.io/proxy-set-headers: "terrakube/custom-headers"
   registry:
     enabled: true
     domain: "terrakube-reg.minikube.net"
@@ -331,14 +331,14 @@ ingress:
     tlsSecretName: tls-secret-reg-terrakube
     annotations:
       nginx.ingress.kubernetes.io/use-regex: "true"
-      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
+      nginx.ingress.kubernetes.io/proxy-set-headers: "terrakube/custom-headers"
   dex:
     enabled: true
     path: "/dex/"
     pathType: "Prefix"
     annotations:
       nginx.ingress.kubernetes.io/use-regex: "true"
-      nginx.ingress.kubernetes.io/configuration-snippet: "proxy_set_header Authorization $http_authorization;"
+      nginx.ingress.kubernetes.io/proxy-set-headers: "terrakube/custom-headers"
   executor:
     enabled: false
     domain: "terrakube-executor.minikube.net"

@@ -1,0 +1,9 @@
+{{- if eq .Values.ingress.api.ingressClassName "nginx" -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: custom-headers
+data:
+  custom-headers.conf: |
+    Authorization: $http_authorization
+{{ end }}
