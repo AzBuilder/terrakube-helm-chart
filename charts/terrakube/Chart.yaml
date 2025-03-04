@@ -15,31 +15,31 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 3.24.1
+version: 3.25.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "2.24.0"
+appVersion: "2.25.0"
 
 dependencies:
 - name: minio
-  version: "12.1.8"
+  version: "15.0.5"
   condition: storage.defaultStorage
   repository: "https://charts.bitnami.com/bitnami"
 
 - name: postgresql
-  version: "12.2.1"
+  version: "16.4.16"
   condition: api.defaultDatabase
   repository: "https://charts.bitnami.com/bitnami"
 
 - name: dex
-  version: "0.16.0"
+  version: "0.22.1"
   condition: dex.enabled
   repository: "https://charts.dexidp.io"
 
 - name: redis
-  version: "17.10.1"
+  version: "20.11.0"
   condition: api.defaultRedis
   repository: "https://charts.bitnami.com/bitnami"
