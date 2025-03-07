@@ -4,16 +4,16 @@ kind: Deployment
 metadata:
   name: terrakube-ui
   labels:
-    app: terrakube-ui
+    {{- include "terrakube.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.ui.replicaCount }}
   selector:
     matchLabels:
-      app: terrakube-ui
+      {{- include "terrakube-ui.labels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: terrakube-ui
+        {{- include "terrakube-ui.labels" . | nindent 8 }}
         {{- with .Values.ui.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

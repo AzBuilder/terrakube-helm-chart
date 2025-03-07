@@ -4,16 +4,16 @@ kind: Deployment
 metadata:
   name: terrakube-executor
   labels:
-    app: terrakube-executor
+    {{- include "terrakube.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.executor.replicaCount }}
   selector:
     matchLabels:
-      app: terrakube-executor
+      {{- include "terrakube-executor.labels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: terrakube-executor
+        {{- include "terrakube-executor.labels" . | nindent 8 }}
         {{- with .Values.executor.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

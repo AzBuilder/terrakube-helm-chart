@@ -3,6 +3,8 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: custom-headers
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
 data:
   custom-headers.conf: |
     Authorization: $http_authorization

@@ -2,12 +2,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: terrakube-openldap-service 
+  name: terrakube-openldap-service
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
 spec:
   type: "ClusterIP"
   ports:
   - port: 1389
     targetPort: 1389
   selector:
-    app: terrakube-openldap
+    {{- include "terrakube-openldap.labels" . | nindent 4 }}
 {{ end }}

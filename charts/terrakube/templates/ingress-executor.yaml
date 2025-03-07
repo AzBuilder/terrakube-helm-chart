@@ -3,6 +3,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: terrakube-executor-ingress
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
   {{- with .Values.ingress.executor.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
