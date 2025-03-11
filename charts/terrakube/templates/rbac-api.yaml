@@ -3,11 +3,15 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ .Values.api.serviceAccountName }}
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: {{ .Values.api.rbac.roleName }}
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
 rules:
 - apiGroups: ["batch"]
   resources: ["jobs"]
@@ -17,6 +21,8 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: {{ .Values.api.rbac.roleBindingName }}
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
 subjects:
 - kind: ServiceAccount
   name: {{ .Values.api.serviceAccountName }}

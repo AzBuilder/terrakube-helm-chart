@@ -4,16 +4,16 @@ kind: Deployment
 metadata:
   name: terrakube-openldap
   labels:
-    app: terrakube-openldap
+    {{- include "terrakube.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: terrakube-openldap
+      {{- include "terrakube-openldap.labels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: terrakube-openldap
+        {{- include "terrakube-openldap.labels" . | nindent 8 }}
         {{- with .Values.openldap.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

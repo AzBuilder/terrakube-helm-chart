@@ -2,12 +2,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: terrakube-registry-service 
+  name: terrakube-registry-service
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.registry.serviceType }}
   ports:
   - port: 8075
     targetPort: 8075
   selector:
-    app: terrakube-registry
+    {{- include "terrakube-registry.labels" . | nindent 4 }}
 {{ end }}
