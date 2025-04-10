@@ -9,7 +9,11 @@ spec:
   type: {{ .Values.executor.serviceType }}
   ports:
   - port: 8090
-    targetPort: 8090
+    targetPort: http
+{{- if and .Values.executor.otel.enabled .Values.executor.otel.metrics }}
+  - port: {{ .Values.executor.otel.metrics.port | default "9464" }}
+    targetPort: metrics
+{{- end }}
   selector:
     {{- include "terrakube-executor.labels" . | nindent 4 }}
 {{ end }}

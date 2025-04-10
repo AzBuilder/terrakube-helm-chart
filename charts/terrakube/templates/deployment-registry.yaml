@@ -22,6 +22,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         checksum/config: {{ include (print $.Template.BasePath "/secrets-registry.yaml") . | sha256sum }}
+{{- if .Values.registry.otel.enabled }}
+        checksum/otel-config: {{ include (print $.Template.BasePath "/otel-registry.yaml") . | sha256sum }}
+{{- end }}
     spec:
       {{- with .Values.registry.imagePullSecrets | default .Values.global.imagePullSecrets }}
       imagePullSecrets:
@@ -38,7 +41,12 @@ spec:
         resources: {{- toYaml .Values.registry.resources | nindent 12 }}
         {{- end }}
         ports:
-        - containerPort: 8075
+        - name: http
+          containerPort: 8075
+        {{- if and .Values.registry.otel.enabled .Values.registry.otel.metrics }}
+        - name: metrics
+          containerPort: {{ .Values.registry.otel.metrics.port | default "9464" }}
+        {{- end }}
         {{- with .Values.registry.env }}
         env:
         {{- toYaml . | nindent 8 }}
@@ -51,6 +59,10 @@ spec:
         {{- range .Values.registry.secrets }}
             - secretRef:
                 name: {{ . | quote }}
+        {{- end }}
+        {{- if .Values.executor.otel.enabled}}
+        - configMapRef:
+          name: "terrakube-executor-otel-config"
         {{- end }}
         startupProbe:
           httpGet:
