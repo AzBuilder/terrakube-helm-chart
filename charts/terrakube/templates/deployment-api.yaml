@@ -22,6 +22,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
         checksum/config: {{ include (print $.Template.BasePath "/secrets-api.yaml") . | sha256sum }}
+{{- if .Values.api.otel.enabled }}
+        checksum/otel-config: {{ include (print $.Template.BasePath "/otel-api.yaml") . | sha256sum }}
+{{- end }}
     spec:
       {{- with .Values.api.imagePullSecrets | default .Values.global.imagePullSecrets }}
       imagePullSecrets:
@@ -38,7 +41,12 @@ spec:
         resources: {{- toYaml .Values.api.resources | nindent 12 }}
         {{- end }}
         ports:
-        - containerPort: 8080
+        - name: http
+          containerPort: 8080
+        {{- if and .Values.api.otel.enabled .Values.api.otel.metrics }}
+        - name: metrics
+          containerPort: {{ .Values.api.otel.metrics.port | default "9464" }}
+        {{- end }}
         {{- with .Values.api.env }}
         env:
         {{- toYaml . | nindent 8 }}
@@ -49,25 +57,29 @@ spec:
           {{- end }}
         envFrom:
         {{- range .Values.api.secrets }}
-            - secretRef:
-                name: {{ . | quote }}
+        - secretRef:
+          name: {{ . | quote }}
+        {{- end }}
+        {{- if .Values.api.otel.enabled}}
+        - configMapRef:
+          name: "terrakube-api-otel-config"
         {{- end }}
         startupProbe:
           httpGet:
             path: /actuator/health
-            port: 8080
+            port: http
           failureThreshold: {{ .Values.api.startupProbe.failureThreshold }}
           periodSeconds: {{ .Values.api.startupProbe.periodSeconds }}
         livenessProbe:
           httpGet:
             path: /actuator/health/liveness
-            port: 8080
+            port: http
           initialDelaySeconds: {{ .Values.api.livenessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.api.livenessProbe.periodSeconds }}
         readinessProbe:
           httpGet:
             path: /actuator/health/readiness
-            port: 8080
+            port: http
           initialDelaySeconds: {{ .Values.api.readinessProbe.initialDelaySeconds }}
           periodSeconds: {{ .Values.api.readinessProbe.periodSeconds }}
         {{- with .Values.api.containerSecurityContext }}

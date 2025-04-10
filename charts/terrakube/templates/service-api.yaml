@@ -9,7 +9,11 @@ spec:
   type: {{ .Values.api.serviceType }}
   ports:
   - port: 8080
-    targetPort: 8080
+    targetPort: http
+{{- if and .Values.api.otel.enabled .Values.api.otel.metrics }}
+  - port: {{ .Values.api.otel.metrics.port | default "9464" }}
+    targetPort: metrics
+{{- end }}
   selector:
     {{- include "terrakube-api.labels" . | nindent 4 }}
 {{ end }}
