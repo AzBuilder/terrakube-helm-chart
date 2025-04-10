@@ -503,7 +503,56 @@ If the configuration is correct the pods log will show something like this:
 Added 2 additional CA certificate(s) to system truststore
 ```
 
-### 6. Deploy Terrakube using helm chart manually
+
+### 6. Enable OTEL for Terrakube components
+To enable OTEL for Terrakube components use the following configuration example:
+
+```yaml
+## API properties
+api:
+  enabled: true
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  otel:
+    enabled: true
+    metrics:
+      port: 8081
+      host: 
+    traces:
+      type: jaeger # or zipkin
+      endpoint: http://jaeger-collector:14268/api/traces
+
+
+## Executor properties
+executor:
+  enabled: true
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  otel:
+    enabled: true
+    metrics:
+      port: 8081
+      host: 
+    traces:
+      type: zupkin # or jaeger
+      endpoint: zipkin:9411/api/v2/spans
+
+## Registry properties
+registry:
+  enabled: true
+  replicaCount: "1"
+  serviceType: "ClusterIP"
+  otel:
+    enabled: false # or true
+    metrics:
+      port: 8081
+      host: 
+    traces:
+      type: zupkin # or jaeger
+      endpoint: zipkin:9411/api/v2/spans
+```
+
+### 7. Deploy Terrakube using helm chart manually
 
 Now you have all the information to deploy Terrakube, you can use the following example:
 

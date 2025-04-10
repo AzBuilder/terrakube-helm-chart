@@ -19,6 +19,9 @@ spec:
         {{- end }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/secrets-executor.yaml") . | sha256sum }}
+{{- if .Values.executor.otel.enabled }}
+        checksum/otel-config: {{ include (print $.Template.BasePath "/otel-executor.yaml") . | sha256sum }}
+{{- end }}
         {{- with .Values.executor.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -38,7 +41,12 @@ spec:
         resources: {{- toYaml .Values.executor.resources | nindent 12 }}
         {{- end }}
         ports:
-        - containerPort: 8090
+        - name: http
+          containerPort: 8090
+        {{- if and .Values.executor.otel.enabled .Values.executor.otel.metrics }}
+        - name: metrics
+          containerPort: {{ .Values.executor.otel.metrics.port | default "9464" }}
+        {{- end }}
         {{- with .Values.executor.env }}
         env:
         {{- toYaml . | nindent 8 }}
@@ -51,6 +59,10 @@ spec:
         {{- range .Values.executor.secrets }}
             - secretRef:
                 name: {{ . | quote }}
+        {{- end }}
+        {{- if .Values.executor.otel.enabled}}
+        - configMapRef:
+          name: "terrakube-executor-otel-config"
         {{- end }}
         startupProbe:
           httpGet:

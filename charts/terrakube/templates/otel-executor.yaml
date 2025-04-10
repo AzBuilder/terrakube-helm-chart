@@ -1,0 +1,27 @@
+{{- if .Values.executor.otel.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: terrakube-executor-otel-config
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
+data:
+   OTEL_JAVAAGENT_ENABLE: "true"
+   OTEL_SERVICE_NAME: TERRAKUBE-EXECUTOR
+{{- if .Values.api.otel.metrics }}
+   OTEL_METRICS_EXPORTER: prometheus
+   OTEL_EXPORTER_PROMETHEUS_PORT: {{ quote .Values.executor.otel.metrics.port | default "9464" }}
+   OTEL_EXPORTER_PROMETHEUS_HOST: {{ quote .Values.executor.otel.metrics.host | default "0.0.0.0"}}
+{{- end }}
+{{- if .Values.executor.otel.traces }}
+{{- if eq .Values.executor.otel.traces.type "zipkin" }}
+   OTEL_TRACES_EXPORTER: zipkin
+   OTEL_EXPORTER_ZIPKIN_ENDPOINT: {{ quote .Values.executor.otel.traces.endpoint  }}
+{{- end }}
+{{- if eq .Values.executor.otel.traces.type "jaeger" }}
+   OTEL_TRACES_EXPORTER: jaeger
+   OTEL_EXPORTER_JAEGER_ENDPOINT: {{ quote .Values.executor.otel.traces.endpoint  }}
+   OTEL_EXPORTER_JAEGER_TIMEOUT: {{ quote .Values.executor.otel.traces.timeout | default "10000" }}
+{{- end }}
+{{- end }}
+{{- end -}}

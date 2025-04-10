@@ -179,6 +179,15 @@ api:
   replicaCount: "1"
   serviceType: "ClusterIP"
   serviceAccountName: ""
+  otel:
+    enabled: false
+    metrics:
+      port: "9464"
+      host: "0.0.0.0"
+    traces:
+      type: jaeger
+      # endpoint its just example, change it to your jaeger endpoint
+      endpoint: "http://terrakube-api.minikube.net:9411/api/v2/spans" 
   rbac:
     create: false
     roleName: "terrakube-api-role"
@@ -242,6 +251,15 @@ executor:
   serviceAccountName: ""
   secrets:
    - terrakube-executor-secrets
+  otel:
+    enabled: false
+    metrics:
+      port: "9464"
+      host: "0.0.0.0"
+    traces:
+      type: jaeger
+      # endpoint its just example, change it to your jaeger endpoint
+      endpoint: "http://terrakube-api.minikube.net:9411/api/v2/spans" 
   resources: {}
   podLabels: {}
   podAnnotations: {}
@@ -274,6 +292,15 @@ registry:
   serviceAccountName: ""
   secrets:
    - terrakube-registry-secrets
+  otel:
+    enabled: false
+    metrics:
+      port: "9464"
+      host: "0.0.0.0"
+    traces:
+      type: jaeger
+      # endpoint its just example, change it to your jaeger endpoint
+      endpoint: "http://terrakube-api.minikube.net:9411/api/v2/spans" 
   resources: {}
   podAnnotations: {}
   podLabels: {}
