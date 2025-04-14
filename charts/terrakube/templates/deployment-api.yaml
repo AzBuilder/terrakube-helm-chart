@@ -58,11 +58,11 @@ spec:
         envFrom:
         {{- range .Values.api.secrets }}
         - secretRef:
-          name: {{ . | quote }}
+            name: {{ . | quote }}
         {{- end }}
         {{- if .Values.api.otel.enabled}}
         - configMapRef:
-          name: "terrakube-api-otel-config"
+            name: "terrakube-api-otel-config"
         {{- end }}
         startupProbe:
           httpGet:

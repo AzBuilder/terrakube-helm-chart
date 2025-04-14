@@ -57,8 +57,8 @@ spec:
           {{- end }}
         envFrom:
         {{- range .Values.registry.secrets }}
-            - secretRef:
-                name: {{ . | quote }}
+        - secretRef:
+            name: {{ . | quote }}
         {{- end }}
         {{- if .Values.executor.otel.enabled}}
         - configMapRef:
