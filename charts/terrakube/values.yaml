@@ -375,3 +375,30 @@ ingress:
     tlsSecretName: tls-secret-executor-terrakube    
     annotations:
       nginx.ingress.kubernetes.io/use-regex: "true"
+  controller: "generic" # Options: generic, aws, gke
+  
+  # AWS specific configuration
+  aws:
+    enabled: false
+    annotations:
+      # AWS ALB annotations
+      kubernetes.io/ingress.class: alb
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+    certificateArn: ""
+    
+  # GKE specific configuration
+  gke:
+    enabled: false
+    annotations:
+      # GKE specific annotations
+      kubernetes.io/ingress.class: gce
+    managedCertificate:
+      create: false
+      domains: []
+    backendConfig:
+      create: false
+      timeout: 30
+    frontendConfig:
+      create: false
+      redirectToHttps: true
