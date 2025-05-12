@@ -393,8 +393,16 @@ ingress:
     annotations:
       # GKE specific annotations
       kubernetes.io/ingress.class: gce
+    # New settings for shared LB
+    sharedLoadBalancer:
+      enabled: false
+      staticIPName: ""         # Name of the reserved static IP in GCP
+      staticIPAddress: ""      # Alternative: direct IP address
     managedCertificate:
       create: false
+      # Use existing cert if available
+      useExisting: false
+      existingCertName: ""
       domains: []
     backendConfig:
       create: false
