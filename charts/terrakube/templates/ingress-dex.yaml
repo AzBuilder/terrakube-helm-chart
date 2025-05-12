@@ -1,12 +1,13 @@
-{{- if .Values.ingress.api.enabled }}
+{{- if and .Values.ingress.dex.enabled .Values.dex.enabled }}
+{{- $dexServiceName := printf "%s-dex" .Release.Name }}
 {{- if eq .Values.ingress.controller "generic" }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Values.name }}-api
+  name: {{ .Values.name }}-dex
   labels:
-    app: {{ .Values.name }}-api
-  {{- with .Values.ingress.api.annotations }}
+    app: {{ .Values.name }}-dex
+  {{- with .Values.ingress.dex.annotations }}
   annotations:
     {{- range $key, $value := . }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
@@ -20,13 +21,13 @@ spec:
     - host: {{ .Values.ingress.api.domain }}
       http:
         paths:
-          - path: {{ .Values.ingress.api.path }}
-            pathType: {{ .Values.ingress.api.pathType }}
+          - path: {{ .Values.ingress.dex.path }}
+            pathType: {{ .Values.ingress.dex.pathType }}
             backend:
               service:
-                name: {{ .Values.name }}-api-service
+                name: {{ $dexServiceName }}
                 port:
-                  number: 8080
+                  number: 5556
   {{- if .Values.ingress.useTls }}
   tls:
     - hosts:
@@ -39,9 +40,9 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Values.name }}-api
+  name: {{ .Values.name }}-dex
   labels:
-    app: {{ .Values.name }}-api
+    app: {{ .Values.name }}-dex
   annotations:
     {{- range $key, $value := .Values.ingress.aws.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
@@ -49,7 +50,7 @@ metadata:
     {{- if .Values.ingress.aws.certificateArn }}
     alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.aws.certificateArn }}
     {{- end }}
-    {{- range $key, $value := .Values.ingress.api.annotations }}
+    {{- range $key, $value := .Values.ingress.dex.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}
 spec:
@@ -57,20 +58,20 @@ spec:
     - host: {{ .Values.ingress.api.domain }}
       http:
         paths:
-          - path: {{ .Values.ingress.api.path }}
-            pathType: {{ .Values.ingress.api.pathType }}
+          - path: {{ .Values.ingress.dex.path }}
+            pathType: {{ .Values.ingress.dex.pathType }}
             backend:
               service:
-                name: {{ .Values.name }}-api-service
+                name: {{ $dexServiceName }}
                 port:
-                  number: 8080
+                  number: 5556
 {{- else if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Values.name }}-api
+  name: {{ .Values.name }}-dex
   labels:
-    app: {{ .Values.name }}-api
+    app: {{ .Values.name }}-dex
   annotations:
     {{- range $key, $value := .Values.ingress.gke.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
@@ -78,10 +79,7 @@ metadata:
     {{- if .Values.ingress.gke.managedCertificate.create }}
     networking.gke.io/managed-certificates: {{ .Values.name }}-certificate
     {{- end }}
-    {{- if .Values.ingress.gke.backendConfig.create }}
-    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-backend-config"}'
-    {{- end }}
-    {{- range $key, $value := .Values.ingress.api.annotations }}
+    {{- range $key, $value := .Values.ingress.dex.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}
 spec:
@@ -89,12 +87,12 @@ spec:
     - host: {{ .Values.ingress.api.domain }}
       http:
         paths:
-          - path: {{ .Values.ingress.api.path }}
-            pathType: {{ .Values.ingress.api.pathType }}
+          - path: {{ .Values.ingress.dex.path }}
+            pathType: {{ .Values.ingress.dex.pathType }}
             backend:
               service:
-                name: {{ .Values.name }}-api-service
+                name: {{ $dexServiceName }}
                 port:
-                  number: 8080
+                  number: 5556
 {{- end }}
 {{- end }}
