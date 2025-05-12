@@ -574,5 +574,3 @@ helm install --debug --values ./values.yaml terrakube ./terrakube-helm-chart/cha
 ```
 
 After installing you should be able to view the app using ui domain inside the values.yaml.
-
-
