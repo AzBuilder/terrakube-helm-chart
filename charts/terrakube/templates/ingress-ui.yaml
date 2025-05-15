@@ -79,24 +79,20 @@ metadata:
     {{- else if .Values.ingress.gke.sharedLoadBalancer.staticIPAddress }}
     kubernetes.io/ingress.global-static-ip: {{ .Values.ingress.gke.sharedLoadBalancer.staticIPAddress }}
     {{- end }}
-    {{- if .Values.ingress.gke.sharedLoadBalancer.enabled }}
-    {{- if .Values.ingress.gke.sharedLoadBalancer.staticIPName }}
-    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gke.sharedLoadBalancer.staticIPName }}
-    {{- else if .Values.ingress.gke.sharedLoadBalancer.staticIPAddress }}
-    kubernetes.io/ingress.global-static-ip: {{ .Values.ingress.gke.sharedLoadBalancer.staticIPAddress }}
     {{- end }}
-    {{- end }}
+    # Apply managed certificate if enabled
     {{- if .Values.ingress.gke.managedCertificate.create }}
     networking.gke.io/managed-certificates: {{ .Values.name }}-certificate
     {{- else if and .Values.ingress.gke.managedCertificate.useExisting .Values.ingress.gke.managedCertificate.existingCertName }}
     networking.gke.io/managed-certificates: {{ .Values.ingress.gke.managedCertificate.existingCertName }}
     {{- end }}
-    {{- if .Values.ingress.gke.frontendConfig.create }}
-    networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-frontend-config
-    {{- end }}
     # Apply frontend config if enabled
     {{- if .Values.ingress.gke.frontendConfig.create }}
     networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-frontend-config
+    {{- end }}
+    # Apply ExternalDNS proxy configuration
+    {{- if .Values.ingress.gke.externalDNS }}
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
     {{- end }}
     # Apply GKE annotations
     {{- range $key, $value := .Values.ingress.gke.annotations }}

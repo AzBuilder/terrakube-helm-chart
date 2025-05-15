@@ -1,4 +1,4 @@
-{{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.managedCertificate.create (not .Values.ingress.gke.managedCertificate.useExisting) }}
+{{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.managedCertificate.create }}
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
@@ -18,9 +18,6 @@ spec:
   {{- end }}
   {{- if and .Values.ingress.registry.enabled }}
     - {{ .Values.ingress.registry.domain }}
-  {{- end }}
-  {{- if and .Values.ingress.executor.enabled }}
-    - {{ .Values.ingress.executor.domain }}
   {{- end }}
   {{- end }}
 {{- end }}
