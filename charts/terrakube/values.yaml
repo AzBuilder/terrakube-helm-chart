@@ -386,6 +386,9 @@ ingress:
       alb.ingress.kubernetes.io/scheme: internet-facing
       alb.ingress.kubernetes.io/target-type: ip
     certificateArn: ""
+    sharedLoadBalancer:
+      enabled: false
+      groupName: "terrakube-alb"  # Name for the shared ALB group
     
   # GKE specific configuration
   gke:
@@ -405,10 +408,15 @@ ingress:
       create: false
       timeout: 30
       healthCheck:
-        requestPath: "/healthz"
+        requestPath: "/actuator/health"
         port: 8080
     frontendConfig:
       create: false
       redirectToHttps: true
     externalDNS:
       proxyEnabled: false      # Control whether ExternalDNS creates proxy records (Cloudflare)
+      perIngressProxy:         # Optional: Allow per-ingress proxy settings
+        ui: false
+        api: false
+        registry: false
+        dex: false

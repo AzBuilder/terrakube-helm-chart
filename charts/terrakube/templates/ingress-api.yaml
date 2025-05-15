@@ -61,13 +61,17 @@ metadata:
     {{- if .Values.ingress.gke.frontendConfig.create }}
     networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-frontend-config
     {{- end }}
-    # Apply backend config if enabled
+    # Apply API-specific backend config 
     {{- if .Values.ingress.gke.backendConfig.create }}
     cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-backend-config"}'
     {{- end }}
     # Apply ExternalDNS proxy configuration
     {{- if .Values.ingress.gke.externalDNS }}
+    {{- if .Values.ingress.gke.externalDNS.perIngressProxy }}
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.perIngressProxy.api }}"
+    {{- else }}
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
+    {{- end }}
     {{- end }}
     # Apply GKE annotations
     {{- range $key, $value := .Values.ingress.gke.annotations }}
@@ -97,6 +101,10 @@ metadata:
   labels:
     app: {{ .Values.name }}-api
   annotations:
+    # For AWS shared load balancer
+    {{- if and .Values.ingress.aws.sharedLoadBalancer.enabled .Values.ingress.aws.sharedLoadBalancer.groupName }}
+    alb.ingress.kubernetes.io/group.name: {{ .Values.ingress.aws.sharedLoadBalancer.groupName }}
+    {{- end }}
     {{- range $key, $value := .Values.ingress.aws.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}

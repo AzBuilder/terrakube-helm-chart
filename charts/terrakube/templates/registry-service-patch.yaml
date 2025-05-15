@@ -1,0 +1,83 @@
+{{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.backendConfig.create }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-registry-health-patch
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+data:
+  registry-service-patch.sh: |-
+    #!/bin/bash
+    echo "Patching Registry service with backend config annotations"
+    kubectl annotate --overwrite service {{ .Values.name }}-registry-service cloud.google.com/backend-config='{"default": "{{ .Values.name }}-registry-backend-config"}'
+    kubectl annotate --overwrite service {{ .Values.name }}-registry-service cloud.google.com/neg='{"ingress": true}'
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-registry-health-patch-job
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "terrakube.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: {{ .Values.name }}-registry-patch-sa
+      containers:
+      - name: kubectl
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/bash
+        - -c
+        - /scripts/registry-service-patch.sh
+        volumeMounts:
+        - name: scripts
+          mountPath: /scripts
+      volumes:
+      - name: scripts
+        configMap:
+          name: {{ .Release.Name }}-registry-health-patch
+          defaultMode: 0755
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .Values.name }}-registry-patch-sa
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .Values.name }}-registry-patch-role
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
+rules:
+- apiGroups: [""]
+  resources: ["services"]
+  verbs: ["get", "patch", "update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .Values.name }}-registry-patch-binding
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ .Values.name }}-registry-patch-role
+subjects:
+- kind: ServiceAccount
+  name: {{ .Values.name }}-registry-patch-sa
+{{- end }}
