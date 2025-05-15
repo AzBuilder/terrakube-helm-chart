@@ -67,9 +67,10 @@ spec:
         startupProbe:
           httpGet:
             path: /actuator/health
-            port: http
-          failureThreshold: {{ .Values.api.startupProbe.failureThreshold }}
-          periodSeconds: {{ .Values.api.startupProbe.periodSeconds }}
+            port: 8080
+          initialDelaySeconds: 30  # Increased from default
+          periodSeconds: 10
+          failureThreshold: 30     # Increased to give more startup time
         livenessProbe:
           httpGet:
             path: /actuator/health/liveness

@@ -90,6 +90,10 @@ metadata:
     {{- if .Values.ingress.gke.frontendConfig.create }}
     networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-frontend-config
     {{- end }}
+    # Apply backend config if enabled
+    {{- if .Values.ingress.gke.backendConfig.create }}
+    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-ui-backend-config"}'
+    {{- end }}
     # Apply ExternalDNS proxy configuration
     {{- if .Values.ingress.gke.externalDNS }}
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
