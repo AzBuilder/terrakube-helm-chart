@@ -72,8 +72,12 @@ metadata:
   labels:
     app: {{ .Values.name }}-ui
   annotations:
-    {{- range $key, $value := .Values.ingress.gke.annotations }}
-    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    # GKE shared load balancer annotations
+    {{- if .Values.ingress.gke.sharedLoadBalancer.enabled }}
+    {{- if .Values.ingress.gke.sharedLoadBalancer.staticIPName }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gke.sharedLoadBalancer.staticIPName }}
+    {{- else if .Values.ingress.gke.sharedLoadBalancer.staticIPAddress }}
+    kubernetes.io/ingress.global-static-ip: {{ .Values.ingress.gke.sharedLoadBalancer.staticIPAddress }}
     {{- end }}
     {{- if .Values.ingress.gke.sharedLoadBalancer.enabled }}
     {{- if .Values.ingress.gke.sharedLoadBalancer.staticIPName }}
@@ -90,6 +94,15 @@ metadata:
     {{- if .Values.ingress.gke.frontendConfig.create }}
     networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-frontend-config
     {{- end }}
+    # Apply frontend config if enabled
+    {{- if .Values.ingress.gke.frontendConfig.create }}
+    networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-frontend-config
+    {{- end }}
+    # Apply GKE annotations
+    {{- range $key, $value := .Values.ingress.gke.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    # Apply UI specific annotations
     {{- range $key, $value := .Values.ingress.ui.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}

@@ -5,4 +5,14 @@ metadata:
   name: {{ .Values.name }}-backend-config
 spec:
   timeoutSec: {{ .Values.ingress.gke.backendConfig.timeout }}
+  {{- if .Values.ingress.gke.backendConfig.healthCheck }}
+  healthCheck:
+    checkIntervalSec: 15
+    timeoutSec: 5
+    healthyThreshold: 1
+    unhealthyThreshold: 2
+    type: HTTP
+    requestPath: {{ .Values.ingress.gke.backendConfig.healthCheck.requestPath | default "/healthz" }}
+    port: {{ .Values.ingress.gke.backendConfig.healthCheck.port | default 8080 }}
+  {{- end }}
 {{- end }}

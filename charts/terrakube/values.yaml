@@ -407,6 +407,9 @@ ingress:
     backendConfig:
       create: false
       timeout: 30
+      healthCheck:
+        requestPath: "/healthz"
+        port: 8080
     frontendConfig:
       create: false
       redirectToHttps: true
