@@ -2,14 +2,22 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: terrakube-ui-service
+  name: {{ .Values.name }}-ui-service
   labels:
-    {{- include "terrakube.labels" . | nindent 4 }}
+    {{- include "terrakube-ui.labels" . | nindent 4 }}
+  {{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.backendConfig.create }}
+  annotations:
+    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-ui-backend-config"}'
+    cloud.google.com/neg: '{"ingress": true}'
+  {{- end }}
 spec:
-  type: {{ .Values.ui.serviceType }}
+  # Use NodePort for GKE or the specified type from values
+  type: {{ if eq .Values.ingress.controller "gke" }}NodePort{{ else }}{{ .Values.ui.serviceType | default "ClusterIP" }}{{ end }}
   ports:
-  - port: 8080
-    targetPort: 8080
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http
   selector:
     {{- include "terrakube-ui.labels" . | nindent 4 }}
 {{ end }}

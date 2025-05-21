@@ -177,7 +177,7 @@ api:
   image: azbuilder/api-server
   version: ""
   replicaCount: "1"
-  serviceType: "ClusterIP"
+  serviceType: "{{ if eq .Values.ingress.controller \"gke\" }}NodePort{{ else }}ClusterIP{{ end }}"
   serviceAccountName: ""
   otel:
     enabled: false
@@ -247,7 +247,7 @@ executor:
   image: "azbuilder/executor"
   version: ""
   replicaCount: "1"
-  serviceType: "ClusterIP"
+  serviceType: "{{ if eq .Values.ingress.controller \"gke\" }}NodePort{{ else }}ClusterIP{{ end }}"
   serviceAccountName: ""
   secrets:
    - terrakube-executor-secrets
@@ -288,7 +288,7 @@ registry:
   image: azbuilder/open-registry
   version: ""
   replicaCount: "1"
-  serviceType: "ClusterIP"
+  serviceType: "{{ if eq .Values.ingress.controller \"gke\" }}NodePort{{ else }}ClusterIP{{ end }}"
   serviceAccountName: ""
   secrets:
    - terrakube-registry-secrets
@@ -316,7 +316,7 @@ ui:
   image: azbuilder/terrakube-ui
   version: ""
   replicaCount: "1"
-  serviceType: "ClusterIP"
+  serviceType: "{{ if eq .Values.ingress.controller \"gke\" }}NodePort{{ else }}ClusterIP{{ end }}"
   serviceAccountName: ""
   resources: {}
   podLabels: {}
@@ -420,3 +420,4 @@ ingress:
         api: false
         registry: false
         dex: false
+        executor: false 

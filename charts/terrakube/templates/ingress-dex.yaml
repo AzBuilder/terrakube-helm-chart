@@ -116,6 +116,7 @@ metadata:
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}
 spec:
+  ingressClassName: gce
   rules:
     - host: {{ .Values.ingress.api.domain }}
       http:

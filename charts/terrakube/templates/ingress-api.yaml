@@ -51,6 +51,14 @@ metadata:
     kubernetes.io/ingress.global-static-ip: {{ .Values.ingress.gke.sharedLoadBalancer.staticIPAddress }}
     {{- end }}
     {{- end }}
+    # Apply GKE annotations
+    {{- range $key, $value := .Values.ingress.gke.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    # Apply API specific annotations
+    {{- range $key, $value := .Values.ingress.api.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
     # Apply managed certificate if enabled
     {{- if .Values.ingress.gke.managedCertificate.create }}
     networking.gke.io/managed-certificates: {{ .Values.name }}-certificate
@@ -73,15 +81,8 @@ metadata:
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
     {{- end }}
     {{- end }}
-    # Apply GKE annotations
-    {{- range $key, $value := .Values.ingress.gke.annotations }}
-    {{ $key }}: {{ tpl (toString $value) $ | quote }}
-    {{- end }}
-    # Apply API specific annotations
-    {{- range $key, $value := .Values.ingress.api.annotations }}
-    {{ $key }}: {{ tpl (toString $value) $ | quote }}
-    {{- end }}
 spec:
+  ingressClassName: gce
   rules:
     - host: {{ .Values.ingress.api.domain }}
       http:

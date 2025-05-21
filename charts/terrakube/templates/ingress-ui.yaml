@@ -106,15 +106,16 @@ metadata:
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
     {{- end }}
     {{- end }}
-    # Apply GKE annotations
+    # GKE annotations need to come before generic ones to prevent overrides
     {{- range $key, $value := .Values.ingress.gke.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}
-    # Apply UI specific annotations
+    # Then UI specific annotations
     {{- range $key, $value := .Values.ingress.ui.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}
 spec:
+  ingressClassName: gce
   rules:
     - host: {{ .Values.ingress.ui.domain }}
       http:

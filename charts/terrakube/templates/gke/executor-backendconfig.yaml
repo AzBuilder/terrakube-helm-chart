@@ -1,0 +1,16 @@
+{{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.backendConfig.create }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ .Values.name }}-executor-backend-config
+spec:
+  timeoutSec: {{ .Values.ingress.gke.backendConfig.timeout }}
+  healthCheck:
+    checkIntervalSec: 15
+    timeoutSec: 5
+    healthyThreshold: 1
+    unhealthyThreshold: 2
+    type: HTTP
+    requestPath: "/actuator/health"
+    port: 8090
+{{- end }}
