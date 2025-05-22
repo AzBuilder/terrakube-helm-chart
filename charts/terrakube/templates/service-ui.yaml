@@ -14,7 +14,7 @@ spec:
   # Use NodePort for GKE or the specified type from values
   type: {{ if eq .Values.ingress.controller "gke" }}NodePort{{ else }}{{ .Values.ui.serviceType | default "ClusterIP" }}{{ end }}
   ports:
-    - port: 80
+    - port: 8080
       targetPort: 8080
       protocol: TCP
       name: http

@@ -26,7 +26,7 @@ spec:
               service:
                 name: {{ .Values.name }}-registry-service
                 port:
-                  number: 8080
+                  number: 8075
   {{- if .Values.ingress.useTls }}
   tls:
     - hosts:
