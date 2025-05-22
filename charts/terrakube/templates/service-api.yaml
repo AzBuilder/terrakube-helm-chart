@@ -7,7 +7,7 @@ metadata:
     {{- include "terrakube-api.labels" . | nindent 4 }}
   {{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.backendConfig.create }}
   annotations:
-    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-backend-config"}'
+    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-api-backend-config"}'
     cloud.google.com/neg: '{"ingress": true}'
   {{- end }}
 spec:

@@ -78,7 +78,7 @@ metadata:
     {{- end }}
     # Apply API-specific backend config 
     {{- if .Values.ingress.gke.backendConfig.create }}
-    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-backend-config"}'
+    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-api-backend-config"}'
     {{- end }}
     # Apply ExternalDNS proxy configuration
     {{- if .Values.ingress.gke.externalDNS }}
