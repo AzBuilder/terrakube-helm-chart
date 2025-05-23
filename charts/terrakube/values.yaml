@@ -385,11 +385,21 @@ ingress:
       kubernetes.io/ingress.class: alb
       alb.ingress.kubernetes.io/scheme: internet-facing
       alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
+      alb.ingress.kubernetes.io/ssl-redirect: '443'
     certificateArn: ""
     sharedLoadBalancer:
       enabled: false
-      groupName: "terrakube-alb"  # Name for the shared ALB group
-    
+      groupName: "terrakube-alb"
+    targetGroupBinding:
+      create: false
+      apiTargetGroupARN: ""
+      uiTargetGroupARN: ""
+      registryTargetGroupARN: ""
+      dexTargetGroupARN: ""
+    securityGroups: []
+    subnets: []
+
   # GKE specific configuration
   gke:
     enabled: false
@@ -420,4 +430,4 @@ ingress:
         api: false
         registry: false
         dex: false
-        executor: false 
+        executor: false

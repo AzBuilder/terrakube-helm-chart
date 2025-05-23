@@ -11,17 +11,12 @@ metadata:
     cloud.google.com/neg: '{"ingress": true}'
   {{- end }}
 spec:
-  # Use NodePort for GKE or the specified type from values
-  type: {{ if eq .Values.ingress.controller "gke" }}NodePort{{ else }}{{ .Values.executor.serviceType | default "ClusterIP" }}{{ end }}
+  type: {{ if eq .Values.ingress.controller "gke" }}NodePort{{ else if eq .Values.ingress.controller "aws" }}ClusterIP{{ else }}{{ .Values.executor.serviceType | default "ClusterIP" }}{{ end }}
   ports:
-  - port: 8090
-    targetPort: http
+    - port: 8090
+      targetPort: 8090
       protocol: TCP
       name: http
-{{- if and .Values.executor.otel.enabled .Values.executor.otel.metrics }}
-  - port: {{ .Values.executor.otel.metrics.port | default "9464" }}
-    targetPort: metrics
-{{- end }}
   selector:
     {{- include "terrakube-executor.labels" . | nindent 4 }}
 {{- end }}
