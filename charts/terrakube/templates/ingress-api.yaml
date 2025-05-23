@@ -105,7 +105,7 @@ spec:
             pathType: {{ .Values.ingress.dex.pathType | quote }}
             backend:
               service:
-                name: {{ .Values.Name }}-dex
+                name: {{ .Release.Name }}-dex
                 port:
                   number: 5556
 {{- else if and (eq .Values.ingress.controller "aws") .Values.ingress.aws.enabled }}
