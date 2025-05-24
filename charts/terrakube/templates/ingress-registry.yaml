@@ -1,3 +1,4 @@
+{{- if not (and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled) }}
 {{- if .Values.ingress.registry.enabled }}
 {{- if eq .Values.ingress.controller "generic" }}
 apiVersion: networking.k8s.io/v1
@@ -127,5 +128,6 @@ spec:
                 name: {{ .Values.name }}-registry-service
                 port:
                   number: 8075
+{{- end }}
 {{- end }}
 {{- end }}
