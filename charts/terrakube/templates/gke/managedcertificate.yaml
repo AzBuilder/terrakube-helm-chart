@@ -1,23 +1,26 @@
-{{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.managedCertificate.create }}
+{{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.managedCertificate.create .Values.ingress.use_single_loadbalancer }}
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
   name: {{ .Values.name }}-certificate
 spec:
   domains:
-  {{- if .Values.ingress.gke.managedCertificate.domains }}
-  {{- range .Values.ingress.gke.managedCertificate.domains }}
+    {{- if .Values.ingress.gke.managedCertificate.domains }}
+    {{- range .Values.ingress.gke.managedCertificate.domains }}
     - {{ . }}
-  {{- end }}
-  {{- else }}
-  {{- if .Values.ingress.ui.enabled }}
+    {{- end }}
+    {{- else }}
+    {{- if .Values.ingress.ui.enabled }}
     - {{ .Values.ingress.ui.domain }}
-  {{- end }}
-  {{- if .Values.ingress.api.enabled }}
+    {{- end }}
+    {{- if .Values.ingress.api.enabled }}
     - {{ .Values.ingress.api.domain }}
-  {{- end }}
-  {{- if and .Values.ingress.registry.enabled }}
+    {{- end }}
+    {{- if .Values.ingress.registry.enabled }}
     - {{ .Values.ingress.registry.domain }}
-  {{- end }}
-  {{- end }}
+    {{- end }}
+    {{- if .Values.ingress.executor.enabled }}
+    - {{ .Values.ingress.executor.domain }}
+    {{- end }}
+    {{- end }}
 {{- end }}

@@ -1,4 +1,4 @@
-{{- if not (and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled) }}
+{{- if not (and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.use_single_loadbalancer) }}
 {{- if .Values.ingress.ui.enabled }}
 {{- if eq .Values.ingress.controller "generic" }}
 apiVersion: networking.k8s.io/v1
@@ -77,23 +77,19 @@ metadata:
   labels:
     app: {{ .Values.name }}-ui
   annotations:
-    # GKE shared load balancer annotations
-    {{- if .Values.ingress.gke.sharedLoadBalancer.enabled }}
+    # GKE individual load balancer annotations (no shared IP)
+    {{- if and .Values.ingress.gke.sharedLoadBalancer.enabled (not .Values.ingress.use_single_loadbalancer) }}
     {{- if .Values.ingress.gke.sharedLoadBalancer.staticIPName }}
-    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gke.sharedLoadBalancer.staticIPName }}
-    {{- else if .Values.ingress.gke.sharedLoadBalancer.staticIPAddress }}
-    kubernetes.io/ingress.global-static-ip: {{ .Values.ingress.gke.sharedLoadBalancer.staticIPAddress }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gke.sharedLoadBalancer.staticIPName }}-ui
     {{- end }}
     {{- end }}
     # Apply managed certificate if enabled
     {{- if .Values.ingress.gke.managedCertificate.create }}
-    networking.gke.io/managed-certificates: {{ .Values.name }}-certificate
-    {{- else if and .Values.ingress.gke.managedCertificate.useExisting .Values.ingress.gke.managedCertificate.existingCertName }}
-    networking.gke.io/managed-certificates: {{ .Values.ingress.gke.managedCertificate.existingCertName }}
+    networking.gke.io/managed-certificates: {{ .Values.name }}-ui-certificate
     {{- end }}
     # Apply frontend config if enabled
     {{- if .Values.ingress.gke.frontendConfig.create }}
-    networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-frontend-config
+    networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-ui-frontend-config
     {{- end }}
     # Apply UI-specific backend config
     {{- if .Values.ingress.gke.backendConfig.create }}
@@ -107,11 +103,11 @@ metadata:
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
     {{- end }}
     {{- end }}
-    # GKE annotations need to come before generic ones to prevent overrides
+    # GKE annotations
     {{- range $key, $value := .Values.ingress.gke.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}
-    # Then UI specific annotations
+    # UI specific annotations
     {{- range $key, $value := .Values.ingress.ui.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}

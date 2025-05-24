@@ -330,6 +330,7 @@ ui:
 ingress:
   useTls: false
   includeTlsHosts: true
+  use_single_loadbalancer: false  
   ui:
     enabled: true
     domain: "terrakube-ui.minikube.net"
