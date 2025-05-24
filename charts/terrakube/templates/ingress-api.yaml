@@ -32,7 +32,7 @@ spec:
             pathType: {{ .Values.ingress.dex.pathType | quote }}
             backend:
               service:
-                name: {{ .Values.Name }}-dex
+                name: {{ .Release.Name }}-dex
                 port:
                   number: 5556
   {{- if .Values.ingress.useTls }}

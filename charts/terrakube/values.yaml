@@ -316,7 +316,7 @@ ui:
   image: azbuilder/terrakube-ui
   version: ""
   replicaCount: "1"
-  serviceType: "{{ if eq .Values.ingress.controller \"gke\" }}NodePort{{ else }}ClusterIP{{ end }}"
+  serviceType: ClusterIP
   serviceAccountName: ""
   resources: {}
   podLabels: {}

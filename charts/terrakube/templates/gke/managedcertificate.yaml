@@ -1,4 +1,4 @@
-{{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.managedCertificate.create .Values.ingress.use_single_loadbalancer }}
+{{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.managedCertificate.create .Values.ingress.gke.sharedLoadBalancer.enabled }}
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
