@@ -1,4 +1,4 @@
-{{- if not (and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.use_single_loadbalancer) }}
+{{- if not (and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.sharedLoadBalancer.enabled) }}
 {{- if .Values.ingress.executor.enabled }}
 {{- if eq .Values.ingress.controller "generic" }}
 apiVersion: networking.k8s.io/v1
@@ -73,25 +73,18 @@ metadata:
   labels:
     app: {{ .Values.name }}-executor
   annotations:
-    # GKE individual load balancer annotations (no shared IP)
-    {{- if and .Values.ingress.gke.sharedLoadBalancer.enabled (not .Values.ingress.use_single_loadbalancer) }}
-    {{- if .Values.ingress.gke.sharedLoadBalancer.staticIPName }}
-    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gke.sharedLoadBalancer.staticIPName }}-executor
+    {{- if .Values.ingress.gke.executorStaticIPName }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gke.executorStaticIPName }}
     {{- end }}
-    {{- end }}
-    # Apply managed certificate if enabled
     {{- if .Values.ingress.gke.managedCertificate.create }}
     networking.gke.io/managed-certificates: {{ .Values.name }}-executor-certificate
     {{- end }}
-    # Apply frontend config if enabled
     {{- if .Values.ingress.gke.frontendConfig.create }}
     networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-executor-frontend-config
     {{- end }}
-    # Apply executor-specific backend config
     {{- if .Values.ingress.gke.backendConfig.create }}
     cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-executor-backend-config"}'
     {{- end }}
-    # Apply ExternalDNS proxy configuration
     {{- if .Values.ingress.gke.externalDNS }}
     {{- if .Values.ingress.gke.externalDNS.perIngressProxy }}
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.perIngressProxy.executor }}"
@@ -99,11 +92,9 @@ metadata:
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
     {{- end }}
     {{- end }}
-    # GKE annotations
     {{- range $key, $value := .Values.ingress.gke.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}
-    # Executor specific annotations
     {{- range $key, $value := .Values.ingress.executor.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}
@@ -120,6 +111,14 @@ spec:
                 name: {{ .Values.name }}-executor-service
                 port:
                   number: 8090
+  {{- if .Values.ingress.useTls }}
+  tls:
+    - hosts:
+      {{- if .Values.ingress.includeTlsHosts }}
+        - {{ .Values.ingress.executor.domain }}
+      {{- end }}
+      secretName: {{ .Values.ingress.executor.tlsSecretName }}
+  {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

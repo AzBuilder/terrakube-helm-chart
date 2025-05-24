@@ -1,4 +1,4 @@
-{{- if not (and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.use_single_loadbalancer) }}
+{{- if not (and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.sharedLoadBalancer.enabled) }}
 {{- if .Values.ingress.registry.enabled }}
 {{- if eq .Values.ingress.controller "generic" }}
 apiVersion: networking.k8s.io/v1
@@ -77,25 +77,18 @@ metadata:
   labels:
     app: {{ .Values.name }}-registry
   annotations:
-    # GKE individual load balancer annotations (no shared IP)
-    {{- if and .Values.ingress.gke.sharedLoadBalancer.enabled (not .Values.ingress.use_single_loadbalancer) }}
-    {{- if .Values.ingress.gke.sharedLoadBalancer.staticIPName }}
-    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gke.sharedLoadBalancer.staticIPName }}-registry
+    {{- if .Values.ingress.gke.registryStaticIPName }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gke.registryStaticIPName }}
     {{- end }}
-    {{- end }}
-    # Apply managed certificate if enabled
     {{- if .Values.ingress.gke.managedCertificate.create }}
     networking.gke.io/managed-certificates: {{ .Values.name }}-registry-certificate
     {{- end }}
-    # Apply frontend config if enabled
     {{- if .Values.ingress.gke.frontendConfig.create }}
     networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-registry-frontend-config
     {{- end }}
-    # Apply registry-specific backend config
     {{- if .Values.ingress.gke.backendConfig.create }}
     cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-registry-backend-config"}'
     {{- end }}
-    # Apply ExternalDNS proxy configuration
     {{- if .Values.ingress.gke.externalDNS }}
     {{- if .Values.ingress.gke.externalDNS.perIngressProxy }}
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.perIngressProxy.registry }}"
@@ -103,11 +96,9 @@ metadata:
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
     {{- end }}
     {{- end }}
-    # GKE annotations
     {{- range $key, $value := .Values.ingress.gke.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}
-    # Registry specific annotations
     {{- range $key, $value := .Values.ingress.registry.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}
@@ -124,6 +115,14 @@ spec:
                 name: {{ .Values.name }}-registry-service
                 port:
                   number: 8075
+  {{- if .Values.ingress.useTls }}
+  tls:
+    - hosts:
+      {{- if .Values.ingress.includeTlsHosts }}
+        - {{ .Values.ingress.registry.domain }}
+      {{- end }}
+      secretName: {{ .Values.ingress.registry.tlsSecretName }}
+  {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

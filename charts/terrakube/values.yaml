@@ -408,8 +408,11 @@ ingress:
       kubernetes.io/ingress.class: gce
     sharedLoadBalancer:
       enabled: false
-      staticIPName: ""         # Name of the reserved static IP in GCP
-      staticIPAddress: ""      # Alternative: direct IP address
+      staticIPName: ""         # Used if shared LB is enabled
+    uiStaticIPName: ""         # Used if shared LB is disabled
+    apiStaticIPName: ""
+    registryStaticIPName: ""
+    executorStaticIPName: ""
     managedCertificate:
       create: false
       useExisting: false
