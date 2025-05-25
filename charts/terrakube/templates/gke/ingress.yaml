@@ -14,6 +14,7 @@ metadata:
     {{- end }}
     {{- if .Values.ingress.gke.externalDNS }}
     external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
+    external-dns.alpha.kubernetes.io/hostname: "{{- if .Values.ingress.ui.enabled }}{{ .Values.ingress.ui.domain }},{{ end }}{{- if .Values.ingress.api.enabled }}{{ .Values.ingress.api.domain }},{{ end }}{{- if .Values.ingress.registry.enabled }}{{ .Values.ingress.registry.domain }},{{ end }}{{- if .Values.ingress.executor.enabled }}{{ .Values.ingress.executor.domain }},{{ end }}"
     {{- end }}
     {{- range $key, $value := .Values.ingress.gke.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
