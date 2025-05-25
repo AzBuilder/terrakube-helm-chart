@@ -101,7 +101,11 @@ metadata:
     networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-api-frontend-config
     {{- end }}
     {{- if .Values.ingress.gke.backendConfig.create }}
-    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-api-backend-config"}'
+    cloud.google.com/backend-config: |
+      {
+        "default": "{{ .Values.name }}-api-backend-config",
+        "/dex/*": "{{ .Values.name }}-dex-backend-config"
+      }
     {{- end }}
     {{- if .Values.ingress.gke.externalDNS }}
     {{- if .Values.ingress.gke.externalDNS.perIngressProxy }}
