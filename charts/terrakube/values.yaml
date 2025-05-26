@@ -388,9 +388,6 @@ ingress:
       alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
       alb.ingress.kubernetes.io/ssl-redirect: '443'
     certificateArn: ""
-    sharedLoadBalancer:
-      enabled: false
-      groupName: "terrakube-alb"
     targetGroupBinding:
       create: false
       apiTargetGroupARN: ""
@@ -405,10 +402,8 @@ ingress:
     enabled: false
     annotations:
       kubernetes.io/ingress.class: gce
-    sharedLoadBalancer:
-      enabled: false
-      staticIPName: ""         # Used if shared LB is enabled
-    uiStaticIPName: ""         # Used if shared LB is disabled
+    # Per-service static IP names for individual load balancers
+    uiStaticIPName: ""         
     apiStaticIPName: ""
     registryStaticIPName: ""
     executorStaticIPName: ""
@@ -420,9 +415,6 @@ ingress:
     backendConfig:
       create: false
       timeout: 30
-      healthCheck:
-        requestPath: "/actuator/health"
-        port: 8080
     frontendConfig:
       create: false
       redirectToHttps: true

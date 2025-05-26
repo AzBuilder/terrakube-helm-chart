@@ -1,4 +1,3 @@
-{{- if not (and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.sharedLoadBalancer.enabled) }}
 {{- if .Values.ingress.executor.enabled }}
 {{- if eq .Values.ingress.controller "generic" }}
 apiVersion: networking.k8s.io/v1
@@ -120,6 +119,5 @@ spec:
       {{- end }}
       secretName: {{ .Values.ingress.executor.tlsSecretName }}
   {{- end }}
-{{- end }}
 {{- end }}
 {{- end }}

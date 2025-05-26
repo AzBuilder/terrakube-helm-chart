@@ -1,5 +1,74 @@
 # Terrakube Helm Chart
 
+This Helm chart deploys Terrakube on Kubernetes with support for multiple ingress controllers and cloud providers.
+
+## Ingress Configuration
+
+Terrakube supports three ingress controllers: `generic` (nginx), `aws` (ALB), and `gke` (Google Cloud Load Balancer).
+
+### Generic Ingress (Default)
+
+Uses standard Kubernetes ingress with nginx controller:
+
+```yaml
+ingress:
+  controller: "generic"
+  ui:
+    enabled: true
+    domain: "terrakube-ui.example.com"
+    ingressClassName: "nginx"
+  api:
+    enabled: true
+    domain: "terrakube-api.example.com"
+    ingressClassName: "nginx"
+  registry:
+    enabled: true
+    domain: "terrakube-registry.example.com"
+    ingressClassName: "nginx"
+  executor:
+    enabled: false
+```
+
+### AWS ALB Ingress
+
+Uses AWS Application Load Balancer for ingress:
+
+```yaml
+ingress:
+  controller: "aws"
+  ui:
+    enabled: true
+    hostname: "terrakube-ui.example.com"
+  api:
+    enabled: true
+    hostname: "terrakube-api.example.com"
+  registry:
+    enabled: true
+    hostname: "terrakube-registry.example.com"
+  executor:
+    enabled: false
+```
+
+### GKE Ingress
+
+Uses Google Cloud Load Balancer for ingress:
+
+```yaml
+ingress:
+  controller: "gke"
+  ui:
+    enabled: true
+    hostname: "terrakube-ui.example.com"
+  api:
+    enabled: true
+    hostname: "terrakube-api.example.com"
+  registry:
+    enabled: true
+    hostname: "terrakube-registry.example.com"
+  executor:
+    enabled: false
+```
+
 ## Helm Repository
 
 ## Usage
