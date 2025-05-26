@@ -2,7 +2,7 @@
 apiVersion: networking.gke.io/v1beta1
 kind: FrontendConfig
 metadata:
-  name: {{ .Values.name }}-frontend-config
+  name: {{ .Values.name }}-api-frontend-config
 spec:
   redirectToHttps:
     enabled: {{ .Values.ingress.gke.frontendConfig.redirectToHttps }}
