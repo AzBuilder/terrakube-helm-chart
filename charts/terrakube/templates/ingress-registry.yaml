@@ -102,6 +102,7 @@ metadata:
     {{- range $key, $value := .Values.ingress.registry.annotations }}
     {{ $key }}: {{ tpl (toString $value) $ | quote }}
     {{- end }}
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
   ingressClassName: gce
   rules:
