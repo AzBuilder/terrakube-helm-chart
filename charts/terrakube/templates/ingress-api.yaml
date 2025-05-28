@@ -148,7 +148,9 @@ spec:
       {{- if .Values.ingress.includeTlsHosts }}
         - {{ .Values.ingress.api.domain }}
       {{- end }}
+      {{- if not .Values.ingress.gke.managedCertificate.create }}
       secretName: {{ .Values.ingress.api.tlsSecretName }}
+      {{- end }}
   {{- end }}
 {{- end }}
 {{- end }}
