@@ -121,7 +121,7 @@ spec:
       {{- if .Values.ingress.includeTlsHosts }}
         - {{ .Values.ingress.ui.domain }}
       {{- end }}
-      {{- if not .Values.ingress.gke.managedCertificate.create }}
+      {{- if and .Values.ingress.ui.tlsSecretName (not .Values.ingress.gke.managedCertificate.create) }}
       secretName: {{ .Values.ingress.ui.tlsSecretName }}
       {{- end }}
   {{- end }}
