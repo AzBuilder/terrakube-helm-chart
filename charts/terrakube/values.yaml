@@ -179,6 +179,7 @@ api:
   replicaCount: "1"
   serviceType: "ClusterIP"
   serviceAccountName: ""
+  automountServiceAccountToken: true
   otel:
     enabled: false
     metrics:
