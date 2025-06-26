@@ -105,6 +105,9 @@ spec:
       {{- with .Values.api.serviceAccountName }}
       serviceAccountName: {{ quote . }}
       {{- end }}
+      {{- with .Values.api.automountServiceAccountToken }}
+      automountServiceAccountToken: {{ . }}
+      {{- end }}
       {{- with .Values.api.securityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
