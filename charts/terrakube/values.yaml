@@ -4,6 +4,8 @@ name: "terrakube"
 global:
   imagePullSecrets: []
 
+enableIPv6: true
+
 ## Azure Active Directory Security
 security:
   useOpenLDAP: true
