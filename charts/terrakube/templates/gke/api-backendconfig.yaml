@@ -1,0 +1,42 @@
+{{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.backendConfig.create }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ .Values.name }}-api-backend-config
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
+spec:
+  timeoutSec: {{ .Values.ingress.gke.backendConfig.timeout }}
+  {{- if .Values.ingress.gke.backendConfig.apiSecurityPolicy }}
+  securityPolicy:
+    name: {{ .Values.ingress.gke.backendConfig.apiSecurityPolicy }}
+  {{- end }}
+  healthCheck:
+    checkIntervalSec: 15
+    timeoutSec: 5
+    healthyThreshold: 1
+    unhealthyThreshold: 2
+    type: HTTP
+    requestPath: "/actuator/health"
+    port: 8080
+---
+{{- if .Values.dex.enabled }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ .Values.name }}-dex-backend-config
+  labels:
+    {{- include "terrakube.labels" . | nindent 4 }}
+spec:
+  timeoutSec: {{ .Values.ingress.gke.backendConfig.timeout }}
+  # NO security policy for Dex - GitHub needs access
+  healthCheck:
+    checkIntervalSec: 15
+    timeoutSec: 5
+    healthyThreshold: 1
+    unhealthyThreshold: 2
+    type: HTTP
+    requestPath: "/dex/healthz"
+    port: 5556
+{{- end }}
+{{- end }}

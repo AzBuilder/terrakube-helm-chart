@@ -1,0 +1,9 @@
+{{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.managedCertificate.create .Values.ingress.api.enabled }}
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: {{ .Values.name }}-api-certificate
+spec:
+  domains:
+    - {{ .Values.ingress.api.domain }}
+{{- end }}

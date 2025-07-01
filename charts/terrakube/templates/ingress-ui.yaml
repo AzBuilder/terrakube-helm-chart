@@ -1,31 +1,116 @@
-{{- if .Values.ingress.ui.enabled -}}
+{{- if .Values.ingress.ui.enabled }}
+{{- if eq .Values.ingress.controller "generic" }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: terrakube-ui-ingress
+  name: {{ .Values.name }}-ui
   labels:
-    {{- include "terrakube.labels" . | nindent 4 }}
+    app: {{ .Values.name }}-ui
   {{- with .Values.ingress.ui.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
   {{- end }}
 spec:
-  ingressClassName: {{ default "nginx" .Values.ingress.ui.ingressClassName }}
-  {{ if and .Values.ingress.useTls .Values.ingress.includeTlsHosts }}
-  tls:
-  - hosts:
-    - {{ .Values.ingress.ui.domain | quote }}
-    secretName: {{ .Values.ingress.ui.tlsSecretName }}
-  {{ end }}
+  {{- if .Values.ingress.ui.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ui.ingressClassName }}
+  {{- end }}
   rules:
-  - host:  {{ .Values.ingress.ui.domain | quote }}
-    http:
-      paths:
-      - path: {{ .Values.ingress.ui.path | quote }}
-        pathType: {{ .Values.ingress.ui.pathType | quote }}
-        backend:
-          service:
-            name: terrakube-ui-service
-            port:
-              number: 8080
-{{ end }}
+    - host: {{ .Values.ingress.ui.domain | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.ui.path | quote }}
+            pathType: {{ .Values.ingress.ui.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Values.name }}-ui-service
+                port:
+                  number: 8080
+  {{- if and .Values.ingress.ui.useTls .Values.ingress.ui.tlsSecretName }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.ui.domain | quote }}
+      secretName: {{ .Values.ingress.ui.tlsSecretName }}
+  {{- end }}
+{{- else if and (eq .Values.ingress.controller "aws") .Values.ingress.aws.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-ui
+  labels:
+    app: {{ .Values.name }}-ui
+  annotations:
+    {{- if and .Values.ingress.aws.sharedLoadBalancer.enabled .Values.ingress.aws.sharedLoadBalancer.groupName }}
+    alb.ingress.kubernetes.io/group.name: {{ .Values.ingress.aws.sharedLoadBalancer.groupName }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.aws.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    {{- if .Values.ingress.aws.certificateArn }}
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.aws.certificateArn }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.ui.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.ui.domain | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.ui.path | quote }}
+            pathType: {{ .Values.ingress.ui.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Values.name }}-ui-service
+                port:
+                  number: 8080
+{{- else if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-ui
+  labels:
+    app: {{ .Values.name }}-ui
+  annotations:
+    {{- if .Values.ingress.gke.uiStaticIPName }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gke.uiStaticIPName }}
+    {{- end }}
+    {{- if .Values.ingress.gke.managedCertificate.create }}
+    networking.gke.io/managed-certificates: {{ .Values.name }}-ui-certificate
+    {{- end }}
+    {{- if .Values.ingress.gke.frontendConfig.create }}
+    networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-ui-frontend-config
+    {{- end }}
+    {{- if .Values.ingress.gke.backendConfig.create }}
+    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-ui-backend-config"}'
+    {{- end }}
+    {{- if .Values.ingress.gke.externalDNS }}
+    {{- if .Values.ingress.gke.externalDNS.perIngressProxy }}
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.perIngressProxy.ui }}"
+    {{- else }}
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
+    {{- end }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.gke.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.ui.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ingressClassName: gce
+  rules:
+    - host: {{ .Values.ingress.ui.domain | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.ui.path | quote }}
+            pathType: {{ .Values.ingress.ui.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Values.name }}-ui-service
+                port:
+                  number: 8080
+{{- end }}
+{{- end }}

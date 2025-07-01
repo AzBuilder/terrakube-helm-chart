@@ -1,0 +1,31 @@
+{{- if and (eq .Values.ingress.controller "aws") .Values.ingress.aws.enabled .Values.ingress.aws.targetGroupBinding.create }}
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: {{ .Values.name }}-api-tgb
+spec:
+  serviceRef:
+    name: {{ .Values.name }}-api-service
+    port: 8080
+  targetGroupARN: {{ .Values.ingress.aws.targetGroupBinding.apiTargetGroupARN }}
+---
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: {{ .Values.name }}-ui-tgb
+spec:
+  serviceRef:
+    name: {{ .Values.name }}-ui-service
+    port: 80
+  targetGroupARN: {{ .Values.ingress.aws.targetGroupBinding.uiTargetGroupARN }}
+---
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: {{ .Values.name }}-registry-tgb
+spec:
+  serviceRef:
+    name: {{ .Values.name }}-registry-service
+    port: 8080
+  targetGroupARN: {{ .Values.ingress.aws.targetGroupBinding.registryTargetGroupARN }}
+{{- end }}
