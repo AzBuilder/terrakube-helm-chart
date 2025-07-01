@@ -1,0 +1,9 @@
+{{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.frontendConfig.create }}
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: {{ .Values.name }}-ui-frontend-config
+spec:
+  redirectToHttps:
+    enabled: {{ .Values.ingress.gke.frontendConfig.redirectToHttps }}
+{{- end }}

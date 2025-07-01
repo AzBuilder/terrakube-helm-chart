@@ -1,31 +1,116 @@
-{{- if .Values.ingress.executor.enabled -}}
+{{- if .Values.ingress.executor.enabled }}
+{{- if eq .Values.ingress.controller "generic" }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: terrakube-executor-ingress
+  name: {{ .Values.name }}-executor
   labels:
-    {{- include "terrakube.labels" . | nindent 4 }}
+    app: {{ .Values.name }}-executor
   {{- with .Values.ingress.executor.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
   {{- end }}
 spec:
-  ingressClassName: {{ default "nginx" .Values.ingress.executor.ingressClassName }}
-  {{ if and .Values.ingress.useTls .Values.ingress.includeTlsHosts -}}
-  tls:
-  - hosts:
-    - {{ .Values.ingress.executor.domain | quote }}
-    secretName: {{ .Values.ingress.executor.tlsSecretName }}
-  {{ end }}
+  {{- if .Values.ingress.executor.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.executor.ingressClassName }}
+  {{- end }}
   rules:
-  - host:  {{ .Values.ingress.executor.domain | quote }}
-    http:
-      paths:
-      - path: {{ .Values.ingress.executor.path | quote }}
-        pathType: {{ .Values.ingress.executor.pathType | quote }}
-        backend:
-          service:
-            name: terrakube-executor-service
-            port:
-              number: 8090
-{{ end }}
+    - host: {{ .Values.ingress.executor.domain | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.executor.path | quote }}
+            pathType: {{ .Values.ingress.executor.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Values.name }}-executor-service
+                port:
+                  number: 8090
+  {{- if and .Values.ingress.executor.useTls .Values.ingress.executor.tlsSecretName }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.executor.domain | quote }}
+      secretName: {{ .Values.ingress.executor.tlsSecretName }}
+  {{- end }}
+{{- else if and (eq .Values.ingress.controller "aws") .Values.ingress.aws.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-executor
+  labels:
+    app: {{ .Values.name }}-executor
+  annotations:
+    {{- if and .Values.ingress.aws.sharedLoadBalancer.enabled .Values.ingress.aws.sharedLoadBalancer.groupName }}
+    alb.ingress.kubernetes.io/group.name: {{ .Values.ingress.aws.sharedLoadBalancer.groupName }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.aws.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    {{- if .Values.ingress.aws.certificateArn }}
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.aws.certificateArn }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.executor.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.executor.domain | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.executor.path | quote }}
+            pathType: {{ .Values.ingress.executor.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Values.name }}-executor-service
+                port:
+                  number: 8090
+{{- else if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-executor
+  labels:
+    app: {{ .Values.name }}-executor
+  annotations:
+    {{- if .Values.ingress.gke.executorStaticIPName }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gke.executorStaticIPName }}
+    {{- end }}
+    {{- if .Values.ingress.gke.managedCertificate.create }}
+    networking.gke.io/managed-certificates: {{ .Values.name }}-executor-certificate
+    {{- end }}
+    {{- if .Values.ingress.gke.frontendConfig.create }}
+    networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-executor-frontend-config
+    {{- end }}
+    {{- if .Values.ingress.gke.backendConfig.create }}
+    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-executor-backend-config"}'
+    {{- end }}
+    {{- if .Values.ingress.gke.externalDNS }}
+    {{- if .Values.ingress.gke.externalDNS.perIngressProxy }}
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.perIngressProxy.executor }}"
+    {{- else }}
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
+    {{- end }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.gke.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.executor.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ingressClassName: gce
+  rules:
+    - host: {{ .Values.ingress.executor.domain | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.executor.path | quote }}
+            pathType: {{ .Values.ingress.executor.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Values.name }}-executor-service
+                port:
+                  number: 8090
+{{- end }}
+{{- end }}

@@ -1,5 +1,102 @@
 # Terrakube Helm Chart
 
+This Helm chart deploys Terrakube, an open-source Terraform management platform, on Kubernetes.
+
+## Features
+
+- **Multi-Cloud Ingress Support**: Generic, AWS ALB, and GKE ingress controllers
+- **TLS/SSL Configuration**: Per-service TLS configuration with custom certificates
+- **Google Cloud Integration**: GKE managed certificates, Cloud Armor, and BackendConfig support
+- **AWS Integration**: ALB ingress with shared load balancer support
+- **Authentication**: Dex OIDC integration with GitHub, Google, and other providers
+- **Storage**: MinIO S3-compatible storage or external S3
+- **Database**: PostgreSQL support with optional external database
+- **Module Registry**: Private Terraform module registry
+- **Workspace Management**: Terraform workspace execution and management
+
+## Prerequisites
+
+- Kubernetes 1.19+
+- Helm 3.0+
+- Ingress controller (nginx, AWS Load Balancer Controller, or GKE ingress)
+
+## Installation
+
+### Basic Installation
+
+```bash
+helm repo add terrakube https://charts.terrakube.io
+helm repo update
+helm install terrakube terrakube/terrakube
+```
+
+### Ingress Configuration
+
+Terrakube supports three ingress controllers: `generic` (nginx), `aws` (ALB), and `gke` (Google Cloud Load Balancer).
+
+#### Generic Ingress (Default)
+
+Uses standard Kubernetes ingress with nginx controller:
+
+```yaml
+ingress:
+  controller: "generic"
+  ui:
+    enabled: true
+    domain: "terrakube-ui.example.com"
+    ingressClassName: "nginx"
+  api:
+    enabled: true
+    domain: "terrakube-api.example.com"
+    ingressClassName: "nginx"
+  registry:
+    enabled: true
+    domain: "terrakube-registry.example.com"
+    ingressClassName: "nginx"
+  executor:
+    enabled: false
+```
+
+#### AWS ALB Ingress
+
+Uses AWS Application Load Balancer for ingress:
+
+```yaml
+ingress:
+  controller: "aws"
+  ui:
+    enabled: true
+    hostname: "terrakube-ui.example.com"
+  api:
+    enabled: true
+    hostname: "terrakube-api.example.com"
+  registry:
+    enabled: true
+    hostname: "terrakube-registry.example.com"
+  executor:
+    enabled: false
+```
+
+#### GKE Ingress
+
+Uses Google Cloud Load Balancer for ingress:
+
+```yaml
+ingress:
+  controller: "gke"
+  ui:
+    enabled: true
+    hostname: "terrakube-ui.example.com"
+  api:
+    enabled: true
+    hostname: "terrakube-api.example.com"
+  registry:
+    enabled: true
+    hostname: "terrakube-registry.example.com"
+  executor:
+    enabled: false
+```
+
 ## Helm Repository
 
 ## Usage
@@ -227,7 +324,6 @@ Once you have completed the above steps you can complete the file values.yaml to
 
 ### 4.1 Helm Value Properties
 
-
 | Key                                       | Required | Description                                                            |
 |:------------------------------------------|----------|------------------------------------------------------------------------|
 | name                                      | Yes      | Use "Terrakube"                                                        |
@@ -239,6 +335,63 @@ Once you have completed the above steps you can complete the file values.yaml to
 | security.dexClientScope                   | Yes      | Use "email openid profile offline_access groups"                       |
 | security.gcpCredentials                   | No       | JSON Credentials for Google Identity Authentication                    |
 | security.caCerts                          | No       | Custom CA certificates to be added at runtime                          |
+| ingress.controller                        | Yes      | Ingress controller type: "generic", "aws", or "gke"                    |
+| ingress.includeTlsHosts                   | No       | Include TLS hosts in ingress configuration (default: true)             |
+| ingress.ui.enabled                        | Yes      | Enable UI ingress (default: true)                                      |
+| ingress.ui.domain                         | Yes      | Domain name for UI service                                             |
+| ingress.ui.path                           | Yes      | URL path for UI service (default: "/")                                 |
+| ingress.ui.pathType                       | Yes      | Path matching type: "Prefix", "Exact", or "ImplementationSpecific"     |
+| ingress.ui.ingressClassName               | No       | Ingress class name (e.g., "nginx", "gce")                             |
+| ingress.ui.useTls                         | No       | Enable TLS/SSL for UI (default: false)                                |
+| ingress.ui.tlsSecretName                  | No       | Kubernetes TLS secret name for UI certificates                         |
+| ingress.ui.annotations                    | No       | Custom annotations for UI ingress                                       |
+| ingress.api.enabled                       | Yes      | Enable API ingress (default: true)                                     |
+| ingress.api.domain                        | Yes      | Domain name for API service                                            |
+| ingress.api.path                          | Yes      | URL path for API service (default: "/")                                |
+| ingress.api.pathType                      | Yes      | Path matching type: "Prefix", "Exact", or "ImplementationSpecific"     |
+| ingress.api.ingressClassName              | No       | Ingress class name (e.g., "nginx", "gce")                             |
+| ingress.api.useTls                        | No       | Enable TLS/SSL for API (default: false)                               |
+| ingress.api.tlsSecretName                 | No       | Kubernetes TLS secret name for API certificates                        |
+| ingress.api.annotations                   | No       | Custom annotations for API ingress                                      |
+| ingress.registry.enabled                  | Yes      | Enable Registry ingress (default: true)                               |
+| ingress.registry.domain                   | Yes      | Domain name for Registry service                                       |
+| ingress.registry.path                     | Yes      | URL path for Registry service (default: "/")                           |
+| ingress.registry.pathType                 | Yes      | Path matching type: "Prefix", "Exact", or "ImplementationSpecific"     |
+| ingress.registry.ingressClassName         | No       | Ingress class name (e.g., "nginx", "gce")                             |
+| ingress.registry.useTls                   | No       | Enable TLS/SSL for Registry (default: false)                          |
+| ingress.registry.tlsSecretName            | No       | Kubernetes TLS secret name for Registry certificates                   |
+| ingress.registry.annotations              | No       | Custom annotations for Registry ingress                                 |
+| ingress.executor.enabled                  | No       | Enable Executor ingress (default: false, usually internal-only)        |
+| ingress.executor.domain                   | No       | Domain name for Executor service                                       |
+| ingress.executor.path                     | No       | URL path for Executor service (default: "/")                           |
+| ingress.executor.pathType                 | No       | Path matching type: "Prefix", "Exact", or "ImplementationSpecific"     |
+| ingress.executor.ingressClassName         | No       | Ingress class name (e.g., "nginx", "gce")                             |
+| ingress.executor.useTls                   | No       | Enable TLS/SSL for Executor (default: false)                          |
+| ingress.executor.tlsSecretName            | No       | Kubernetes TLS secret name for Executor certificates                   |
+| ingress.executor.annotations              | No       | Custom annotations for Executor ingress                                 |
+| ingress.dex.path                          | No       | URL path for Dex OIDC service (default: "/dex")                       |
+| ingress.dex.pathType                      | No       | Path matching type for Dex service (default: "Prefix")                |
+| ingress.aws.enabled                       | No       | Enable AWS ALB ingress features (default: false)                      |
+| ingress.aws.certificateArn               | No       | AWS ACM certificate ARN for SSL termination                           |
+| ingress.aws.sharedLoadBalancer.enabled   | No       | Use shared ALB across multiple ingresses (default: false)             |
+| ingress.aws.sharedLoadBalancer.groupName | No       | ALB group name for shared load balancer                               |
+| ingress.aws.annotations                   | No       | Global AWS ALB annotations applied to all ingresses                   |
+| ingress.gke.enabled                       | No       | Enable GKE ingress features (default: false)                          |
+| ingress.gke.managedCertificate.create     | No       | Create GCP managed SSL certificates (default: false)                  |
+| ingress.gke.backendConfig.create          | No       | Create BackendConfig resources for health checks (default: false)     |
+| ingress.gke.backendConfig.timeout         | No       | Backend timeout in seconds (default: 30)                              |
+| ingress.gke.backendConfig.uiSecurityPolicy      | No       | Cloud Armor security policy for UI service (restrict user access)     |
+| ingress.gke.backendConfig.apiSecurityPolicy     | No       | Cloud Armor security policy for API service (usually empty)           |
+| ingress.gke.backendConfig.registrySecurityPolicy | No       | Cloud Armor security policy for Registry service (usually empty)      |
+| ingress.gke.backendConfig.executorSecurityPolicy | No       | Cloud Armor security policy for Executor service (usually empty)      '
+| ingress.gke.frontendConfig.create         | No       | Create FrontendConfig resources (default: false)                      |
+| ingress.gke.externalDNS.proxyEnabled      | No       | Enable Cloudflare proxy for external-dns (default: "false")           |
+| ingress.gke.externalDNS.perIngressProxy   | No       | Per-service Cloudflare proxy settings                                 |
+| ingress.gke.annotations                   | No       | Global GKE annotations applied to all ingresses                       |
+| ingress.gke.uiStaticIPName                | No       | GCP static IP name for UI service                                      |
+| ingress.gke.apiStaticIPName               | No       | GCP static IP name for API service                                     |
+| ingress.gke.registryStaticIPName          | No       | GCP static IP name for Registry service                                |
+| ingress.gke.executorStaticIPName          | No       | GCP static IP name for Executor service                                |
 | openldap.adminUser                        | Yes      | LDAP deployment admin user                                             |
 | openldap.adminPass                        | Yes      | LDAP deployment admin password                                         |
 | openldap.baseRoot                         | Yes      | LDAP baseDN (or suffix) of the LDAP tree                               |
@@ -261,17 +414,17 @@ Once you have completed the above steps you can complete the file values.yaml to
 | storage.aws.bucketName                    | No       | Aws bucket name                                                        |
 | storage.aws.region                        | No       | Aws region name (Example: us-east-1)                                   |
 | storage.aws.endpoint                      | No       | Setup custom endpoint (MinIO)                                          |
-| dex.enabled                               | No       | Enable Dex component                                                   |
+| dex.enabled                               | No       | Enable Dex OIDC authentication component                              |
 | dex.*                                     | No       | Setup based on https://github.com/dexidp/helm-charts                   |
 | minio.*                                   | No       | Setup based on https://github.com/bitnami/charts/tree/main/bitnami/minio    |
 | postgres.*                                | No       | Setup based on https://github.com/bitnami/charts/tree/main/bitnami/postgres |
 | redis.*                                   | No       | Setup based on https://github.com/bitnami/charts/tree/main/bitnami/redis    |
-| api.enabled                               | Yes      | true/false                                                             |
+| api.enabled                               | Yes      | Enable API component deployment                                        |
 | api.defaultRedis                          | No       | Enable default Redis using Bitnami helm chart                          |
 | api.defaultDatabase                       | No       | Enable default database using postgresql helm chart                    |
 | api.image                                 | No       | API image repository                                                   |
 | api.version                               | Yes      | Terrakube API version                                                  |
-| api.replicaCount                          | Yes      |                                                                        |
+| api.replicaCount                          | Yes      | Number of API pod replicas                                             |
 | api.serviceAccountName                    | No       | Kubernetes Service Account name                                        |
 | api.automountServiceAccountToken          | No       | Enable automountServiceAccountToken                                    | 
 | api.serviceType                           | Yes      |                                                                        |
@@ -287,42 +440,42 @@ Once you have completed the above steps you can complete the file values.yaml to
 | api.containerSecurityContext              | No       | Fill securityContext field in the container spec                       |
 | api.imagePullSecrets                      | No       | Specific Secret used to pull images from private repository            |
 | api.initContainers                        | No       | Init containers for API deployment                                     |
-| executor.enabled                          | Yes      | true/false                                                             |
+| executor.enabled                          | Yes      | Enable Executor component deployment                                   |
 | executor.image                            | No       | Executor image repository                                              |
 | executor.version                          | Yes      | Terrakube Executor version                                             |
-| executor.replicaCount                     | Yes      |                                                                        |
+| executor.replicaCount                     | Yes      | Number of Executor pod replicas                                        |
 | executor.serviceAccountName               | No       | Kubernetes Service Account name                                        |
-| executor.serviceType                      | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
-| executor.env                              | No       |                                                                        |
-| executor.volumes                          | No       |                                                                        |
-| executor.volumeMounts                     | No       |                                                                        |
-| executor.properties.toolsRepository       | Yes      | Example: https://github.com/AzBuilder/terrakube-extensions             |
-| executor.properties.toolsBranch           | Yes      | Example: main                                                          |
-| executor.securityContext                  | No       | Fill securityContext field                                             |
-| executor.containerSecurityContext         | No       | Fill securityContext field in the container spec                       |
+| executor.serviceType                      | Yes      | Kubernetes service type (ClusterIP/NodePort/LoadBalancer)             |
+| executor.env                              | No       | Environment variables for Executor pods                                |
+| executor.volumes                          | No       | Volume mounts for Executor pods                                        |
+| executor.volumeMounts                     | No       | Volume mount points for Executor pods                                  |
+| executor.properties.toolsRepository       | Yes      | Git repository for Terraform tools (e.g., GitHub extensions repo)     |
+| executor.properties.toolsBranch           | Yes      | Git branch for tools repository (typically "main")                    |
+| executor.securityContext                  | No       | Pod security context for Executor                                     |
+| executor.containerSecurityContext         | No       | Container security context for Executor                               |
 | executor.imagePullSecrets                 | No       | Specific Secret used to pull images from private repository            |
 | executor.initContainers                   | No       | Init containers for executor deployment                                |
-| registry.enabled                          | Yes      |                                                                        |
+| registry.enabled                          | Yes      | Enable Registry component deployment                                   |
 | registry.image                            | No       | Registry image repository                                              |
-| registry.version                          | Yes      |                                                                        |
-| registry.replicaCount                     | Yes      |                                                                        |
+| registry.version                          | Yes      | Terrakube Registry version                                             |
+| registry.replicaCount                     | Yes      | Number of Registry pod replicas                                        |
 | registry.serviceAccountName               | No       | Kubernetes Service Account name                                        |
-| registry.serviceType                      | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
-| registry.env                              | No       |                                                                        |
-| registry.volumes                          | No       |                                                                        |
-| registry.volumeMounts                     | No       |                                                                        |
-| registry.securityContext                  | No       | Fill securityContext field                                             |
-| registry.containerSecurityContext         | No       | Fill securityContext field in the container spec                       |
+| registry.serviceType                      | Yes      | Kubernetes service type (ClusterIP/NodePort/LoadBalancer)             |
+| registry.env                              | No       | Environment variables for Registry pods                                |
+| registry.volumes                          | No       | Volume mounts for Registry pods                                        |
+| registry.volumeMounts                     | No       | Volume mount points for Registry pods                                  |
+| registry.securityContext                  | No       | Pod security context for Registry                                     |
+| registry.containerSecurityContext         | No       | Container security context for Registry                               |
 | registry.imagePullSecrets                 | No       | Specific Secret used to pull images from private repository            |
 | registry.initContainers                   | No       | Init containers for registry deployment                                |
-| ui.enabled                                | Yes      | true/false                                                             |
+| ui.enabled                                | Yes      | Enable UI component deployment                                         |
 | ui.image                                  | No       | UI image repository                                                    |
-| ui.version                                | Yes      |                                                                        |
-| ui.replicaCount                           | Yes      |                                                                        |
+| ui.version                                | Yes      | Terrakube UI version                                                   |
+| ui.replicaCount                           | Yes      | Number of UI pod replicas                                              |
 | ui.serviceAccountName                     | No       | Kubernetes Service Account name                                        |
-| ui.serviceType                            | Yes      | ClusterIP/NodePort/LoadBalancer/ExternalName                           |
-| ui.securityContext                        | No       | Fill securityContext field                                             |
-| ui.containerSecurityContext               | No       | Fill securityContext field in the container spec                       |
+| ui.serviceType                            | Yes      | Kubernetes service type (ClusterIP/NodePort/LoadBalancer)             |
+| ui.securityContext                        | No       | Pod security context for UI                                           |
+| ui.containerSecurityContext               | No       | Container security context for UI                                     |
 | ui.imagePullSecrets                       | No       | Specific Secret used to pull images from private repository            |
 | ui.initContainers                         | No       | Init containers for UI deployment                                      |
 | ingress.ui.ingressClassName               | Yes      | Default is set to nginx                                                |
@@ -352,6 +505,24 @@ Once you have completed the above steps you can complete the file values.yaml to
 | ingress.dex.pathType                      | Yes      | ImplementationSpecific/Exact/Prefix                                    |
 | ingress.dex.annontations                  | Yes      | Ingress annotations                                                    |
 
+
+#### Per-Service Security Policies
+
+You can apply Cloud Armor security policies to individual services:
+
+```yaml
+ingress:
+  controller: "gke"
+  gke:
+    enabled: true
+    backendConfig:
+      create: true
+      timeout: 30
+      # Only restrict UI access - keep APIs open for external agents
+      uiSecurityPolicy: "terrakube-ui-security-policy"
+      # apiSecurityPolicy: ""          # Empty - external agents need access
+      # registrySecurityPolicy: ""     # Empty - module downloads need access
+```
 
 ### 4.2 Node Affinity, NodeSelector, Taints and Tolerations.
 
@@ -575,5 +746,3 @@ helm install --debug --values ./values.yaml terrakube ./terrakube-helm-chart/cha
 ```
 
 After installing you should be able to view the app using ui domain inside the values.yaml.
-
-

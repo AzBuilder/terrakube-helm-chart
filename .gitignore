@@ -1,3 +1,6 @@
 sample-*.yaml
 secretFiles/*
 !secretFiles/README.md
+local_build.sh
+.cr-release-packages
+.DS_Store

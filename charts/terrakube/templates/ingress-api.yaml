@@ -1,52 +1,143 @@
-{{- if .Values.ingress.api.enabled -}}
+{{- if .Values.ingress.api.enabled }}
+{{- if eq .Values.ingress.controller "generic" }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: terrakube-api-ingress
+  name: {{ .Values.name }}-api
   labels:
-    {{- include "terrakube.labels" . | nindent 4 }}
+    app: {{ .Values.name }}-api
   {{- with .Values.ingress.api.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
   {{- end }}
 spec:
-  ingressClassName: {{ default "nginx" .Values.ingress.api.ingressClassName }}
-  {{ if and .Values.ingress.useTls .Values.ingress.includeTlsHosts }}
+  {{- if .Values.ingress.api.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.api.ingressClassName }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.api.domain | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.api.path | quote }}
+            pathType: {{ .Values.ingress.api.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Values.name }}-api-service
+                port:
+                  number: 8080
+          {{- if .Values.ingress.dex.enabled }}
+          - path: {{ .Values.ingress.dex.path | quote }}
+            pathType: {{ .Values.ingress.dex.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Release.Name }}-dex
+                port:
+                  number: 5556
+          {{- end }}
+  {{- if and .Values.ingress.api.useTls .Values.ingress.api.tlsSecretName }}
   tls:
-  - hosts:
-    - {{ .Values.ingress.api.domain | quote }}
-    secretName: {{ .Values.ingress.api.tlsSecretName }}
-  {{ end }}
-  {{- if and .Values.ingress.api.enabled .Values.ingress.dex.enabled .Values.ingress.dex.enabled  }}
+    - hosts:
+        - {{ .Values.ingress.api.domain | quote }}
+      secretName: {{ .Values.ingress.api.tlsSecretName }}
+  {{- end }}
+{{- else if and (eq .Values.ingress.controller "aws") .Values.ingress.aws.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-api
+  labels:
+    app: {{ .Values.name }}-api
+  annotations:
+    {{- if and .Values.ingress.aws.sharedLoadBalancer.enabled .Values.ingress.aws.sharedLoadBalancer.groupName }}
+    alb.ingress.kubernetes.io/group.name: {{ .Values.ingress.aws.sharedLoadBalancer.groupName }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.aws.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    {{- if .Values.ingress.aws.certificateArn }}
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.aws.certificateArn }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.api.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+spec:
   rules:
-  - host: {{ .Values.ingress.api.domain | quote }}
-    http:
-      paths:
-      - path: {{ .Values.ingress.api.path | quote }}
-        pathType: {{ .Values.ingress.api.pathType | quote }}
-        backend:
-          service:
-            name: terrakube-api-service
-            port:
-              number: 8080
-      - path: {{ .Values.ingress.dex.path | quote }}
-        pathType: {{ .Values.ingress.dex.pathType | quote }}
-        backend:
-          service:
-            name: {{ .Release.Name }}-dex
-            port:
-              number: 5556
-  {{ else }}
+    - host: {{ .Values.ingress.api.domain | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.api.path | quote }}
+            pathType: {{ .Values.ingress.api.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Values.name }}-api-service
+                port:
+                  number: 8080
+          {{- if .Values.ingress.dex.enabled }}
+          - path: {{ .Values.ingress.dex.path | quote }}
+            pathType: {{ .Values.ingress.dex.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Release.Name }}-dex
+                port:
+                  number: 5556
+          {{- end }}
+{{- else if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-api
+  labels:
+    app: {{ .Values.name }}-api
+  annotations:
+    {{- if .Values.ingress.gke.apiStaticIPName }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gke.apiStaticIPName }}
+    {{- end }}
+    {{- if .Values.ingress.gke.managedCertificate.create }}
+    networking.gke.io/managed-certificates: {{ .Values.name }}-api-certificate
+    {{- end }}
+    {{- if .Values.ingress.gke.frontendConfig.create }}
+    networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-api-frontend-config
+    {{- end }}
+    {{- if .Values.ingress.gke.backendConfig.create }}
+    cloud.google.com/backend-config: '{"ports": {"8080":"{{ .Values.name }}-api-backend-config", "5556":"{{ .Values.name }}-dex-backend-config"}}'
+    {{- end }}
+    {{- if .Values.ingress.gke.externalDNS }}
+    {{- if .Values.ingress.gke.externalDNS.perIngressProxy }}
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.perIngressProxy.api }}"
+    {{- else }}
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
+    {{- end }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.gke.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.api.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ingressClassName: gce
   rules:
-  - host: {{ .Values.ingress.api.domain | quote }}
-    http:
-      paths:
-      - path: {{ .Values.ingress.api.path | quote }}
-        pathType: {{ .Values.ingress.api.pathType | quote }}
-        backend:
-          service:
-            name: terrakube-api-service
-            port:
-              number: 8080
-  {{ end }}
-{{ end }}
+    - host: {{ .Values.ingress.api.domain | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.api.path | quote }}
+            pathType: {{ .Values.ingress.api.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Values.name }}-api-service
+                port:
+                  number: 8080
+          {{- if .Values.ingress.dex.enabled }}
+          - path: {{ .Values.ingress.dex.path | quote }}
+            pathType: {{ .Values.ingress.dex.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Release.Name }}-dex
+                port:
+                  number: 5556
+          {{- end }}
+{{- end }}
+{{- end }}

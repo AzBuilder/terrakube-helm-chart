@@ -2,17 +2,25 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: terrakube-registry-service
+  name: {{ .Values.name }}-registry-service
   labels:
-    {{- include "terrakube.labels" . | nindent 4 }}
+    {{- include "terrakube-registry.labels" . | nindent 4 }}
+  {{- if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled .Values.ingress.gke.backendConfig.create }}
+  annotations:
+    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-registry-backend-config"}'
+    cloud.google.com/neg: '{"ingress": true}'
+  {{- end }}
 spec:
-  type: {{ .Values.registry.serviceType }}
+  # Use NodePort for GKE or the specified type from values
+  type: {{ if eq .Values.ingress.controller "gke" }}NodePort{{ else }}{{ .Values.registry.serviceType | default "ClusterIP" }}{{ end }}
   ports:
-  - port: 8075
-    targetPort: http
+    - port: 8075
+      targetPort: http
+      protocol: TCP
+      name: http
 {{- if and .Values.registry.otel.enabled .Values.registry.otel.metrics }}
-  - port: {{ .Values.registry.otel.metrics.port | default "9464" }}
-    targetPort: metrics
+    - port: {{ .Values.registry.otel.metrics.port | default "9464" }}
+      targetPort: metrics
 {{- end }}
   selector:
     {{- include "terrakube-registry.labels" . | nindent 4 }}

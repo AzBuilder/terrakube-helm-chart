@@ -1,0 +1,98 @@
+{{- if and .Values.ingress.dex.enabled .Values.dex.enabled }}
+{{- $dexServiceName := printf "%s-dex" .Release.Name }}
+{{- if eq .Values.ingress.controller "generic" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-dex
+  labels:
+    app: {{ .Values.name }}-dex
+  {{- with .Values.ingress.dex.annotations }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.api.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.api.ingressClassName }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.api.domain }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.dex.path }}
+            pathType: {{ .Values.ingress.dex.pathType }}
+            backend:
+              service:
+                name: {{ $dexServiceName }}
+                port:
+                  number: 5556
+  {{- if .Values.ingress.useTls }}
+  tls:
+    - hosts:
+      {{- if .Values.ingress.includeTlsHosts }}
+        - {{ .Values.ingress.api.domain }}
+      {{- end }}
+      secretName: {{ .Values.ingress.api.tlsSecretName }}
+  {{- end }}
+{{- else if and (eq .Values.ingress.controller "aws") .Values.ingress.aws.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-dex
+  labels:
+    app: {{ .Values.name }}-dex
+  annotations:
+    {{- range $key, $value := .Values.ingress.aws.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    {{- if .Values.ingress.aws.certificateArn }}
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.aws.certificateArn }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.dex.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.api.domain }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.dex.path }}
+            pathType: {{ .Values.ingress.dex.pathType }}
+            backend:
+              service:
+                name: {{ $dexServiceName }}
+                port:
+                  number: 5556
+{{- else if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-dex
+  labels:
+    app: {{ .Values.name }}-dex
+  annotations:
+    {{- range $key, $value := .Values.ingress.gke.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    {{- if .Values.ingress.gke.managedCertificate.create }}
+    networking.gke.io/managed-certificates: {{ .Values.name }}-certificate
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.dex.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.api.domain }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.dex.path }}
+            pathType: {{ .Values.ingress.dex.pathType }}
+            backend:
+              service:
+                name: {{ $dexServiceName }}
+                port:
+                  number: 5556
+{{- end }}
+{{- end }}

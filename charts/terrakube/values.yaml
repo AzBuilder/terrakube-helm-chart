@@ -179,7 +179,7 @@ api:
   image: azbuilder/api-server
   version: ""
   replicaCount: "1"
-  serviceType: "ClusterIP"
+  serviceType: ClusterIP
   serviceAccountName: ""
   automountServiceAccountToken: true
   otel:
@@ -250,7 +250,7 @@ executor:
   image: "azbuilder/executor"
   version: ""
   replicaCount: "1"
-  serviceType: "ClusterIP"
+  serviceType: ClusterIP
   serviceAccountName: ""
   secrets:
    - terrakube-executor-secrets
@@ -291,7 +291,7 @@ registry:
   image: azbuilder/open-registry
   version: ""
   replicaCount: "1"
-  serviceType: "ClusterIP"
+  serviceType: ClusterIP
   serviceAccountName: ""
   secrets:
    - terrakube-registry-secrets
@@ -319,7 +319,7 @@ ui:
   image: azbuilder/terrakube-ui
   version: ""
   replicaCount: "1"
-  serviceType: "ClusterIP"
+  serviceType: ClusterIP
   serviceAccountName: ""
   resources: {}
   podLabels: {}
@@ -333,31 +333,74 @@ ui:
 ingress:
   useTls: false
   includeTlsHosts: true
+  controller: "generic"  # Options: "generic", "aws", "gke"
+  
+  gke:
+    enabled: false
+    backendConfig:
+      create: false
+      timeout: 30
+      # Per-service security policies (optional)
+      uiSecurityPolicy: ""           # Cloud Armor policy for UI (user access restriction)
+      apiSecurityPolicy: ""          # Cloud Armor policy for API (usually empty - external access needed)
+      registrySecurityPolicy: ""     # Cloud Armor policy for Registry (usually empty - external access needed)
+      executorSecurityPolicy: ""     # Cloud Armor policy for Executor (usually empty if exposed)
+    managedCertificate:
+      create: false
+    frontendConfig:
+      create: false
+    externalDNS:
+      proxyEnabled: "false"
+      perIngressProxy:
+        ui: "false"
+        api: "false"
+        registry: "false"
+        executor: "false"
+    annotations: {}
+    uiStaticIPName: ""
+    apiStaticIPName: ""
+    registryStaticIPName: ""
+    executorStaticIPName: ""
+  
+  aws:
+    enabled: false
+    certificateArn: ""
+    sharedLoadBalancer:
+      enabled: false
+      groupName: ""
+    annotations: {}
+  
   ui:
     enabled: true
     domain: "terrakube-ui.minikube.net"
     path: "/"
     pathType: "Prefix"
     ingressClassName: "nginx"
+    useTls: true
     tlsSecretName: tls-secret-ui-terrakube
     annotations:
       nginx.ingress.kubernetes.io/use-regex: "true"
+    annotations: {}
+  
   api:
     enabled: true
     domain: "terrakube-api.minikube.net"
     path: "/"
     pathType: "Prefix"
     ingressClassName: "nginx"
+    useTls: false
     tlsSecretName: tls-secret-api-terrakube
     annotations:
       nginx.ingress.kubernetes.io/use-regex: "true"
       nginx.ingress.kubernetes.io/proxy-set-headers: "terrakube/custom-headers"
+
   registry:
     enabled: true
     domain: "terrakube-reg.minikube.net"
     path: "/"
     pathType: "Prefix"
     ingressClassName: "nginx"
+    useTls: false
     tlsSecretName: tls-secret-reg-terrakube
     annotations:
       nginx.ingress.kubernetes.io/use-regex: "true"
@@ -378,3 +421,57 @@ ingress:
     tlsSecretName: tls-secret-executor-terrakube    
     annotations:
       nginx.ingress.kubernetes.io/use-regex: "true"
+  controller: "generic" # Options: generic, aws, gke
+  
+  # AWS specific configuration
+  aws:
+    enabled: false
+    annotations:
+      # AWS ALB annotations
+      kubernetes.io/ingress.class: alb
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}, {"HTTP":80}]'
+      alb.ingress.kubernetes.io/ssl-redirect: '443'
+    certificateArn: ""
+    targetGroupBinding:
+      create: false
+      apiTargetGroupARN: ""
+      uiTargetGroupARN: ""
+      registryTargetGroupARN: ""
+      dexTargetGroupARN: ""
+    securityGroups: []
+    subnets: []
+
+    certificateArn: ""
+    
+  # GKE specific configuration
+  gke:
+    enabled: false
+    annotations:
+      kubernetes.io/ingress.class: gce
+    # Per-service static IP names for individual load balancers
+    uiStaticIPName: ""         
+    apiStaticIPName: ""
+    registryStaticIPName: ""
+    executorStaticIPName: ""
+    managedCertificate:
+      create: false
+      useExisting: false
+      existingCertName: ""
+      domains: []
+    backendConfig:
+      create: false
+      timeout: 30
+      securityPolicy: "none"  # Cloud Armor security policy name (optional)
+    frontendConfig:
+      create: false
+      redirectToHttps: true
+    externalDNS:
+      proxyEnabled: false      # Control whether ExternalDNS creates proxy records (Cloudflare)
+      perIngressProxy:         # Optional: Allow per-ingress proxy settings
+        ui: false
+        api: false
+        registry: false
+        dex: false
+        executor: false

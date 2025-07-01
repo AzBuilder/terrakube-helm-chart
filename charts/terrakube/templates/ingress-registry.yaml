@@ -1,31 +1,116 @@
-{{- if .Values.ingress.registry.enabled -}}
+{{- if .Values.ingress.registry.enabled }}
+{{- if eq .Values.ingress.controller "generic" }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: terrakube-registry-ingress
+  name: {{ .Values.name }}-registry
   labels:
-    {{- include "terrakube.labels" . | nindent 4 }}
+    app: {{ .Values.name }}-registry
   {{- with .Values.ingress.registry.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
   {{- end }}
 spec:
-  ingressClassName: {{ default "nginx" .Values.ingress.registry.ingressClassName }}
-  {{ if and .Values.ingress.useTls .Values.ingress.includeTlsHosts }}
-  tls:
-  - hosts:
-    - {{ .Values.ingress.registry.domain | quote}}
-    secretName: {{ .Values.ingress.registry.tlsSecretName }}
-  {{ end }}
+  {{- if .Values.ingress.registry.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.registry.ingressClassName }}
+  {{- end }}
   rules:
-  - host:  {{ .Values.ingress.registry.domain | quote}}
-    http:
-      paths:
-      - path: {{ .Values.ingress.registry.path | quote }}
-        pathType: {{ .Values.ingress.registry.pathType | quote }}
-        backend:
-          service:
-            name: terrakube-registry-service
-            port:
-              number: 8075
-{{ end }}
+    - host: {{ .Values.ingress.registry.domain | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.registry.path | quote }}
+            pathType: {{ .Values.ingress.registry.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Values.name }}-registry-service
+                port:
+                  number: 8075
+  {{- if and .Values.ingress.registry.useTls .Values.ingress.registry.tlsSecretName }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.registry.domain | quote }}
+      secretName: {{ .Values.ingress.registry.tlsSecretName }}
+  {{- end }}
+{{- else if and (eq .Values.ingress.controller "aws") .Values.ingress.aws.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-registry
+  labels:
+    app: {{ .Values.name }}-registry
+  annotations:
+    {{- if and .Values.ingress.aws.sharedLoadBalancer.enabled .Values.ingress.aws.sharedLoadBalancer.groupName }}
+    alb.ingress.kubernetes.io/group.name: {{ .Values.ingress.aws.sharedLoadBalancer.groupName }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.aws.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    {{- if .Values.ingress.aws.certificateArn }}
+    alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.aws.certificateArn }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.registry.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+spec:
+  rules:
+    - host: {{ .Values.ingress.registry.domain | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.registry.path | quote }}
+            pathType: {{ .Values.ingress.registry.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Values.name }}-registry-service
+                port:
+                  number: 8075
+{{- else if and (eq .Values.ingress.controller "gke") .Values.ingress.gke.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}-registry
+  labels:
+    app: {{ .Values.name }}-registry
+  annotations:
+    {{- if .Values.ingress.gke.registryStaticIPName }}
+    kubernetes.io/ingress.global-static-ip-name: {{ .Values.ingress.gke.registryStaticIPName }}
+    {{- end }}
+    {{- if .Values.ingress.gke.managedCertificate.create }}
+    networking.gke.io/managed-certificates: {{ .Values.name }}-registry-certificate
+    {{- end }}
+    {{- if .Values.ingress.gke.frontendConfig.create }}
+    networking.gke.io/v1beta1.FrontendConfig: {{ .Values.name }}-registry-frontend-config
+    {{- end }}
+    {{- if .Values.ingress.gke.backendConfig.create }}
+    cloud.google.com/backend-config: '{"default": "{{ .Values.name }}-registry-backend-config"}'
+    {{- end }}
+    {{- if .Values.ingress.gke.externalDNS }}
+    {{- if .Values.ingress.gke.externalDNS.perIngressProxy }}
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.perIngressProxy.registry }}"
+    {{- else }}
+    external-dns.alpha.kubernetes.io/cloudflare-proxied: "{{ .Values.ingress.gke.externalDNS.proxyEnabled }}"
+    {{- end }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.gke.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.registry.annotations }}
+    {{ $key }}: {{ tpl (toString $value) $ | quote }}
+    {{- end }}
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ingressClassName: gce
+  rules:
+    - host: {{ .Values.ingress.registry.domain | quote }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.registry.path | quote }}
+            pathType: {{ .Values.ingress.registry.pathType | quote }}
+            backend:
+              service:
+                name: {{ .Values.name }}-registry-service
+                port:
+                  number: 8075
+{{- end }}
+{{- end }}
