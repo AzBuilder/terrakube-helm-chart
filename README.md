@@ -426,17 +426,18 @@ Once you have completed the above steps you can complete the file values.yaml to
 | api.version                               | Yes      | Terrakube API version                                                  |
 | api.replicaCount                          | Yes      | Number of API pod replicas                                             |
 | api.serviceAccountName                    | No       | Kubernetes Service Account name                                        |
-| api.serviceType                           | Yes      | Kubernetes service type (ClusterIP/NodePort/LoadBalancer)             |
-| api.env                                   | No       | Environment variables for API pods                                     |
-| api.volumes                               | No       | Volume mounts for API pods                                             |
-| api.volumeMounts                          | No       | Volume mount points for API pods                                       |
-| api.properties.databaseType               | Yes      | Database type: H2/SQL_AZURE/POSTGRESQL/MYSQL                          |
-| api.properties.databaseHostname           | No       | External database hostname                                             |
-| api.properties.databaseName               | No       | External database name                                                 |
-| api.properties.databaseUser               | No       | External database username                                             |
-| api.properties.databasePassword           | No       | External database password                                             |
-| api.securityContext                       | No       | Pod security context for API                                           |
-| api.containerSecurityContext              | No       | Container security context for API                                     |
+| api.automountServiceAccountToken          | No       | Enable automountServiceAccountToken                                    | 
+| api.serviceType                           | Yes      |                                                                        |
+| api.env                                   | No       |                                                                        |
+| api.volumes                               | No       |                                                                        |
+| api.volumeMounts                          | No       |                                                                        |
+| api.properties.databaseType               | Yes      | H2/SQL_AZURE/POSTGRESQL/MYSQL                                          |
+| api.properties.databaseHostname           | No       |                                                                        |
+| api.properties.databaseName               | No       |                                                                        |
+| api.properties.databaseUser               | No       |                                                                        |
+| api.properties.databasePassword           | No       |                                                                        |
+| api.securityContext                       | No       | Fill securityContext field                                             |
+| api.containerSecurityContext              | No       | Fill securityContext field in the container spec                       |
 | api.imagePullSecrets                      | No       | Specific Secret used to pull images from private repository            |
 | api.initContainers                        | No       | Init containers for API deployment                                     |
 | executor.enabled                          | Yes      | Enable Executor component deployment                                   |
