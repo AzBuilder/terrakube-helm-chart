@@ -5,6 +5,9 @@ metadata:
   name: {{ .Values.api.serviceAccountName }}
   labels:
     {{- include "terrakube.labels" . | nindent 4 }}
+{{- with .Values.api.automountServiceAccountToken }}
+automountServiceAccountToken: {{ . }}
+{{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role

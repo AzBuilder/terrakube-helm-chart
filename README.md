@@ -273,6 +273,7 @@ Once you have completed the above steps you can complete the file values.yaml to
 | api.version                               | Yes      | Terrakube API version                                                  |
 | api.replicaCount                          | Yes      |                                                                        |
 | api.serviceAccountName                    | No       | Kubernetes Service Account name                                        |
+| api.automountServiceAccountToken          | No       | Enable automountServiceAccountToken                                    | 
 | api.serviceType                           | Yes      |                                                                        |
 | api.env                                   | No       |                                                                        |
 | api.volumes                               | No       |                                                                        |

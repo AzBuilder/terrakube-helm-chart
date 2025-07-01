@@ -21,6 +21,7 @@ spec:
         {{- with .Values.ui.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+        checksum/configmap: {{ include (print $.Template.BasePath "/configMap-ui.yaml") . | sha256sum }}
         checksum/config: {{ include (print $.Template.BasePath "/secrets-ui.yaml") . | sha256sum }}
     spec:
       {{- with .Values.ui.imagePullSecrets | default .Values.global.imagePullSecrets }}
@@ -38,6 +39,10 @@ spec:
         - name: ui-config
           mountPath: "/app/env-config.js"
           subPath: "env-config.js"
+          readOnly: true
+        - name: ui-web-config
+          mountPath: "/opt/bitnami/nginx/conf/server_blocks/my_server_block.conf"
+          subPath: my_server_block.conf
           readOnly: true
         {{- if .Values.ui.resources }}
         resources: {{- toYaml .Values.ui.resources | nindent 12 }}
@@ -70,6 +75,9 @@ spec:
           items:
           - key: env-config.js
             path: env-config.js
+      - name: ui-web-config
+        configMap:
+          name: terrakube-ui
       {{- with .Values.ui.serviceAccountName }}
       serviceAccountName: {{ quote . }}
       {{- end }}
