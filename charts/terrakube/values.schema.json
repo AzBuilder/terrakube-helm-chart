@@ -328,7 +328,7 @@
             "required": ["toolsRepository", "toolsBranch"],
             "properties": {
               "toolsRepository": {
-                "description": "Terrakube Tools repository. Example: https://github.com/AzBuilder/terrakube-extensions",
+                "description": "Terrakube Tools repository. Example: https://github.com/terrakube-io/terrakube-extensions",
                 "type": "string"
               },
               "toolsBranch": {
