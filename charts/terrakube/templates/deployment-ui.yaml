@@ -41,7 +41,7 @@ spec:
           subPath: "env-config.js"
           readOnly: true
         - name: ui-web-config
-          mountPath: "/opt/bitnami/nginx/conf/server_blocks/my_server_block.conf"
+          mountPath: "/bitnami/nginx/conf/server_blocks/my_server_block.conf"
           subPath: my_server_block.conf
           readOnly: true
         {{- if .Values.ui.resources }}
